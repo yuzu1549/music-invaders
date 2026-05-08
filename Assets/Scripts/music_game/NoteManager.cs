@@ -7,7 +7,7 @@ public class NoteManager : MonoBehaviour
 {
 	public TextAsset chartText;     // 譜面テキストファイル
 	public GameObject notePrefab;   // ノーツのプレハブ
-									// ↓ 共同制作者さんのオブジェクトプールをここにアタッチ
+									
 	public ObjectPool pool;
 
 	[Header("設定")]
@@ -69,7 +69,7 @@ public class NoteManager : MonoBehaviour
 
 	void SpawnNote(int lane)
 	{
-		// 共同制作者さんのプールのメソッド名は Get()
+		// プールのメソッド名は Get()
 		GameObject obj = pool.Get();
 
 		if (obj != null)
