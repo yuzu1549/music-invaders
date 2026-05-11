@@ -105,7 +105,7 @@ InitTestScene*.unity*
 /Assets/_recovery.meta
 
 # GitHub
-.github/
+#.github/
 
 # vscode
 .vscode/
