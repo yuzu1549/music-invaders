@@ -10,13 +10,14 @@ public class PlayerMove : MonoBehaviour
     
     private Vector2 moveInput;  // 移動入力値
     private Vector2 lastMoveDirection = Vector2.right; // 初期方向は右(任意)
+    private Rigidbody2D rb;
 
-    private void Start()
+    private void Awake()
     {
-
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         MovePlayer();
     }
@@ -39,7 +40,7 @@ public class PlayerMove : MonoBehaviour
     /// </summary>
     private void MovePlayer()
     {
-        transform.Translate(moveInput * moveSpeed * Time.deltaTime);
+        rb.MovePosition(rb.position + moveInput * moveSpeed * Time.fixedDeltaTime);
     }
 
     /// <summary>
