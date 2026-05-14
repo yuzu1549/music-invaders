@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyHealth : MonoBehaviour, IPoolable
+public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
 {
     public int maxHealth = 1; // 敵の最大体力
     [SerializeField]
