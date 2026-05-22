@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7650682773108361666}
   m_Layer: 0
   m_Name: Note
-  m_TagString: Untagged
+  m_TagString: Note
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,11 +107,11 @@ MonoBehaviour:
   lane: 0
   baseDuration: 2
   noteSpeed: 1
-  startY: 0
-  endY: -5
-  startSpread: 0.2
-  endSpread: 1
-  minScaleX: 0.5
-  maxScaleX: 2
-  minScaleY: 0.05
-  maxScaleY: 0.2
+  startY: -5
+  endY: 0
+  startSpread: 1
+  endSpread: 0.225
+  startScaleX: 2
+  endScaleX: 0.45
+  startScaleY: 0.2
+  endScaleY: 0.045

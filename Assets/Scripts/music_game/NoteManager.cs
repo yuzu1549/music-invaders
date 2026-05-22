@@ -57,19 +57,19 @@ public class NoteManager : MonoBehaviour
 		// 次に流れてくるノーツをチェック
 		for (int i = 0; i < notes.Count; i++)
 		{
-			// 重要：判定時間にちょうど届くように「落下時間」を逆算して生成する
 			if (elapsedTime >= notes[i].time - actualDuration)
 			{
-				SpawnNote(notes[i].lane);
+				// ★修正：引数に計算した actualDuration を追加
+				SpawnNote(notes[i].lane, actualDuration);
 				notes.RemoveAt(i);
 				i--;
 			}
 		}
 	}
 
-	void SpawnNote(int lane)
+	// ★修正：受け取る引数に float actualDuration を追加
+	void SpawnNote(int lane, float actualDuration)
 	{
-		// プールのメソッド名は Get()
 		GameObject obj = pool.Get();
 
 		if (obj != null)
@@ -77,8 +77,8 @@ public class NoteManager : MonoBehaviour
 			Pseudo3DNote noteScript = obj.GetComponent<Pseudo3DNote>();
 			if (noteScript != null)
 			{
-				// レーンを渡して、座標計算を開始させる
-				noteScript.Init(lane);
+				// ★修正：Initに時間を渡す
+				noteScript.Init(lane, actualDuration);
 			}
 		}
 	}
