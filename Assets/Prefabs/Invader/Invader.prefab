@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 206183762387394898}
   - component: {fileID: 7303594687251603761}
   - component: {fileID: 5855389480912556414}
-  m_Layer: 0
+  - component: {fileID: 2595497580781758201}
+  m_Layer: 6
   m_Name: Invader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -180,3 +181,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 1
+  currentHealth: 0
+--- !u!114 &2595497580781758201
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9088425884241310538}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6ce5b1944cad5414ba4d63d5a81439f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySnakeMover
+  speed: 3
+  downDistance: 1
+  firstDirection: 0
