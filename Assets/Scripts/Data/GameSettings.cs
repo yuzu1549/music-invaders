@@ -39,7 +39,21 @@ public static class GameSettings
 
     public static float NoteSpeed
     {
-        get => PlayerPrefs.GetFloat(NoteSpeedKey, DefaultNoteSpeed);
+        get
+        {
+            float noteSpeed = PlayerPrefs.GetFloat(
+                NoteSpeedKey,
+                DefaultNoteSpeed);
+
+            if (noteSpeed < MinNoteSpeed || MaxNoteSpeed < noteSpeed)
+            {
+                NoteSpeed = DefaultNoteSpeed;
+                Save();
+                return DefaultNoteSpeed;
+            }
+
+            return RoundToOneDecimal(noteSpeed);
+        }
         set => PlayerPrefs.SetFloat(
             NoteSpeedKey,
             Mathf.Clamp(RoundToOneDecimal(value), MinNoteSpeed, MaxNoteSpeed));

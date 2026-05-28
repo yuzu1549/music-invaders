@@ -40,12 +40,18 @@ public class OptionsOverlayController : MonoBehaviour
     [Header("SE 音量の現在値を表示するテキスト")]
     [SerializeField] private TMP_Text seVolumeValueText;
 
+    private bool isInitializing; // Slider 初期化中かどうか
+
     private void Start()
     {
+        isInitializing = true;
+
         SetupSliderRanges();
         LoadSettingsToSliders();
         RefreshTexts();
         CloseOptions();
+
+        isInitializing = false;
     }
 
     /// <summary>
@@ -70,6 +76,11 @@ public class OptionsOverlayController : MonoBehaviour
     /// <param name="value">変更後のノーツ速度</param>
     public void SetNoteSpeed(float value)
     {
+        if (isInitializing)
+        {
+            return;
+        }
+
         GameSettings.NoteSpeed = value;
         noteSpeedSlider.SetValueWithoutNotify(GameSettings.NoteSpeed);
         RefreshTexts();
@@ -114,6 +125,11 @@ public class OptionsOverlayController : MonoBehaviour
     /// <param name="value">変更後のタイミング調整値</param>
     public void SetTimingOffset(float value)
     {
+        if (isInitializing)
+        {
+            return;
+        }
+
         GameSettings.TimingOffsetMs = Mathf.RoundToInt(value);
         timingOffsetSlider.SetValueWithoutNotify(GameSettings.TimingOffsetMs);
         RefreshTexts();
@@ -158,6 +174,11 @@ public class OptionsOverlayController : MonoBehaviour
     /// <param name="value">変更後の BGM 音量</param>
     public void SetBgmVolume(float value)
     {
+        if (isInitializing)
+        {
+            return;
+        }
+
         GameSettings.BgmVolumePercent = Mathf.RoundToInt(value);
         bgmVolumeSlider.SetValueWithoutNotify(GameSettings.BgmVolumePercent);
         RefreshTexts();
@@ -202,6 +223,11 @@ public class OptionsOverlayController : MonoBehaviour
     /// <param name="value">変更後の SE 音量</param>
     public void SetSeVolume(float value)
     {
+        if (isInitializing)
+        {
+            return;
+        }
+
         GameSettings.SeVolumePercent = Mathf.RoundToInt(value);
         seVolumeSlider.SetValueWithoutNotify(GameSettings.SeVolumePercent);
         RefreshTexts();
@@ -280,8 +306,8 @@ public class OptionsOverlayController : MonoBehaviour
     {
         noteSpeedValueText.text = $"{GameSettings.NoteSpeed:0.0}";
         timingOffsetValueText.text = FormatTimingOffset(GameSettings.TimingOffsetMs);
-        bgmVolumeValueText.text = $"{GameSettings.BgmVolumePercent}%";
-        seVolumeValueText.text = $"{GameSettings.SeVolumePercent}%";
+        bgmVolumeValueText.text = FormatVolume(GameSettings.BgmVolumePercent);
+        seVolumeValueText.text = FormatVolume(GameSettings.SeVolumePercent);
     }
 
     /// <summary>
@@ -290,12 +316,18 @@ public class OptionsOverlayController : MonoBehaviour
     /// <param name="timingOffsetMs">タイミング調整値</param>
     /// <returns>表示用テキスト</returns>
     private string FormatTimingOffset(int timingOffsetMs)
-    {
-        if (timingOffsetMs > 0)
-        {
-            return $"+{timingOffsetMs}ms";
-        }
+	{
+		string sign = timingOffsetMs > 0 ? "+" : "";
+		return $"{sign}{timingOffsetMs}<size=12> </size><size=24>ms</size>";
+	}
 
-        return $"{timingOffsetMs}ms";
+    /// <summary>
+    /// 音量を % 表記に変換する。
+    /// </summary>
+    /// <param name="volumePercent">音量</param>
+    /// <returns>表示用テキスト</returns>
+    private string FormatVolume(int volumePercent)
+    {
+        return $"{volumePercent}<size=12> </size><size=24>%</size>";
     }
 }
