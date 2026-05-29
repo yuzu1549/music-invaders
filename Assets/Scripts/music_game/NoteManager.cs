@@ -1,48 +1,63 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
-using System.IO;
 
 public class NoteManager : MonoBehaviour
 {
-	public TextAsset chartText;     // 譜面テキストファイル
-	public GameObject notePrefab;   // ノーツのプレハブ
-									
+	[Header("参照")]
+	public TextAsset chartText;
+	public AudioSource audioSource;
 	public ObjectPool pool;
 
 	[Header("設定")]
-	public float noteSpeed = 1.0f;
+	public float bpm = 158.0f;
 	public float baseDuration = 2.0f;
+	public float noteSpeed = 1.0f;
+	public float delayTime = 3.0f;    // 全体の開始待ち時間
 
-	private float startTime;
+	[Header("同期調整")]
+	// ★追加：曲に対する譜面のズレを秒単位で調整するオフセット
+	public float chartOffset = 0.0f;
+
 	private List<NoteData> notes = new List<NoteData>();
+	private double dspStartTime;
+	private bool isMusicScheduled = false;
 
-	// 譜面データの構造体
 	struct NoteData
 	{
-		public float time;
+		public float beat;
 		public int lane;
 	}
 
 	void Start()
 	{
 		LoadChart();
-		startTime = Time.time;
+
+		dspStartTime = AudioSettings.dspTime;
+
+		if (audioSource != null && audioSource.clip != null)
+		{
+			audioSource.PlayScheduled(dspStartTime + delayTime);
+			isMusicScheduled = true;
+		}
+		else
+		{
+			Debug.LogError("AudioSourceまたはClipが設定されていません！");
+		}
 	}
 
 	void LoadChart()
 	{
-		// テキストを1行ずつ読み込む
 		string[] lines = chartText.text.Split('\n');
 		foreach (string line in lines)
 		{
-			if (string.IsNullOrEmpty(line)) continue;
+			if (string.IsNullOrWhiteSpace(line)) continue;
+
 			string[] values = line.Split(',');
 			if (values.Length == 2)
 			{
 				notes.Add(new NoteData
 				{
-					time = float.Parse(values[0]),
+					beat = float.Parse(values[0]),
 					lane = int.Parse(values[1])
 				});
 			}
@@ -51,15 +66,21 @@ public class NoteManager : MonoBehaviour
 
 	void Update()
 	{
-		float elapsedTime = Time.time - startTime;
-		float actualDuration = baseDuration / noteSpeed;
+		if (audioSource == null || !isMusicScheduled) return;
 
-		// 次に流れてくるノーツをチェック
+		double currentDspTime = AudioSettings.dspTime - dspStartTime;
+		float currentMusicTime = (float)(currentDspTime - delayTime);
+
+		float actualDuration = baseDuration / noteSpeed;
+		float secondsPerBeat = 60.0f / bpm;
+
 		for (int i = 0; i < notes.Count; i++)
 		{
-			if (elapsedTime >= notes[i].time - actualDuration)
+			// ★修正：本来のターゲット時間に、ズレ調整用のオフセット（秒）を足す
+			float targetTime = (notes[i].beat * secondsPerBeat) + chartOffset;
+
+			if (currentMusicTime >= targetTime - actualDuration)
 			{
-				// ★修正：引数に計算した actualDuration を追加
 				SpawnNote(notes[i].lane, actualDuration);
 				notes.RemoveAt(i);
 				i--;
@@ -67,17 +88,14 @@ public class NoteManager : MonoBehaviour
 		}
 	}
 
-	// ★修正：受け取る引数に float actualDuration を追加
 	void SpawnNote(int lane, float actualDuration)
 	{
 		GameObject obj = pool.Get();
-
 		if (obj != null)
 		{
 			Pseudo3DNote noteScript = obj.GetComponent<Pseudo3DNote>();
 			if (noteScript != null)
 			{
-				// ★修正：Initに時間を渡す
 				noteScript.Init(lane, actualDuration);
 			}
 		}
