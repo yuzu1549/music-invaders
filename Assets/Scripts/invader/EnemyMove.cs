@@ -98,6 +98,8 @@ public class EnemyMove : MonoBehaviour
         speed = newSpeed;
         downDistance = newDownDistance;
         firstDirection = newFirstDirection;
+        isMovingDown = false;
+        targetY = transform.position.y;
 
         horizontalDirection = firstDirection == MoveDirection.Right
             ? Vector2.right
