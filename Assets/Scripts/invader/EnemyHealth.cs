@@ -53,7 +53,6 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
         isDead = true; // 死亡フラグを立てる
         if (ownerPool != null)
         {
-            OnDespawn(); // プールに返す前に位置や状態をリセット
             ownerPool.Return(gameObject); // プールに返す
         }
         else
