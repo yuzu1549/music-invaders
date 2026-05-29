@@ -11,7 +11,8 @@ public class Bullet : MonoBehaviour, IPoolable
     public float maxDistance = 20f; // 弾が消える距離
     private Vector2 startPosition; // スタート位置
     private bool isAttacking = false; // 攻撃中かどうか
-    private Transform playerTransform; // プレイヤーのTransform
+    [Header("プレイヤーの攻撃ポイントのTransform")]
+    private Transform attackPoint; // "プレイヤーの攻撃ポイントのTransform"
     
     [Header("弾のダメージ量")]
     public int damage = 1; // ダメージ量
@@ -24,7 +25,7 @@ public class Bullet : MonoBehaviour, IPoolable
         GameObject playerObject = GameObject.FindGameObjectWithTag("Player");
         if (playerObject != null)
         {
-            playerTransform = playerObject.transform;
+            attackPoint = playerObject.transform.Find("AttackPoint"); // プレイヤーの攻撃ポイントのTransformを取得
         }
     }
 
@@ -43,7 +44,7 @@ public class Bullet : MonoBehaviour, IPoolable
     public void OnSpawn()
     {
         // 位置をプレイヤーの位置に設定
-        transform.position = playerTransform.position;
+        transform.position = attackPoint.position;
         // 回転をリセット
         transform.rotation = Quaternion.identity;
         // 状態をリセット
