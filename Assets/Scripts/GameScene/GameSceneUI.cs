@@ -1,33 +1,65 @@
 using UnityEngine;
 using TMPro;
 
-/// <summary>
 /// GameScene上に曲情報・再生時間・オプション設定を表示する。
-/// </summary>
 public class GameSceneUI : MonoBehaviour
 {
     [Header("UI Text")]
     [SerializeField] private TextMeshProUGUI gameInfoText;
 
-    [Header("Music Info")]
-    [SerializeField] private string songTitle = "Music Invaders";
-    [SerializeField] private string artistName = "Hokuto";
-    [SerializeField] private string difficulty = "Hard";
+    [Header("Music Clip")]
+    [SerializeField] private AudioClip musicClip;
 
-    [Header("Time")]
-    [SerializeField] private string currentTimeText = "00:00";
-    [SerializeField] private string totalTimeText = "00:00";
+    [Header("Music Info")]
+    [SerializeField] private string artistName = "Unknown Artist";
+    [SerializeField] private string difficulty = "Normal";
+
+    [Header("Test Timer")]
+    [SerializeField] private bool startTimerOnAwake = true;
+
+    private float currentTime = 0f;
+    private bool isTimerRunning = false;
 
     private void Start()
     {
+        if (startTimerOnAwake)
+        {
+            isTimerRunning = true;
+        }
+
         UpdateGameInfoText();
     }
 
-    /// <summary>
-    /// GameSceneの左上に表示する情報を更新する。
-    /// </summary>
+    private void Update()
+    {
+        if (isTimerRunning)
+        {
+            currentTime += Time.deltaTime;
+
+            if (musicClip != null && currentTime > musicClip.length)
+            {
+                currentTime = musicClip.length;
+                isTimerRunning = false;
+            }
+        }
+
+        UpdateGameInfoText();
+    }
+
     private void UpdateGameInfoText()
     {
+        if (gameInfoText == null) return;
+
+        string songTitle = "Unknown Title";
+        string currentTimeText = FormatTime(currentTime);
+        string totalTimeText = "00:00";
+
+        if (musicClip != null)
+        {
+            songTitle = musicClip.name;
+            totalTimeText = FormatTime(musicClip.length);
+        }
+
         gameInfoText.text =
             $"Title: {songTitle}\n" +
             $"Artist: {artistName}\n" +
@@ -36,5 +68,13 @@ public class GameSceneUI : MonoBehaviour
             $"Options\n" +
             $"Notes Speed: {GameSettings.NoteSpeed:F1}\n" +
             $"Timing Offset: {GameSettings.TimingOffsetMs}ms";
+    }
+
+    private string FormatTime(float time)
+    {
+        int minutes = Mathf.FloorToInt(time / 60f);
+        int seconds = Mathf.FloorToInt(time % 60f);
+
+        return $"{minutes:00}:{seconds:00}";
     }
 }
