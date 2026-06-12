@@ -35,7 +35,6 @@ public class RandomEnemyAttacker : MonoBehaviour
             EnemyAttack enemyAttack = selectedEnemy.GetComponent<EnemyAttack>();
             if (enemyAttack != null)
             {
-                Debug.Log($"{selectedEnemy.name} が攻撃します！");
                 enemyAttack.Attack();
             }
         }

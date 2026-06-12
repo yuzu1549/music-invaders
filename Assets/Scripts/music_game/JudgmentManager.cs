@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using System;
 
 public class JudgmentManager : MonoBehaviour
 {
@@ -19,6 +20,8 @@ public class JudgmentManager : MonoBehaviour
 
 	[Header("UI設定")]
 	public TextMeshProUGUI judgmentText;
+
+	public event Action<string> OnJudgment; // 判定結果を外部に通知するイベント
 
 	// ★追加：起動時に自分自身をInstanceに登録する
 	void Awake()
@@ -69,6 +72,7 @@ public class JudgmentManager : MonoBehaviour
 			if (minTimeDiff <= perfectWindow)
 			{
 				ShowJudgment("PERFECT!!", Color.yellow);
+				OnJudgment?.Invoke("PERFECT");
 
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
 				if (script != null) script.HitAndDespawn();
@@ -76,6 +80,7 @@ public class JudgmentManager : MonoBehaviour
 			else if (minTimeDiff <= goodWindow)
 			{
 				ShowJudgment("GOOD!", Color.green);
+				OnJudgment?.Invoke("GOOD");
 
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
 				if (script != null) script.HitAndDespawn();
