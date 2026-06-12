@@ -7,10 +7,18 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     private int currentHealth;   // 敵の現在の体力
     private ObjectPool ownerPool; // 所属するオブジェクトプール
     private bool isDead = false; // 死亡フラグ
+    private Animator anim; // アニメーターの参照
 
     private void Awake()
     {
         currentHealth = maxHealth; // 初期化
+        anim = GetComponent<Animator>(); // アニメーターの取得
+    }
+
+    void Start()
+    {
+
+        anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
     }
 
     private void Update()
@@ -38,6 +46,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     public void TakeDamage(int damage)
     {
         currentHealth -= damage;
+        anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
         if (currentHealth <= 0)
         {
             Die();
@@ -68,6 +77,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     {
         isDead = false; // 死亡フラグをリセット
         currentHealth = maxHealth; // スポーン時に体力をリセット
+        anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
     }
 
     /// <summary>

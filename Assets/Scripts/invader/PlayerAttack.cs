@@ -4,27 +4,17 @@ public class PlayerAttack : MonoBehaviour
 {
     [Header("スポーンする弾の名前")]
     [SerializeField] private string bulletName = "Bullet";
-
-    [Header("スポーンする間隔")]
-    [SerializeField] private float spawnInterval = 2f;
-
-    private float timer = 0f;
     private GameObject bullet;
 
-    private void Update()
+    void Start()
     {
-        timer += Time.deltaTime;
-        if (timer >= spawnInterval)
-        {
-            SpawnBullet();
-            timer = 0f;
-        }
+        JudgmentManager.Instance.OnJudgment += SpawnBullet; // 判定結果を受ける
     }
 
     /// <summary>
     /// 弾をスポーンさせる処理
     /// </summary>
-    private void SpawnBullet()
+    private void SpawnBullet(string judgment)
     {
         if (bulletName != null)
         {
@@ -32,7 +22,16 @@ public class PlayerAttack : MonoBehaviour
             bullet = PoolManager.Instance.Get(bulletName);
             if (bullet != null)
             {
-                bullet.GetComponent<Bullet>().Attack(); // 弾を発射して攻撃する
+                Bullet bulletScript = bullet.GetComponent<Bullet>();
+                if (bulletScript != null)
+                {
+                    bulletScript.damage = GetDamageByJudgment(judgment);
+                    bulletScript.Attack(); // 弾を発射して攻撃する
+                }
+                else
+                {
+                    Debug.LogError($"{name}: 取得したオブジェクトに Bullet コンポーネントが見つかりませんでした。");
+                }
             }
             else
             {
@@ -43,5 +42,22 @@ public class PlayerAttack : MonoBehaviour
         {
             Debug.LogError($"{name}: bulletName が設定されていません。");
         }
+    }
+
+    /// <summary>
+    /// 判定結果に応じたダメージ量を返すメソッド
+    /// </summary>
+    /// <param name="judgment"></param>
+    /// <returns>ダメージ量</returns>
+    private int GetDamageByJudgment(string judgment)
+    {
+        switch (judgment)
+        {
+            case "PERFECT":
+                return 2;
+            case "GOOD":
+                return 1;
+        }
+        return 0;
     }
 }

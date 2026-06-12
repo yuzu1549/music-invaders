@@ -811,11 +811,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9215624342464528399, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
       propertyPath: initialEnemyCount
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9215624342464528399, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
       propertyPath: subsequentEnemyCount
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1508,7 +1508,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAttack
   bulletName: Bullet
-  spawnInterval: 2
 --- !u!1001 &1799900681
 PrefabInstance:
   m_ObjectHideFlags: 0
