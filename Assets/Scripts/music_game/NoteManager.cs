@@ -15,12 +15,25 @@ public class NoteManager : MonoBehaviour
 	public float delayTime = 3.0f;    // 全体の開始待ち時間
 
 	[Header("同期調整")]
-	// ★追加：曲に対する譜面のズレを秒単位で調整するオフセット
 	public float chartOffset = 0.0f;
+
+	// ★追加：インスペクターで一目でテスト用とわかるように目立たせる
+	[Header("■■■ デバッグ・テスト専用 ■■■")]
+	[Tooltip("ONにすると下の小節から曲と譜面を途中再生します")]
+	public bool isDebugMode = false;
+
+	[Tooltip("何小節目からスタートするか（1で曲の最初から）")]
+	public int startMeasure = 1;
+
+	[Tooltip("1小節を何拍とするか（一般的な曲は4拍子なので4）")]
+	public int beatsPerMeasure = 4;
 
 	private List<NoteData> notes = new List<NoteData>();
 	private double dspStartTime;
 	private bool isMusicScheduled = false;
+
+	// ★追加：途中から始めた分の時間を記憶する変数
+	private float debugStartTimeOffset = 0f;
 
 	struct NoteData
 	{
@@ -31,6 +44,30 @@ public class NoteManager : MonoBehaviour
 	void Start()
 	{
 		LoadChart();
+
+		float secondsPerBeat = 60.0f / bpm;
+		float actualDuration = baseDuration / noteSpeed;
+
+		// ★追加：テスト用の途中再生処理
+		if (isDebugMode && startMeasure > 1)
+		{
+			// 開始する拍数 = (指定した小節 - 1) × 1小節の拍数
+			float startBeat = (startMeasure - 1) * beatsPerMeasure;
+			debugStartTimeOffset = startBeat * secondsPerBeat;
+
+			if (audioSource != null && audioSource.clip != null)
+			{
+				// 曲の再生位置（秒）を、指定した小節まで一気に進める
+				audioSource.time = Mathf.Min(debugStartTimeOffset, audioSource.clip.length);
+			}
+
+			// ★重要：途中から始めたことによって、「既に通り過ぎているべき過去のノーツ」をリストから削除しておく
+			// （これをしないと、開始した瞬間に過去のノーツが100個くらい同時に降ってきてバグります）
+			notes.RemoveAll(n => (n.beat * secondsPerBeat) + chartOffset < debugStartTimeOffset - actualDuration);
+
+			// コンソールにも黄色い警告を出して、テスト中であることを知らせる
+			Debug.LogWarning($"【テストモード作動中】第{startMeasure}小節（{debugStartTimeOffset:F2}秒）から再生します！");
+		}
 
 		dspStartTime = AudioSettings.dspTime;
 
@@ -69,14 +106,15 @@ public class NoteManager : MonoBehaviour
 		if (audioSource == null || !isMusicScheduled) return;
 
 		double currentDspTime = AudioSettings.dspTime - dspStartTime;
-		float currentMusicTime = (float)(currentDspTime - delayTime);
+
+		// ★修正：通常の現在時間に、途中再生で飛ばした分の秒数（debugStartTimeOffset）を足す
+		float currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 
 		float actualDuration = baseDuration / noteSpeed;
 		float secondsPerBeat = 60.0f / bpm;
 
 		for (int i = 0; i < notes.Count; i++)
 		{
-			// ★修正：本来のターゲット時間に、ズレ調整用のオフセット（秒）を足す
 			float targetTime = (notes[i].beat * secondsPerBeat) + chartOffset;
 
 			if (currentMusicTime >= targetTime - actualDuration)

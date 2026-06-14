@@ -3566,6 +3566,14 @@ PrefabInstance:
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 573744520}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: isDebugMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: startMeasure
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 6528076457382009528, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: maxSize
       value: 10
