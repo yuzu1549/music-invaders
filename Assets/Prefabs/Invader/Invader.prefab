@@ -184,6 +184,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyHealth
   maxHealth: 2
   currentHealth: 0
+  deathSE: {fileID: 8300000, guid: 3d99723593c50c1489e11f0c681b2699, type: 3}
 --- !u!114 &2595497580781758201
 MonoBehaviour:
   m_ObjectHideFlags: 0

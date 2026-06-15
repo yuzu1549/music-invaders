@@ -8,6 +8,9 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     private ObjectPool ownerPool; // 所属するオブジェクトプール
     private bool isDead = false; // 死亡フラグ
     private Animator anim; // アニメーターの参照
+    
+    [Header("死亡音")]
+    [SerializeField] private AudioClip deathSE; // 死亡音
 
     private void Awake()
     {
@@ -60,6 +63,12 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     {
         // 死亡エフェクトやスコア加算などの処理をここに追加
         isDead = true; // 死亡フラグを立てる
+
+        if (deathSE != null)
+        {
+            AudioManager.Instance.PlaySE(deathSE); // 死亡音を再生
+        }
+
         if (ownerPool != null)
         {
             ownerPool.Return(gameObject); // プールに返す
