@@ -23,6 +23,10 @@ public class JudgmentManager : MonoBehaviour
 
 	public event Action<string> OnJudgment; // 判定結果を外部に通知するイベント
 
+	public int PerfectCount { get; private set; }
+	public int GoodCount { get; private set; }
+	public int MissCount { get; private set; }
+
 	// ★追加：起動時に自分自身をInstanceに登録する
 	void Awake()
 	{
@@ -71,6 +75,7 @@ public class JudgmentManager : MonoBehaviour
 		{
 			if (minTimeDiff <= perfectWindow)
 			{
+				PerfectCount++;
 				ShowJudgment("PERFECT!!", Color.yellow);
 				OnJudgment?.Invoke("PERFECT");
 
@@ -79,6 +84,7 @@ public class JudgmentManager : MonoBehaviour
 			}
 			else if (minTimeDiff <= goodWindow)
 			{
+				GoodCount++;
 				ShowJudgment("GOOD!", Color.green);
 				OnJudgment?.Invoke("GOOD");
 
@@ -87,6 +93,7 @@ public class JudgmentManager : MonoBehaviour
 			}
 			else if (minTimeDiff <= missWindow)
 			{
+				MissCount++;
 				ShowJudgment("MISS", Color.gray);
 
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
@@ -98,6 +105,7 @@ public class JudgmentManager : MonoBehaviour
 	// ★追加：ノーツが見逃されて消える時に、外部から呼び出す用のメソッド
 	public void DisplayMiss()
 	{
+		MissCount++;
 		ShowJudgment("MISS", Color.gray);
 	}
 

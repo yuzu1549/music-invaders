@@ -20,8 +20,14 @@ public class IntegrationSceneUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI goodCountText;
     [SerializeField] private TextMeshProUGUI missCountText;
 
-    [Header("Music Clip")]
-    [SerializeField] private AudioClip musicClip;
+    [Header("Game Over UI")]
+    [SerializeField] private TextMeshProUGUI gameOverText;
+
+    //[Header("Music Clip")]
+    //[SerializeField] private AudioClip musicClip;
+
+    [Header("Audio Source")]
+    [SerializeField] private AudioSource musicAudioSource;
 
     [Header("Music Info")]
     [SerializeField] private string artistName = "Unknown";
@@ -30,17 +36,29 @@ public class IntegrationSceneUI : MonoBehaviour
     [Header("Test Timer")]
     [SerializeField] private bool startTimerOnAwake = true;
 
-    [Header("Test Score Info")]
+    [Header("Player Health")]
+    [SerializeField] private PlayerHealth playerHealth;
+
+    [Header("Score Info")]
     [SerializeField] private int score = 0;
 
     private float currentTime = 0f;
     private bool isTimerRunning = false;
+    private bool isGameOver = false;
 
     private void Start()
     {
+        // 前回のゲームオーバーなどで止まったままにならないようにする
+        Time.timeScale = 1f;
+
         if (startTimerOnAwake)
         {
             isTimerRunning = true;
+        }
+
+        if (gameOverText != null)
+        {
+            gameOverText.gameObject.SetActive(false);
         }
 
         UpdateAllTexts();
@@ -48,15 +66,21 @@ public class IntegrationSceneUI : MonoBehaviour
 
     private void Update()
     {
+        if (isGameOver)
+        {
+            return;
+        }
+
         if (isTimerRunning)
         {
             currentTime += Time.deltaTime;
 
-            if (musicClip != null && currentTime > musicClip.length)
-            {
-                currentTime = musicClip.length;
-                isTimerRunning = false;
-            }
+            //if (musicClip != null && currentTime > musicClip.length)
+            //{
+                //currentTime = musicClip.length;
+                //isTimerRunning = false;
+            //
+            //}
         }
 
         UpdateAllTexts();
@@ -75,11 +99,11 @@ public class IntegrationSceneUI : MonoBehaviour
         string currentTimeText = FormatTime(currentTime);
         string totalTimeText = "00:00";
 
-        if (musicClip != null)
-        {
-            songTitle = musicClip.name;
-            totalTimeText = FormatTime(musicClip.length);
-        }
+        //if (musicClip != null)
+        //{
+            //songTitle = musicClip.name;
+            //totalTimeText = FormatTime(musicClip.length);
+        //}
 
         if (titleText != null)
         {
@@ -129,9 +153,35 @@ public class IntegrationSceneUI : MonoBehaviour
 
     private void UpdateScoreTexts()
     {
+        int perfect = 0;
+        int good = 0;
+        int miss = 0;
+
+        if (JudgmentManager.Instance != null)
+        {
+            perfect = JudgmentManager.Instance.PerfectCount;
+            good = JudgmentManager.Instance.GoodCount;
+            miss = JudgmentManager.Instance.MissCount;
+        }
+
+        // P = 20点，G = 10点，M = 0点
+        score = perfect * 20 + good * 10;
+
         if (lifeText != null)
         {
-            lifeText.text = "Life:♥♥♥";
+            int life = 3;
+
+            if (playerHealth != null)
+            {
+                life = playerHealth.currentHealth;
+            }
+
+            if (life < 0)
+            {
+                life = 0;
+            }
+
+            lifeText.text = "Life:" + new string('♥', life);
             lifeText.fontSize = 40;
         }
 
@@ -143,21 +193,49 @@ public class IntegrationSceneUI : MonoBehaviour
 
         if (perfectCountText != null)
         {
-            perfectCountText.text = "P: 0";
+            perfectCountText.text = $"P: {perfect}";
             perfectCountText.fontSize = 40;
         }
 
         if (goodCountText != null)
         {
-            goodCountText.text = "G: 0";
+            goodCountText.text = $"G: {good}";
             goodCountText.fontSize = 40;
         }
 
         if (missCountText != null)
         {
-            missCountText.text = "M: 0";
+            missCountText.text = $"M: {miss}";
             missCountText.fontSize = 40;
         }
+
+        if (playerHealth != null && playerHealth.currentHealth <= 0)
+        {
+            GameOver();
+        }
+    }
+
+    private void GameOver()
+    {
+        if (isGameOver)
+        {
+            return;
+        }
+
+        isGameOver = true;
+        isTimerRunning = false;
+
+        if (gameOverText != null)
+        {
+            gameOverText.text = "GAME OVER";
+            gameOverText.fontSize = 100;
+            gameOverText.gameObject.SetActive(true);
+        }
+
+        // ゲーム全体を停止
+        Time.timeScale = 0f;
+
+        Debug.Log("Game Over");
     }
 
     private string FormatTime(float time)
