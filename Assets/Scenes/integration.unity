@@ -3823,7 +3823,7 @@ PrefabInstance:
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartText
       value: 
-      objectReference: {fileID: 4900000, guid: 339d1157b471a1e40a91a9787c13fead, type: 3}
+      objectReference: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: audioSource
       value: 
@@ -3834,7 +3834,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: startMeasure
-      value: 5
+      value: 45
       objectReference: {fileID: 0}
     - target: {fileID: 6528076457382009528, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: maxSize
