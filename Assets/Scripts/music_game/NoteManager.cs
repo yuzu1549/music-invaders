@@ -106,9 +106,20 @@ public class NoteManager : MonoBehaviour
 		if (audioSource == null || !isMusicScheduled) return;
 
 		double currentDspTime = AudioSettings.dspTime - dspStartTime;
+		float currentMusicTime;
 
-		// ★修正：通常の現在時間に、途中再生で飛ばした分の秒数（debugStartTimeOffset）を足す
-		float currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
+		// ★超重要：ここが同期ズレを防ぐ心臓部です！
+		if (currentDspTime >= delayTime)
+		{
+			// 待ち時間を過ぎて曲が鳴り始めているはずの時は、
+			// 絶対にズレない「実際のオーディオの再生位置（秒）」を基準にする！
+			currentMusicTime = audioSource.time;
+		}
+		else
+		{
+			// まだ曲が鳴る前の待ち時間（delayTime中）は、時計の計算でノーツを先出しする
+			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
+		}
 
 		float actualDuration = baseDuration / noteSpeed;
 		float secondsPerBeat = 60.0f / bpm;
@@ -117,6 +128,7 @@ public class NoteManager : MonoBehaviour
 		{
 			float targetTime = (notes[i].beat * secondsPerBeat) + chartOffset;
 
+			// 判定ラインに到達する時間 - ノーツが移動する時間
 			if (currentMusicTime >= targetTime - actualDuration)
 			{
 				SpawnNote(notes[i].lane, actualDuration);
