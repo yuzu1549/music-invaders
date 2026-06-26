@@ -208,34 +208,6 @@ public class IntegrationSceneUI : MonoBehaviour
             missCountText.text = $"M: {miss}";
             missCountText.fontSize = 40;
         }
-
-        if (playerHealth != null && playerHealth.currentHealth <= 0)
-        {
-            GameOver();
-        }
-    }
-
-    private void GameOver()
-    {
-        if (isGameOver)
-        {
-            return;
-        }
-
-        isGameOver = true;
-        isTimerRunning = false;
-
-        if (gameOverText != null)
-        {
-            gameOverText.text = "GAME OVER";
-            gameOverText.fontSize = 100;
-            gameOverText.gameObject.SetActive(true);
-        }
-
-        // ゲーム全体を停止
-        Time.timeScale = 0f;
-
-        Debug.Log("Game Over");
     }
 
     private string FormatTime(float time)
