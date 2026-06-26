@@ -981,7 +981,7 @@ AudioSource:
   m_GameObject: {fileID: 573744519}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -8386031039692512368, guid: ac334f8201eac3b418a04e2e161658ec, type: 2}
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: fa9a85d9a140a4640a0c6e5d338d56ec, type: 3}
   m_PlayOnAwake: 0
@@ -1497,10 +1497,16 @@ MonoBehaviour:
   perfectWindow: 0.0666
   goodWindow: 0.1
   missWindow: 0.1666
+  perfectSE: {fileID: 8300000, guid: 2681006efc9d3a14ca088487586f8d88, type: 3}
+  goodSE: {fileID: 8300000, guid: 34c36d26f88f26e4d904a9b72c8e90d5, type: 3}
+  emptyHitSE: {fileID: 0}
   leftKey: 20
   centerKey: 1
   rightKey: 24
   judgmentText: {fileID: 1345244423}
+  perfectEffectPrefab: {fileID: 4503054050056049811, guid: 46d919a4594e26a47820b90c797d4b49, type: 3}
+  goodEffectPrefab: {fileID: 4503054050056049811, guid: 57226a50cab4d774e97b7ac8a5c94337, type: 3}
+  missEffectPrefab: {fileID: 4503054050056049811, guid: a9e30db164e034a41919af79b3d22b18, type: 3}
 --- !u!4 &1000885325
 Transform:
   m_ObjectHideFlags: 0
@@ -1653,6 +1659,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046944631}
   m_CullTransparentMesh: 1
+--- !u!1 &1249092287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1249092289}
+  - component: {fileID: 1249092288}
+  m_Layer: 0
+  m_Name: ChartRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1249092288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249092287}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f10cbde35f4239748a87b170566173ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChartRecorder
+  audioSource: {fileID: 573744520}
+  bpm: 158
+  outputFileName: RecordedChart.txt
+  leftKey: 20
+  centerKey: 1
+  rightKey: 24
+  saveKey: 33
+--- !u!4 &1249092289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249092287}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.86534, y: -1.24803, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1257188793
 GameObject:
   m_ObjectHideFlags: 0
@@ -2911,10 +2968,12 @@ MonoBehaviour:
   perfectCountText: {fileID: 1454236987}
   goodCountText: {fileID: 1517443714}
   missCountText: {fileID: 1523417721}
-  musicClip: {fileID: 0}
+  gameOverText: {fileID: 0}
+  musicAudioSource: {fileID: 0}
   artistName: Unknown
   difficulty: Unknown
   startTimerOnAwake: 1
+  playerHealth: {fileID: 0}
   score: 0
 --- !u!1 &1711022202
 GameObject:
@@ -3741,6 +3800,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2110130095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2110130097}
+  - component: {fileID: 2110130096}
+  m_Layer: 0
+  m_Name: OsuConverter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2110130096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110130095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4329d58ffac54b24790717d9436fce2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
+  osuTextFile: {fileID: 4900000, guid: fd1b50fa64e82ab48bd3ba8778a2dae1, type: 3}
+  bpm: 158
+  outputFileName: Mania2LaneChart.txt
+--- !u!4 &2110130097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110130095}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.86534, y: -1.24803, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2136073665
 GameObject:
   m_ObjectHideFlags: 0
@@ -3825,9 +3931,17 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: audioSource
       value: 
       objectReference: {fileID: 573744520}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: chartOffset
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: isDebugMode
       value: 0
@@ -3838,11 +3952,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6528076457382009528, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: maxSize
-      value: 10
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 6528076457382009528, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: initialSize
-      value: 10
+      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 7657337028167500128, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_Name
@@ -3935,3 +4049,5 @@ SceneRoots:
   - {fileID: 1281890159}
   - {fileID: 85628690}
   - {fileID: 52728226}
+  - {fileID: 1249092289}
+  - {fileID: 2110130097}
