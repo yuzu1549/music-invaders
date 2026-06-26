@@ -13,6 +13,12 @@ public class JudgmentManager : MonoBehaviour
 	public float goodWindow = 0.1000f;    // ±6フレーム (100.0ms)
 	public float missWindow = 0.1666f;    // ±10フレーム (166.6ms)
 
+	// ★追加：インスペクターで判定ごとの効果音を設定できるようにする
+	[Header("ノーツ・判定の効果音")]
+	public AudioClip perfectSE;
+	public AudioClip goodSE;
+	public AudioClip emptyHitSE; // 空打ち（ノーツが無い時）用の音
+
 	[Header("キー設定（New Input System用）")]
 	public Key leftKey = Key.F;
 	public Key centerKey = Key.Space;
@@ -26,6 +32,11 @@ public class JudgmentManager : MonoBehaviour
 	public int PerfectCount { get; private set; }
 	public int GoodCount { get; private set; }
 	public int MissCount { get; private set; }
+
+	[Header("エフェクト")]
+	public GameObject perfectEffectPrefab; // ★追加：ここに作ったエフェクトを入れる
+	public GameObject goodEffectPrefab;
+	public GameObject missEffectPrefab;
 
 	// ★追加：起動時に自分自身をInstanceに登録する
 	void Awake()
@@ -71,6 +82,8 @@ public class JudgmentManager : MonoBehaviour
 			}
 		}
 
+		// --- 🌟 ここから下が判定と音を鳴らす処理です 🌟 ---
+
 		if (targetNote != null)
 		{
 			if (minTimeDiff <= perfectWindow)
@@ -79,8 +92,12 @@ public class JudgmentManager : MonoBehaviour
 				ShowJudgment("PERFECT!!", Color.yellow);
 				OnJudgment?.Invoke("PERFECT");
 
+				// ★追加：PerfectのSEを鳴らす（ミキサーのSEグループを通る）
+				AudioManager.Instance.PlaySE(perfectSE);
+
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
 				if (script != null) script.HitAndDespawn();
+				SpawnEffect(targetNote, perfectEffectPrefab);
 			}
 			else if (minTimeDiff <= goodWindow)
 			{
@@ -88,17 +105,36 @@ public class JudgmentManager : MonoBehaviour
 				ShowJudgment("GOOD!", Color.green);
 				OnJudgment?.Invoke("GOOD");
 
+				// ★追加：GoodのSEを鳴らす
+				AudioManager.Instance.PlaySE(goodSE);
+
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
 				if (script != null) script.HitAndDespawn();
+				SpawnEffect(targetNote, goodEffectPrefab);
 			}
 			else if (minTimeDiff <= missWindow)
 			{
 				MissCount++;
 				ShowJudgment("MISS", Color.gray);
 
+				// ★追加：MISSの時も空打ち用の音を鳴らす！
+				AudioManager.Instance.PlaySE(emptyHitSE);
+				SpawnEffect(targetNote, missEffectPrefab);
+
 				Pseudo3DNote script = targetNote.GetComponent<Pseudo3DNote>();
 				if (script != null) script.HitAndDespawn();
 			}
+			else
+			{
+				// ノーツはあるけれど判定範囲（missWindow）よりも大幅に手前、または後ろすぎる場合
+				// これも「空打ち」として扱います
+				AudioManager.Instance.PlaySE(emptyHitSE);
+			}
+		}
+		else
+		{
+			// ★追加：そのレーンにノーツが1つも存在しないのにキーを押した（空打ち）の時
+			AudioManager.Instance.PlaySE(emptyHitSE);
 		}
 	}
 
@@ -126,5 +162,15 @@ public class JudgmentManager : MonoBehaviour
 	{
 		yield return new WaitForSeconds(0.5f);
 		judgmentText.gameObject.SetActive(false);
+	}
+
+	private void SpawnEffect(GameObject note, GameObject effectPrefab)
+	{
+		// 指定されたエフェクトがちゃんとインスペクターにセットされているか確認
+		if (effectPrefab != null)
+		{
+			// ノーツの位置に、指定されたエフェクトを生成
+			Instantiate(effectPrefab, note.transform.position, Quaternion.identity);
+		}
 	}
 }
