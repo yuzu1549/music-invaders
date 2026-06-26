@@ -90,6 +90,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isDead = true; // 死亡フラグを立てる
 
         // ゲームオーバー処理
-
+        GameManager.Instance.GameOver();
     }
 }
