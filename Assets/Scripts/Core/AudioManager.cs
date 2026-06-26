@@ -32,7 +32,7 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// BGMを再生するメソッド
     /// </summary>
-    /// <param name="clip"></param>
+    /// <param name="clip">再生するBGMの AudioClip</param>
     public void PlayBGM(AudioClip clip)
     {
         if (clip == null) return;
@@ -45,12 +45,13 @@ public class AudioManager : MonoBehaviour
     /// <summary>
     /// SEを再生するメソッド
     /// </summary>
-    /// <param name="clip"></param>
-    public void PlaySE(AudioClip clip)
+    /// <param name="clip">再生するSEの AudioClip</param>
+    /// <param name="volumeScale">ボリュームのスケール</param>
+    public void PlaySE(AudioClip clip, float volumeScale = 1.0f)
     {
         if (clip == null) return;
 
-        seSource.PlayOneShot(clip);
+        seSource.PlayOneShot(clip, volumeScale);
     }
 
     /// <summary>
