@@ -1499,7 +1499,7 @@ MonoBehaviour:
   missWindow: 0.1666
   perfectSE: {fileID: 8300000, guid: 2681006efc9d3a14ca088487586f8d88, type: 3}
   goodSE: {fileID: 8300000, guid: 34c36d26f88f26e4d904a9b72c8e90d5, type: 3}
-  emptyHitSE: {fileID: 8300000, guid: 3e62614846e60784bbc5bf540fbeb063, type: 3}
+  emptyHitSE: {fileID: 0}
   leftKey: 20
   centerKey: 1
   rightKey: 24
@@ -1659,6 +1659,57 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1046944631}
   m_CullTransparentMesh: 1
+--- !u!1 &1249092287
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1249092289}
+  - component: {fileID: 1249092288}
+  m_Layer: 0
+  m_Name: ChartRecorder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &1249092288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249092287}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f10cbde35f4239748a87b170566173ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ChartRecorder
+  audioSource: {fileID: 573744520}
+  bpm: 158
+  outputFileName: RecordedChart.txt
+  leftKey: 20
+  centerKey: 1
+  rightKey: 24
+  saveKey: 33
+--- !u!4 &1249092289
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1249092287}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.86534, y: -1.24803, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1257188793
 GameObject:
   m_ObjectHideFlags: 0
@@ -3749,6 +3800,53 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2110130095
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2110130097}
+  - component: {fileID: 2110130096}
+  m_Layer: 0
+  m_Name: OsuConverter
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2110130096
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110130095}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4329d58ffac54b24790717d9436fce2f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
+  osuTextFile: {fileID: 4900000, guid: fd1b50fa64e82ab48bd3ba8778a2dae1, type: 3}
+  bpm: 158
+  outputFileName: Mania2LaneChart.txt
+--- !u!4 &2110130097
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2110130095}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.86534, y: -1.24803, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2136073665
 GameObject:
   m_ObjectHideFlags: 0
@@ -3951,3 +4049,5 @@ SceneRoots:
   - {fileID: 1281890159}
   - {fileID: 85628690}
   - {fileID: 52728226}
+  - {fileID: 1249092289}
+  - {fileID: 2110130097}
