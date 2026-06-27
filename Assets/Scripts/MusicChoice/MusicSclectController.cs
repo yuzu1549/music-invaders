@@ -4,25 +4,42 @@ using UnityEngine.InputSystem;
 public class MusicSelectController : MonoBehaviour
 {
     [SerializeField] private SongItem[] songItems;
+    [SerializeField] private SongInfoPanel songInfoPanel;
 
     private string[] songNames =
     {
-        "titel1",
+        "title1",
         "title2",
         "title3",
         "title4",
         "title5"
     };
 
-    // 真ん中に表示する曲の番号
-    private int centerSongIndex = 0;
+    private Sprite[] jacketSprites =
+    {
+        null, null, null, null, null
+    };
 
-    // 5つの表示枠のうち、真ん中は2番目
+    private string[] difficultyNames =
+    {
+        "Easy",
+        "Normal",
+        "Difficult"
+    };
+
+    private int centerSongIndex = 0;
+    private int selectedDifficultyIndex = 1;
+
     private const int centerItemIndex = 2;
+
+    // false：曲選択中、true：難易度選択中
+    private bool isDifficultySelectMode = false;
 
     private void Start()
     {
         UpdateSongList();
+        UpdateRightPanel();
+        UpdateDifficultySelection();
     }
 
     private void Update()
@@ -32,6 +49,18 @@ public class MusicSelectController : MonoBehaviour
             return;
         }
 
+        if (isDifficultySelectMode == false)
+        {
+            UpdateMusicSelectMode();
+        }
+        else
+        {
+            UpdateDifficultySelectMode();
+        }
+    }
+
+    private void UpdateMusicSelectMode()
+    {
         if (Keyboard.current.downArrowKey.wasPressedThisFrame)
         {
             MoveDown();
@@ -40,6 +69,45 @@ public class MusicSelectController : MonoBehaviour
         if (Keyboard.current.upArrowKey.wasPressedThisFrame)
         {
             MoveUp();
+        }
+
+        if (Keyboard.current.enterKey.wasPressedThisFrame ||
+            Keyboard.current.numpadEnterKey.wasPressedThisFrame)
+        {
+            StartDifficultySelect();
+        }
+    }
+
+    private void UpdateDifficultySelectMode()
+    {
+        if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
+        {
+            selectedDifficultyIndex++;
+
+            if (selectedDifficultyIndex >= difficultyNames.Length)
+            {
+                selectedDifficultyIndex = 0;
+            }
+
+            UpdateDifficultySelection();
+        }
+
+        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
+        {
+            selectedDifficultyIndex--;
+
+            if (selectedDifficultyIndex < 0)
+            {
+                selectedDifficultyIndex = difficultyNames.Length - 1;
+            }
+
+            UpdateDifficultySelection();
+        }
+
+        if (Keyboard.current.enterKey.wasPressedThisFrame ||
+            Keyboard.current.numpadEnterKey.wasPressedThisFrame)
+        {
+            DecideMusicAndDifficulty();
         }
     }
 
@@ -53,6 +121,8 @@ public class MusicSelectController : MonoBehaviour
         }
 
         UpdateSongList();
+        UpdateRightPanel();
+        UpdateDifficultySelection();
     }
 
     private void MoveUp()
@@ -65,20 +135,37 @@ public class MusicSelectController : MonoBehaviour
         }
 
         UpdateSongList();
+        UpdateRightPanel();
+        UpdateDifficultySelection();
+    }
+
+    private void StartDifficultySelect()
+    {
+        isDifficultySelectMode = true;
+
+        // Enterを押して難易度選択に入ったら、Normalから始める
+        selectedDifficultyIndex = 1;
+
+        UpdateDifficultySelection();
+
+        Debug.Log("難易度選択に移動：" + songNames[centerSongIndex]);
+    }
+
+    private void DecideMusicAndDifficulty()
+    {
+        string songName = songNames[centerSongIndex];
+        string difficultyName = difficultyNames[selectedDifficultyIndex];
+
+        Debug.Log("決定：" + songName + " / " + difficultyName);
     }
 
     private void UpdateSongList()
     {
         for (int i = 0; i < songItems.Length; i++)
         {
-            // i が 2 のとき、offset は 0
-            // i が 0 のとき、offset は -2
-            // i が 4 のとき、offset は 2
             int offset = i - centerItemIndex;
-
             int songIndex = centerSongIndex + offset;
 
-            // 配列の範囲外になったらローテーションさせる
             if (songIndex < 0)
             {
                 songIndex += songNames.Length;
@@ -90,9 +177,30 @@ public class MusicSelectController : MonoBehaviour
             }
 
             songItems[i].SetTitle(songNames[songIndex]);
-
-            // 真ん中だけ選択状態にする
             songItems[i].SetSelected(i == centerItemIndex);
         }
+    }
+
+    private void UpdateRightPanel()
+    {
+        if (songInfoPanel == null)
+        {
+            return;
+        }
+
+        songInfoPanel.SetSongInfo(
+            songNames[centerSongIndex],
+            jacketSprites[centerSongIndex]
+        );
+    }
+
+    private void UpdateDifficultySelection()
+    {
+        if (songInfoPanel == null)
+        {
+            return;
+        }
+
+        songInfoPanel.SetDifficultySelected(selectedDifficultyIndex, isDifficultySelectMode);
     }
 }
