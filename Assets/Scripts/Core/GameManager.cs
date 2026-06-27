@@ -1,11 +1,13 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     [Header("Game Over UI")]
     [SerializeField] private TextMeshProUGUI gameOverText;
     private bool isGameOver = false; // ゲームオーバーフラグ
+    public string musicTitle; // 音楽タイトルの公開プロパティ
 
     private void Awake()
     {
@@ -23,8 +25,10 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// ゲームをスタートするメソッド
     /// </summary>
-    public void StartGame(AudioClip musicClip)
+    public void StartGame(AudioClip musicClip, string difficulty)
     {
+        SceneManager.LoadScene("integration");
+
         if (musicClip != null)
         {
             AudioManager.Instance.PlayBGM(musicClip);
@@ -33,6 +37,22 @@ public class GameManager : MonoBehaviour
         // ゲーム全体を再開
         Time.timeScale = 1f;
         isGameOver = false;
+
+        if (difficulty == "Easy")
+        {
+            // Easyモードの設定を行う
+            Debug.Log("Easy mode selected");
+        }
+        else if (difficulty == "Normal")
+        {
+            // Normalモードの設定を行う
+            Debug.Log("Normal mode selected");
+        }
+        else if (difficulty == "Hard")
+        {
+            // Hardモードの設定を行う
+            Debug.Log("Hard mode selected");
+        }
     }
 
 
