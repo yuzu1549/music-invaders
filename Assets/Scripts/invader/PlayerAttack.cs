@@ -14,8 +14,13 @@ public class PlayerAttack : MonoBehaviour
     /// <summary>
     /// 弾をスポーンさせる処理
     /// </summary>
-    private void SpawnBullet(string judgment)
+    private void SpawnBullet(string judgement)
     {
+        if (judgement == "MISS")
+        {
+            // MISSの場合は弾をスポーンしない
+            return;
+        }
         if (bulletName != null)
         {
             // プールから弾を取得
@@ -25,7 +30,7 @@ public class PlayerAttack : MonoBehaviour
                 Bullet bulletScript = bullet.GetComponent<Bullet>();
                 if (bulletScript != null)
                 {
-                    bulletScript.damage = GetDamageByJudgment(judgment);
+                    bulletScript.damage = GetDamageByJudgement(judgement);
                     bulletScript.Attack(); // 弾を発射して攻撃する
                 }
                 else
@@ -47,11 +52,11 @@ public class PlayerAttack : MonoBehaviour
     /// <summary>
     /// 判定結果に応じたダメージ量を返すメソッド
     /// </summary>
-    /// <param name="judgment"></param>
+    /// <param name="judgement"></param>
     /// <returns>ダメージ量</returns>
-    private int GetDamageByJudgment(string judgment)
+    private int GetDamageByJudgement(string judgement)
     {
-        switch (judgment)
+        switch (judgement)
         {
             case "PERFECT":
                 return 2;

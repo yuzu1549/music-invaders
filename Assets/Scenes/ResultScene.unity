@@ -897,6 +897,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResultUI
   gameResultText: {fileID: 1062466934}
+  scoreText: {fileID: 1788558909}
+  perfectText: {fileID: 663818689}
+  goodText: {fileID: 2022118152}
+  missText: {fileID: 485080542}
 --- !u!1 &1426731116
 GameObject:
   m_ObjectHideFlags: 0

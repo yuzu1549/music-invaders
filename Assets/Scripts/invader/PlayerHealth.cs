@@ -17,6 +17,8 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private ObjectPool ownerPool; // 所属するオブジェクトプール
     private SpriteRenderer spriteRenderer; // スプライトレンダラーの参照
     private bool isDead = false; // 死亡フラグ
+    [Header("ゲームオーバー時の処理を行うGameFinishスクリプト")]
+    [SerializeField] private GameFinish gameFinish; // GameFinishスクリプトの参照
 
     private void Awake()
     {
@@ -90,6 +92,6 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         isDead = true; // 死亡フラグを立てる
 
         // ゲームオーバー処理
-        GameManager.Instance.GameOver();
+        gameFinish.GameOver();
     }
 }

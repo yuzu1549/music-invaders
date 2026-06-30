@@ -116,6 +116,7 @@ public class JudgmentManager : MonoBehaviour
 			{
 				MissCount++;
 				ShowJudgment("MISS", Color.gray);
+				OnJudgment?.Invoke("MISS");
 
 				// ★追加：MISSの時も空打ち用の音を鳴らす！
 				AudioManager.Instance.PlaySE(emptyHitSE);
@@ -143,6 +144,7 @@ public class JudgmentManager : MonoBehaviour
 	{
 		MissCount++;
 		ShowJudgment("MISS", Color.gray);
+		OnJudgment?.Invoke("MISS");
 	}
 
 	void ShowJudgment(string resultMessage, Color textColor)
