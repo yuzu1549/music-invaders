@@ -1,12 +1,14 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.SceneManagement;
+using System.Collections;
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
     [Header("Game Over UI")]
     [SerializeField] private TextMeshProUGUI gameOverText;
-    private bool isGameOver = false; // ゲームオーバーフラグ
+    public bool isGameOver = false; // ゲームオーバーフラグ
+    public bool isGameCleared = false; // ゲームクリアフラグ
     public string musicTitle; // 音楽タイトルの公開プロパティ
 
     private void Awake()
@@ -37,6 +39,7 @@ public class GameManager : MonoBehaviour
         // ゲーム全体を再開
         Time.timeScale = 1f;
         isGameOver = false;
+        isGameCleared = false;
 
         if (difficulty == "Easy")
         {
@@ -61,7 +64,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void GameOver()
     {
-        if (isGameOver)
+        if (isGameOver || isGameCleared)
         {
             return;
         }
@@ -78,7 +81,43 @@ public class GameManager : MonoBehaviour
         // ゲーム全体を停止
         Time.timeScale = 0f;
 
+        StartCoroutine(LoadResultScene());
+
         Debug.Log("Game Over");
+    }
+
+    /// <summary>
+    /// ゲームクリア処理を行うメソッド
+    /// </summary>
+    public void GameClear()
+    {
+        if (isGameCleared || isGameOver)
+        {
+            return;
+        }
+
+        isGameCleared = true;
+
+        if (gameOverText != null)
+        {
+            gameOverText.text = "GAME CLEAR";
+            gameOverText.fontSize = 100;
+            gameOverText.gameObject.SetActive(true);
+        }
+
+        // ゲーム全体を停止
+        Time.timeScale = 0f;
+
+        StartCoroutine(LoadResultScene());
+
+        Debug.Log("Game Clear");
+    }
+
+    private IEnumerator LoadResultScene()
+    {
+        yield return new WaitForSecondsRealtime(4f); // 4秒待機（リアルタイムで待機）
+        Time.timeScale = 1f; // 時間を元に戻す
+        SceneManager.LoadScene("ResultScene");
     }
 
 
