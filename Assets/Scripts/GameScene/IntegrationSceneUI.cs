@@ -39,9 +39,6 @@ public class IntegrationSceneUI : MonoBehaviour
     [Header("Player Health")]
     [SerializeField] private PlayerHealth playerHealth;
 
-    [Header("Score Info")]
-    [SerializeField] private int score = 0;
-
     private float currentTime = 0f;
     private bool isTimerRunning = false;
     private bool isGameOver = false;
@@ -62,6 +59,9 @@ public class IntegrationSceneUI : MonoBehaviour
         }
 
         UpdateAllTexts();
+        UpdateScoreTexts(""); // 初期化のために空文字で呼び出す
+
+        GameManager.Instance.OnScoreChanged += UpdateScoreTexts; // 判定結果のイベントにメソッドを登録
     }
 
     private void Update()
@@ -90,7 +90,7 @@ public class IntegrationSceneUI : MonoBehaviour
     {
         UpdateMusicTexts();
         UpdateOptionTexts();
-        UpdateScoreTexts();
+        UpdateLifeText();
     }
 
     private void UpdateMusicTexts()
@@ -151,22 +151,36 @@ public class IntegrationSceneUI : MonoBehaviour
         }
     }
 
-    private void UpdateScoreTexts()
+    private void UpdateScoreTexts(string judgement)
     {
-        int perfect = 0;
-        int good = 0;
-        int miss = 0;
 
-        if (JudgmentManager.Instance != null)
+        if (scoreText != null)
         {
-            perfect = JudgmentManager.Instance.PerfectCount;
-            good = JudgmentManager.Instance.GoodCount;
-            miss = JudgmentManager.Instance.MissCount;
+            scoreText.text = $"Score: {GameManager.Instance.score}";
+            scoreText.fontSize = 40;
         }
 
-        // P = 20点，G = 10点，M = 0点
-        score = perfect * 20 + good * 10;
+        if (perfectCountText != null)
+        {
+            perfectCountText.text = $"P: {GameManager.Instance.perfectCount}";
+            perfectCountText.fontSize = 40;
+        }
 
+        if (goodCountText != null)
+        {
+            goodCountText.text = $"G: {GameManager.Instance.goodCount}";
+            goodCountText.fontSize = 40;
+        }
+
+        if (missCountText != null)
+        {
+            missCountText.text = $"M: {GameManager.Instance.missCount}";
+            missCountText.fontSize = 40;
+        }
+    }
+
+    private void UpdateLifeText()
+    {
         if (lifeText != null)
         {
             int life = 3;
@@ -183,30 +197,6 @@ public class IntegrationSceneUI : MonoBehaviour
 
             lifeText.text = "Life:" + new string('♥', life);
             lifeText.fontSize = 40;
-        }
-
-        if (scoreText != null)
-        {
-            scoreText.text = $"Score: {score}";
-            scoreText.fontSize = 40;
-        }
-
-        if (perfectCountText != null)
-        {
-            perfectCountText.text = $"P: {perfect}";
-            perfectCountText.fontSize = 40;
-        }
-
-        if (goodCountText != null)
-        {
-            goodCountText.text = $"G: {good}";
-            goodCountText.fontSize = 40;
-        }
-
-        if (missCountText != null)
-        {
-            missCountText.text = $"M: {miss}";
-            missCountText.fontSize = 40;
         }
     }
 
