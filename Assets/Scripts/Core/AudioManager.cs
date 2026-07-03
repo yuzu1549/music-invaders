@@ -1,19 +1,23 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public class AudioManager : MonoBehaviour
 {
     public static AudioManager Instance { get; private set; }
 
-    [Header("オーディオミキサー")]
+    [Header("音量調整に使用する AudioMixer")]
     [SerializeField] private AudioMixer audioMixer;
-    [Header("オーディオソース")]
+    [Header("BGM 再生用 AudioSource")]
     [SerializeField] private AudioSource bgmSource;
+    [Header("SE 再生用 AudioSource")]
     [SerializeField] private AudioSource seSource;
 
     private const string MasterVolumeKey = "MasterVolume";
     private const string BGMVolumeKey = "BGMVolume";
     private const string SEVolumeKey = "SEVolume";
+    private const float MinVolumeRatio = 0.0001f;
+    private const float MaxVolumeRatio = 1f;
 
     private void Awake()
     {
@@ -26,16 +30,32 @@ public class AudioManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        LoadVolumeSettings(); // ボリューム設定の読み込み
+        LoadVolumeSettings();
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+        ApplyVolumeSettings();
     }
 
     /// <summary>
-    /// BGMを再生するメソッド
+    /// BGM を再生する。
     /// </summary>
-    /// <param name="clip">再生するBGMの AudioClip</param>
+    /// <param name="clip">再生する BGM</param>
     public void PlayBGM(AudioClip clip)
     {
         if (clip == null) return;
+        if (bgmSource == null) return;
 
         bgmSource.clip = clip;
         bgmSource.loop = true;
@@ -43,21 +63,23 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// SEを再生するメソッド
+    /// SE を再生する。
     /// </summary>
-    /// <param name="clip">再生するSEの AudioClip</param>
-    /// <param name="volumeScale">ボリュームのスケール</param>
+    /// <param name="clip">再生する SE</param>
+    /// <param name="volumeScale">SE ごとの音量倍率</param>
     public void PlaySE(AudioClip clip, float volumeScale = 1.0f)
     {
         if (clip == null) return;
+        if (seSource == null) return;
 
-        seSource.PlayOneShot(clip, volumeScale);
+        float safeVolumeScale = Mathf.Clamp01(volumeScale);
+        seSource.PlayOneShot(clip, safeVolumeScale);
     }
 
     /// <summary>
-    /// マスターボリュームを設定するメソッド
+    /// Master 音量を設定する。
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">0.0 から 1.0 の音量</param>
     public void SetMasterVolume(float value)
     {
         SetVolume(MasterVolumeKey, value);
@@ -65,46 +87,57 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
-    /// BGMのボリュームを設定するメソッド
+    /// BGM 音量を設定する。
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">0.0 から 1.0 の音量</param>
     public void SetBGMVolume(float value)
     {
         SetVolume(BGMVolumeKey, value);
-        PlayerPrefs.SetFloat(BGMVolumeKey, value);
     }
 
     /// <summary>
-    /// SEのボリュームを設定するメソッド
+    /// SE 音量を設定する。
     /// </summary>
-    /// <param name="value"></param>
+    /// <param name="value">0.0 から 1.0 の音量</param>
     public void SetSEVolume(float value)
     {
         SetVolume(SEVolumeKey, value);
-        PlayerPrefs.SetFloat(SEVolumeKey, value);
     }
 
     /// <summary>
-    /// 保存されたボリューム設定を読み込むメソッド
+    /// GameSettings に保存されている BGM / SE 音量を AudioMixer に反映する。
+    /// </summary>
+    public void ApplyVolumeSettings()
+    {
+        SetBGMVolume(GameSettings.BgmVolumeNormalized);
+        SetSEVolume(GameSettings.SeVolumeNormalized);
+    }
+
+    /// <summary>
+    /// 保存済みの音量設定を読み込んで AudioMixer に反映する。
     /// </summary>
     private void LoadVolumeSettings()
     {
         SetVolume(MasterVolumeKey, PlayerPrefs.GetFloat(MasterVolumeKey, 1f));
-        SetVolume(BGMVolumeKey, PlayerPrefs.GetFloat(BGMVolumeKey, 1f));
-        SetVolume(SEVolumeKey, PlayerPrefs.GetFloat(SEVolumeKey, 1f));
+        ApplyVolumeSettings();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        ApplyVolumeSettings();
     }
 
     /// <summary>
-    /// ボリュームを設定する共通メソッド
+    /// AudioMixer の指定パラメータへ音量を反映する。
     /// </summary>
-    /// <param name="parameterName"></param>
-    /// <param name="value"></param>
+    /// <param name="parameterName">AudioMixer に公開されているパラメータ名</param>
+    /// <param name="value">0.0 から 1.0 の音量</param>
     private void SetVolume(string parameterName, float value)
     {
-        // ボリューム値を0.0001から1の範囲にクランプ
-        value = Mathf.Clamp(value, 0.0001f, 1f);
+        if (audioMixer == null) return;
 
-        // デシベルに変換してオーディオミキサーに設定
+        value = Mathf.Clamp(value, MinVolumeRatio, MaxVolumeRatio);
+
         float volumeDb = Mathf.Log10(value) * 20f;
         audioMixer.SetFloat(parameterName, volumeDb);
     }
