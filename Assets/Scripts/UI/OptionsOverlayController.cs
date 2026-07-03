@@ -183,6 +183,7 @@ public class OptionsOverlayController : MonoBehaviour
         bgmVolumeSlider.SetValueWithoutNotify(GameSettings.BgmVolumePercent);
         RefreshTexts();
         GameSettings.Save();
+        ApplyAudioSettings();
     }
 
     /// <summary>
@@ -232,6 +233,7 @@ public class OptionsOverlayController : MonoBehaviour
         seVolumeSlider.SetValueWithoutNotify(GameSettings.SeVolumePercent);
         RefreshTexts();
         GameSettings.Save();
+        ApplyAudioSettings();
     }
 
     /// <summary>
@@ -308,6 +310,19 @@ public class OptionsOverlayController : MonoBehaviour
         timingOffsetValueText.text = FormatTimingOffset(GameSettings.TimingOffsetMs);
         bgmVolumeValueText.text = FormatVolume(GameSettings.BgmVolumePercent);
         seVolumeValueText.text = FormatVolume(GameSettings.SeVolumePercent);
+    }
+
+    /// <summary>
+    /// 保存済みの音量設定を、存在する AudioManager に即時反映する。
+    /// </summary>
+    private void ApplyAudioSettings()
+    {
+        if (AudioManager.Instance == null)
+        {
+            return;
+        }
+
+        AudioManager.Instance.ApplyVolumeSettings();
     }
 
     /// <summary>

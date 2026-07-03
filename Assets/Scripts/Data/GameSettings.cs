@@ -83,6 +83,16 @@ public static class GameSettings
             Mathf.Clamp(value, MinVolumePercent, MaxVolumePercent));
     }
 
+    public static float BgmVolumeNormalized
+    {
+        get => BgmVolumePercent / 100f;
+    }
+
+    public static float SeVolumeNormalized
+    {
+        get => SeVolumePercent / 100f;
+    }
+
     /// <summary>
     /// ノーツが画面に表示されてから判定位置へ到達するまでの時間を秒で返す。
     /// </summary>
