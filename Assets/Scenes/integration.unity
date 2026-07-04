@@ -679,9 +679,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: a82aabd46dd231f40b7cdc0fd84b2219, type: 3}
+  osuTextFile: {fileID: 4900000, guid: b67ff322715fee44795004620af4311c, type: 3}
   bpm: 158
-  outputFileName: test2.txt
+  outputFileName: shiningstar_hard.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
@@ -4344,7 +4344,7 @@ PrefabInstance:
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartText
       value: 
-      objectReference: {fileID: 4900000, guid: c8a1b1b8abe716c449975d9b76b5bf47, type: 3}
+      objectReference: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_Enabled
       value: 1
