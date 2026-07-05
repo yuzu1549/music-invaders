@@ -51,14 +51,14 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// ゲームをスタートするメソッド
     /// </summary>
-    public void StartGame(AudioClip musicClip, string difficulty)
+    public void StartGame(string musicTitle, string difficulty)
     {
-        SceneManager.LoadScene("integration");
+		GameSceneArgs.SelectedMusic = musicTitle;
+		GameSceneArgs.SelectedDifficulty = difficulty;
 
-        if (musicClip != null)
-        {
-            AudioManager.Instance.PlayBGM(musicClip);
-        }
+		SceneManager.LoadScene("integration");
+
+        
 
         // ゲーム全体を再開
         Time.timeScale = 1f;

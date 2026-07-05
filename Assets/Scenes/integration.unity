@@ -679,9 +679,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: b67ff322715fee44795004620af4311c, type: 3}
+  osuTextFile: {fileID: 4900000, guid: 90e3c0256bc460a4a94bffe8460ab405, type: 3}
   bpm: 158
-  outputFileName: shiningstar_hard.txt
+  outputFileName: test.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
@@ -1732,6 +1732,52 @@ MonoBehaviour:
   perfectCount: 0
   goodCount: 0
   missCount: 0
+--- !u!1 &957203736
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 957203738}
+  - component: {fileID: 957203737}
+  m_Layer: 0
+  m_Name: test_music
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &957203737
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957203736}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6939410eb7e32d3498113ac924e4cd8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestDataInjector
+  testSongName: shiningstar
+  testDifficulty: normal
+--- !u!4 &957203738
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 957203736}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.86534, y: -1.24803, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &958903658
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1944,6 +1990,60 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1013447273
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1013447275}
+  - component: {fileID: 1013447274}
+  m_Layer: 0
+  m_Name: SongDatabase
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1013447274
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013447273}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1775627cfe7693344b9ab7aa3343e737, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SongDatabase
+  songs:
+  - songName: shiningstar
+    bgm: {fileID: 8300000, guid: fa9a85d9a140a4640a0c6e5d338d56ec, type: 3}
+    charts:
+    - difficultyName: normal
+      chartFile: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
+      defaultOffset: 0.5
+    - difficultyName: hard
+      chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
+      defaultOffset: 0.1
+--- !u!4 &1013447275
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1013447273}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.28484, y: -1.4827, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4344,7 +4444,7 @@ PrefabInstance:
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartText
       value: 
-      objectReference: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
+      objectReference: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -4355,12 +4455,16 @@ PrefabInstance:
       objectReference: {fileID: 573744520}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartOffset
-      value: 0.1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: isDebugMode
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: songDatabase
+      value: 
+      objectReference: {fileID: 1013447274}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: startMeasure
       value: 45
@@ -4466,3 +4570,5 @@ SceneRoots:
   - {fileID: 943151320}
   - {fileID: 1827994863}
   - {fileID: 343468541}
+  - {fileID: 957203738}
+  - {fileID: 1013447275}

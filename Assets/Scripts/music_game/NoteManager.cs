@@ -7,6 +7,7 @@ public class NoteManager : MonoBehaviour
 	public TextAsset chartText;
 	public AudioSource audioSource;
 	public ObjectPool pool;
+	public SongDatabase songDatabase;
 
 	[Header("設定")]
 	public float bpm = 158.0f;
@@ -17,7 +18,6 @@ public class NoteManager : MonoBehaviour
 	[Header("同期調整")]
 	public float chartOffset = 0.0f;
 
-	// ★追加：インスペクターで一目でテスト用とわかるように目立たせる
 	[Header("■■■ デバッグ・テスト専用 ■■■")]
 	[Tooltip("ONにすると下の小節から曲と譜面を途中再生します")]
 	public bool isDebugMode = false;
@@ -32,7 +32,7 @@ public class NoteManager : MonoBehaviour
 	private double dspStartTime;
 	private bool isMusicScheduled = false;
 
-	// ★追加：途中から始めた分の時間を記憶する変数
+	// 途中から始めた分の時間を記憶する変数
 	private float debugStartTimeOffset = 0f;
 
 	struct NoteData
@@ -43,12 +43,16 @@ public class NoteManager : MonoBehaviour
 
 	void Start()
 	{
+		// 🔥【追加】前のシーンから曲データと難易度が渡されていればセットアップする
+		SetupFromArgs();
+
+		// 譜面データを読み込む
 		LoadChart();
 
 		float secondsPerBeat = 60.0f / bpm;
 		float actualDuration = baseDuration / noteSpeed;
 
-		// ★追加：テスト用の途中再生処理
+		// デバッグモード：テスト用の途中再生処理
 		if (isDebugMode && startMeasure > 1)
 		{
 			// 開始する拍数 = (指定した小節 - 1) × 1小節の拍数
@@ -61,11 +65,10 @@ public class NoteManager : MonoBehaviour
 				audioSource.time = Mathf.Min(debugStartTimeOffset, audioSource.clip.length);
 			}
 
-			// ★重要：途中から始めたことによって、「既に通り過ぎているべき過去のノーツ」をリストから削除しておく
-			// （これをしないと、開始した瞬間に過去のノーツが100個くらい同時に降ってきてバグります）
+			// 既に通り過ぎているべき過去のノーツをリストから削除しておく
 			notes.RemoveAll(n => (n.beat * secondsPerBeat) + chartOffset < debugStartTimeOffset - actualDuration);
 
-			// コンソールにも黄色い警告を出して、テスト中であることを知らせる
+			// コンソールに黄色い警告を出して、テスト中であることを知らせる
 			Debug.LogWarning($"【テストモード作動中】第{startMeasure}小節（{debugStartTimeOffset:F2}秒）から再生します！");
 		}
 
@@ -73,6 +76,7 @@ public class NoteManager : MonoBehaviour
 
 		if (audioSource != null && audioSource.clip != null)
 		{
+			// 精密な時間で再生を予約する
 			audioSource.PlayScheduled(dspStartTime + delayTime);
 			isMusicScheduled = true;
 		}
@@ -82,8 +86,64 @@ public class NoteManager : MonoBehaviour
 		}
 	}
 
+	// 🔥【追加】シーン間のデータ引き継ぎ処理
+	// 🔥修正：Resourcesではなく、SongDatabaseから検索してロードする
+	// 🔥修正：曲ごとではなく「譜面（難易度）ごと」のオフセットを取得して適用する
+	void SetupFromArgs()
+	{
+		string targetSongName = GameSceneArgs.SelectedMusic;
+		string targetDifficulty = GameSceneArgs.SelectedDifficulty;
+
+		if (string.IsNullOrEmpty(targetSongName) || string.IsNullOrEmpty(targetDifficulty))
+		{
+			Debug.LogWarning("データが渡されていません。インスペクターの初期設定を使用します。");
+			return;
+		}
+
+		if (songDatabase == null)
+		{
+			Debug.LogError("❌ SongDatabase がインスペクターにセットされていません！");
+			return;
+		}
+
+		// 1. データベースから曲名で検索
+		SongData foundSong = songDatabase.FindSong(targetSongName);
+
+		if (foundSong != null)
+		{
+			// 曲をセット
+			audioSource.clip = foundSong.bgm;
+			Debug.Log($"🎵 BGMをセットしました: {targetSongName}");
+
+			// 2. その曲の中から、難易度が一致する譜面を検索
+			ChartData foundChart = foundSong.charts.Find(c => c.difficultyName == targetDifficulty);
+
+			if (foundChart != null)
+			{
+				// 譜面テキストをセット
+				chartText = foundChart.chartFile;
+				Debug.Log($"✨ 譜面をセットしました: {targetSongName} - {targetDifficulty}");
+
+				// 🔥【変更】見つかった「譜面」固有のデフォルトオフセットを、設定用の全体オフセットに加算する
+				chartOffset += foundChart.defaultOffset;
+				Debug.Log($"🔧 譜面固有({targetDifficulty})のオフセットを適用しました: {foundChart.defaultOffset:F3}秒 (合計オフセット: {chartOffset:F3}秒)");
+			}
+			else
+			{
+				Debug.LogError($"❌ 難易度【{targetDifficulty}】の譜面が登録されていません！");
+			}
+		}
+		else
+		{
+			Debug.LogError($"❌ 曲名【{targetSongName}】がデータベースに登録されていません！");
+		}
+	}
+
 	void LoadChart()
 	{
+		// chartTextが空ならエラーを防ぐために処理しない
+		if (chartText == null) return;
+
 		string[] lines = chartText.text.Split('\n');
 		foreach (string line in lines)
 		{
@@ -108,11 +168,9 @@ public class NoteManager : MonoBehaviour
 		double currentDspTime = AudioSettings.dspTime - dspStartTime;
 		float currentMusicTime;
 
-		// ★超重要：ここが同期ズレを防ぐ心臓部です！
+		// 待ち時間を過ぎて曲が鳴り始めているはずの時はオーディオの再生位置（秒）を基準にする
 		if (currentDspTime >= delayTime)
 		{
-			// 待ち時間を過ぎて曲が鳴り始めているはずの時は、
-			// 絶対にズレない「実際のオーディオの再生位置（秒）」を基準にする！
 			currentMusicTime = audioSource.time;
 		}
 		else
