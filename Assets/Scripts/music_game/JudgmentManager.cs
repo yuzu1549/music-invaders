@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 using TMPro;
 using System;
 
@@ -20,9 +19,7 @@ public class JudgmentManager : MonoBehaviour
 	public AudioClip emptyHitSE; // 空打ち（ノーツが無い時）用の音
 
 	[Header("キー設定（New Input System用）")]
-	public Key leftKey = Key.F;
-	public Key centerKey = Key.Space;
-	public Key rightKey = Key.J;
+	[SerializeField] private GameInputReader inputReader;
 
 	[Header("UI設定")]
 	public TextMeshProUGUI judgmentText;
@@ -51,13 +48,23 @@ public class JudgmentManager : MonoBehaviour
 		}
 	}
 
+	void Start()
+	{
+		if (inputReader == null)
+		{
+			Debug.LogWarning("JudgmentManager に GameInputReader が設定されていません。");
+		}
+	}
+
 	void Update()
 	{
-		if (Keyboard.current == null) return;
+		if (inputReader == null)
+		{
+			return;
+		}
 
-		if (Keyboard.current[leftKey].wasPressedThisFrame) CheckHit(-1);
-		if (Keyboard.current[centerKey].wasPressedThisFrame) CheckHit(0);
-		if (Keyboard.current[rightKey].wasPressedThisFrame) CheckHit(1);
+		if (inputReader.WasRhythmLeftPressed()) CheckHit(-1);
+		if (inputReader.WasRhythmRightPressed()) CheckHit(1);
 	}
 
 	void CheckHit(int laneIndex)
