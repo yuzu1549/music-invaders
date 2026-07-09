@@ -26,6 +26,9 @@ public class EnemySpawner : MonoBehaviour
     [SerializeField] private float enemySpeed = 3f;
     [Header("敵が壁に当たったときの垂直移動距離")]
     [SerializeField] private float enemyDownDistance = 1f;
+    [Space(15)]
+    [Header("敵スポーンデータベース")]
+    [SerializeField] private EnemySpawnDatabase enemySpawnDatabase; // 敵スポーンデータベースの参照
 
     private bool isFirstSpawn = true; // 最初のスポーンかどうかを判定するフラグ
 
@@ -38,6 +41,16 @@ public class EnemySpawner : MonoBehaviour
     private void Start()
     {
         StartCoroutine(SpawnLoop()); // 敵のスポーンループを開始
+        EnemySpawnData spawnData = enemySpawnDatabase.GetByName(GameManager.Instance.musicTitle + GameManager.Instance.difficulty); // 敵スポーンデータを取得
+        if (spawnData != null)
+        {
+            spawnInterval = spawnData.spawnInterval;
+            initialEnemyCount = spawnData.initialEnemyCount;
+            subsequentEnemyCount = spawnData.subsequentEnemyCount;
+            enemySpacing = spawnData.enemySpacing;
+            enemySpeed = spawnData.enemySpeed;
+            enemyDownDistance = spawnData.enemyDownDistance;
+        }
     }
 
     /// <summary>

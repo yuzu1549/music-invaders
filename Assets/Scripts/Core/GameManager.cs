@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public bool isGameOver = false; // ゲームオーバーフラグ
     public bool isGameCleared = false; // ゲームクリアフラグ
     public string musicTitle; // 音楽タイトルの公開プロパティ
+    public string difficulty; // 難易度の公開プロパティ
     public int score; // スコアの公開プロパティ
     public int perfectCount; // パーフェクトの公開プロパティ
     public int goodCount; // グッドの公開プロパティ
@@ -53,6 +54,8 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame(string musicTitle, string difficulty)
     {
+        this.musicTitle = musicTitle;
+        this.difficulty = difficulty;
 		GameSceneArgs.SelectedMusic = musicTitle;
 		GameSceneArgs.SelectedDifficulty = difficulty;
 

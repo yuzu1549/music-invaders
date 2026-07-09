@@ -1728,6 +1728,7 @@ MonoBehaviour:
   isGameOver: 0
   isGameCleared: 0
   musicTitle: 
+  difficulty: 
   score: 0
   perfectCount: 0
   goodCount: 0
@@ -1850,6 +1851,10 @@ PrefabInstance:
       propertyPath: initialEnemyCount
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 9215624342464528399, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: enemySpawnDatabase
+      value: 
+      objectReference: {fileID: 11400000, guid: af40f67bca2c2af46845c564aa18a634, type: 2}
     - target: {fileID: 9215624342464528399, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
       propertyPath: subsequentEnemyCount
       value: 3
