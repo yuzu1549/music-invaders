@@ -74,12 +74,23 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame(string musicTitle, string difficulty)
     {
-        this.musicTitle = musicTitle;
-        this.difficulty = difficulty;
-		GameSceneArgs.SelectedMusic = musicTitle;
-		GameSceneArgs.SelectedDifficulty = difficulty;
+        string normalizedDifficulty = difficulty;
 
-		SceneManager.LoadScene("integration");
+        if (string.IsNullOrWhiteSpace(normalizedDifficulty))
+        {
+            normalizedDifficulty = "Normal";
+        }
+        else if (normalizedDifficulty == "Difficult")
+        {
+            normalizedDifficulty = "Hard";
+        }
+
+        this.musicTitle = musicTitle;
+        this.difficulty = normalizedDifficulty;
+		GameSceneArgs.SelectedMusic = musicTitle;
+		GameSceneArgs.SelectedDifficulty = normalizedDifficulty;
+
+		SceneManager.LoadScene("Integration");
 
         
 
@@ -88,17 +99,17 @@ public class GameManager : MonoBehaviour
         isGameOver = false;
         isGameCleared = false;
 
-        if (difficulty == "Easy")
+        if (normalizedDifficulty == "Easy")
         {
             // Easyモードの設定を行う
             Debug.Log("Easy mode selected");
         }
-        else if (difficulty == "Normal")
+        else if (normalizedDifficulty == "Normal")
         {
             // Normalモードの設定を行う
             Debug.Log("Normal mode selected");
         }
-        else if (difficulty == "Hard")
+        else if (normalizedDifficulty == "Hard")
         {
             // Hardモードの設定を行う
             Debug.Log("Hard mode selected");

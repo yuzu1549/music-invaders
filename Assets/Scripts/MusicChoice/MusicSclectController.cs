@@ -22,7 +22,7 @@ public class MusicSelectController : MonoBehaviour
 
     private readonly string[] songNames =
     {
-        "title1",
+        "ShiningStar",
         "title2",
         "title3",
         "title4",
@@ -42,11 +42,17 @@ public class MusicSelectController : MonoBehaviour
     {
         "Easy",
         "Normal",
-        "Difficult"
+        "Hard"
     };
 
     private int centerSongIndex = 0;
     private int selectedDifficultyIndex = 1;
+
+    private string currentSongName = string.Empty;
+    private string currentDifficultyName = string.Empty;
+
+    public string CurrentSongName => currentSongName;
+    public string CurrentDifficultyName => currentDifficultyName;
 
     private const int centerItemIndex = 2;
 
@@ -83,6 +89,7 @@ public class MusicSelectController : MonoBehaviour
             );
         }
 
+        UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
         UpdateDifficultySelection();
@@ -166,6 +173,7 @@ public class MusicSelectController : MonoBehaviour
                 selectedDifficultyIndex = 0;
             }
 
+            UpdateSelectedValues();
             UpdateDifficultySelection();
         }
 
@@ -178,6 +186,7 @@ public class MusicSelectController : MonoBehaviour
                 selectedDifficultyIndex = difficultyNames.Length - 1;
             }
 
+            UpdateSelectedValues();
             UpdateDifficultySelection();
         }
 
@@ -197,17 +206,7 @@ public class MusicSelectController : MonoBehaviour
     {
         if (IsEnterPressed())
         {
-            if (playButton != null)
-            {
-                playButton.onClick.Invoke();
-            }
-            else
-            {
-                Debug.LogWarning(
-                    "Play Buttonが登録されていません。"
-                );
-            }
-
+            StartSelectedGame();
             return;
         }
 
@@ -232,6 +231,7 @@ public class MusicSelectController : MonoBehaviour
             centerSongIndex = 0;
         }
 
+        UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
         UpdateDifficultySelection();
@@ -246,9 +246,33 @@ public class MusicSelectController : MonoBehaviour
             centerSongIndex = songNames.Length - 1;
         }
 
+        UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
         UpdateDifficultySelection();
+    }
+
+    private void UpdateSelectedValues()
+    {
+        currentSongName = songNames[centerSongIndex];
+        currentDifficultyName = difficultyNames[selectedDifficultyIndex];
+    }
+
+    public void StartSelectedGame()
+    {
+        UpdateSelectedValues();
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StartGame(
+                currentSongName,
+                currentDifficultyName
+            );
+        }
+        else
+        {
+            Debug.LogWarning("GameManagerが見つかりませんでした。")
+;        }
     }
 
     private void StartDifficultySelect()
@@ -261,11 +285,12 @@ public class MusicSelectController : MonoBehaviour
             readyPanel.SetActive(false);
         }
 
+        UpdateSelectedValues();
         UpdateDifficultySelection();
 
         Debug.Log(
             "難易度選択に移動：" +
-            songNames[centerSongIndex]
+            currentSongName
         );
     }
 
@@ -278,11 +303,12 @@ public class MusicSelectController : MonoBehaviour
             readyPanel.SetActive(false);
         }
 
+        UpdateSelectedValues();
         UpdateDifficultySelection();
 
         Debug.Log(
             "曲選択に戻る：" +
-            songNames[centerSongIndex]
+            currentSongName
         );
     }
 
@@ -301,13 +327,14 @@ public class MusicSelectController : MonoBehaviour
             );
         }
 
+        UpdateSelectedValues();
         UpdateDifficultySelection();
 
         Debug.Log(
             "決定：" +
-            songNames[centerSongIndex] +
+            currentSongName +
             " / " +
-            difficultyNames[selectedDifficultyIndex]
+            currentDifficultyName
         );
     }
 
@@ -320,13 +347,14 @@ public class MusicSelectController : MonoBehaviour
             readyPanel.SetActive(false);
         }
 
+        UpdateSelectedValues();
         UpdateDifficultySelection();
 
         Debug.Log(
             "難易度選択に戻る：" +
-            songNames[centerSongIndex] +
+            currentSongName +
             " / " +
-            difficultyNames[selectedDifficultyIndex]
+            currentDifficultyName
         );
     }
 
