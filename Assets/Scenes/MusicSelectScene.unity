@@ -1310,6 +1310,17 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 98342281}
   m_CullTransparentMesh: 1
+--- !u!114 &103739998 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 813221678748964638, guid: 463b500418f53465dbc1280e8cda58f0, type: 3}
+  m_PrefabInstance: {fileID: 2123840287}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 845a58cd819f5427d8599b1326e0a6c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MusicSelectController
 --- !u!1 &116815618
 GameObject:
   m_ObjectHideFlags: 0
@@ -4451,16 +4462,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1640332396}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: LoadScene
-        m_Mode: 5
+      - m_Target: {fileID: 103739998}
+        m_TargetAssemblyTypeName: MusicSelectController, Assembly-CSharp
+        m_MethodName: StartSelectedGame
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: Integration
+          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &647645838
@@ -6622,6 +6633,63 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
+--- !u!1001 &1045369306
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1382179097672910535, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_Name
+      value: GameManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6753576237420963104, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: cd1ccd125f2643e40b20fac7d99e0990, type: 3}
 --- !u!1 &1060033059
 GameObject:
   m_ObjectHideFlags: 0
@@ -14412,3 +14480,4 @@ SceneRoots:
   - {fileID: 510647215}
   - {fileID: 1640332397}
   - {fileID: 901059411}
+  - {fileID: 1045369306}
