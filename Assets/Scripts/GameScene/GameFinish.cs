@@ -64,7 +64,8 @@ public class GameFinish : MonoBehaviour
     private IEnumerator LoadResultScene()
     {
         yield return new WaitForSecondsRealtime(4f); // 4秒待機（リアルタイムで待機）
-        JudgmentManager.Instance.OnJudgment -= GameManager.Instance.CostCount; // 判定結果のイベントからメソッドを解除
+        JudgementManager.Instance.OnJudgement -= GameManager.Instance.CostCount; // 判定結果のイベントからメソッドを解除
+        GameManager.Instance.isJudgementHandlerRegistered = false; // 判定結果のイベント登録フラグをリセット
         gameOverText.gameObject.SetActive(false); // 結果表示を非表示にする
         Time.timeScale = 1f; // 時間を元に戻す
         SceneManager.LoadScene("ResultScene");

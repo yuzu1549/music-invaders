@@ -66,9 +66,9 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 		float t = timer / actualDuration;
 
-		// ★修正：ハードコード（0.1666f）をやめて、JudgmentManagerに設定されたMISS判定時間を自動で使うようにします
+		// ★修正：ハードコード（0.1666f）をやめて、JudgementManagerに設定されたMISS判定時間を自動で使うようにします
 		// 万が一マネージャーがいない場合のエラーを防ぐため、存在しない場合は 0.1666f を使います
-		float missWindow = (JudgmentManager.Instance != null) ? JudgmentManager.Instance.missWindow : 0.1666f;
+		float missWindow = (JudgementManager.Instance != null) ? JudgementManager.Instance.missWindow : 0.1666f;
 
 		// 判定ラインを過ぎて、MISSの猶予時間が過ぎるまで生き残る
 		if (timer <= actualDuration + missWindow)
@@ -86,10 +86,10 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 			// 猶予時間を過ぎても叩かれなかったら「見逃しMISS」
 			Debug.Log("MISS... (見逃し)");
 
-			// ★追加：JudgmentManagerに「見逃し用MISSの画面表示」を命令する
-			if (JudgmentManager.Instance != null)
+			// ★追加：JudgementManagerに「見逃し用MISSの画面表示」を命令する
+			if (JudgementManager.Instance != null)
 			{
-				JudgmentManager.Instance.DisplayMiss();
+				JudgementManager.Instance.DisplayMiss();
 			}
 
 			HitAndDespawn();

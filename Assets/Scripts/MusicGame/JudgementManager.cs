@@ -2,10 +2,10 @@ using UnityEngine;
 using TMPro;
 using System;
 
-public class JudgmentManager : MonoBehaviour
+public class JudgementManager : MonoBehaviour
 {
 	// ★追加：他のスクリプト（ノーツ）から一瞬でアクセスできるようにする
-	public static JudgmentManager Instance { get; private set; }
+	public static JudgementManager Instance { get; private set; }
 
 	[Header("判定時間（秒） 60fps基準")]
 	public float perfectWindow = 0.0666f; // ±4フレーム (66.6ms)
@@ -22,9 +22,9 @@ public class JudgmentManager : MonoBehaviour
 	[SerializeField] private GameInputReader inputReader;
 
 	[Header("UI設定")]
-	public TextMeshProUGUI judgmentText;
+	public TextMeshProUGUI judgementText;
 
-	public event Action<string> OnJudgment; // 判定結果を外部に通知するイベント
+	public event Action<string> OnJudgement; // 判定結果を外部に通知するイベント
 
 	public int PerfectCount { get; private set; }
 	public int GoodCount { get; private set; }
@@ -52,7 +52,7 @@ public class JudgmentManager : MonoBehaviour
 	{
 		if (inputReader == null)
 		{
-			Debug.LogWarning("JudgmentManager に GameInputReader が設定されていません。");
+			Debug.LogWarning("JudgementManager に GameInputReader が設定されていません。");
 		}
 	}
 
@@ -96,8 +96,8 @@ public class JudgmentManager : MonoBehaviour
 			if (minTimeDiff <= perfectWindow)
 			{
 				PerfectCount++;
-				ShowJudgment("PERFECT!!", Color.yellow);
-				OnJudgment?.Invoke("PERFECT");
+				ShowJudgement("PERFECT!!", Color.yellow);
+				OnJudgement?.Invoke("PERFECT");
 
 				// ★追加：PerfectのSEを鳴らす（ミキサーのSEグループを通る）
 				AudioManager.Instance.PlaySE(perfectSE);
@@ -109,8 +109,8 @@ public class JudgmentManager : MonoBehaviour
 			else if (minTimeDiff <= goodWindow)
 			{
 				GoodCount++;
-				ShowJudgment("GOOD!", Color.green);
-				OnJudgment?.Invoke("GOOD");
+				ShowJudgement("GOOD!", Color.green);
+				OnJudgement?.Invoke("GOOD");
 
 				// ★追加：GoodのSEを鳴らす
 				AudioManager.Instance.PlaySE(goodSE);
@@ -122,8 +122,8 @@ public class JudgmentManager : MonoBehaviour
 			else if (minTimeDiff <= missWindow)
 			{
 				MissCount++;
-				ShowJudgment("MISS", Color.gray);
-				OnJudgment?.Invoke("MISS");
+				ShowJudgement("MISS", Color.gray);
+				OnJudgement?.Invoke("MISS");
 
 				// ★追加：MISSの時も空打ち用の音を鳴らす！
 				AudioManager.Instance.PlaySE(emptyHitSE);
@@ -150,17 +150,17 @@ public class JudgmentManager : MonoBehaviour
 	public void DisplayMiss()
 	{
 		MissCount++;
-		ShowJudgment("MISS", Color.gray);
-		OnJudgment?.Invoke("MISS");
+		ShowJudgement("MISS", Color.gray);
+		OnJudgement?.Invoke("MISS");
 	}
 
-	void ShowJudgment(string resultMessage, Color textColor)
+	void ShowJudgement(string resultMessage, Color textColor)
 	{
-		if (judgmentText != null)
+		if (judgementText != null)
 		{
-			judgmentText.text = resultMessage;
-			judgmentText.color = textColor;
-			judgmentText.gameObject.SetActive(true);
+			judgementText.text = resultMessage;
+			judgementText.color = textColor;
+			judgementText.gameObject.SetActive(true);
 
 			StopAllCoroutines();
 			StartCoroutine(HideJudgmentCoroutine());
@@ -170,7 +170,7 @@ public class JudgmentManager : MonoBehaviour
 	System.Collections.IEnumerator HideJudgmentCoroutine()
 	{
 		yield return new WaitForSeconds(0.5f);
-		judgmentText.gameObject.SetActive(false);
+		judgementText.gameObject.SetActive(false);
 	}
 
 	private void SpawnEffect(GameObject note, GameObject effectPrefab)

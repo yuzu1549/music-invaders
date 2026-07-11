@@ -18,6 +18,8 @@ public class GameManager : MonoBehaviour
     public int missCount; // ミスの公開プロパティ
     public event Action<string> OnScoreChanged; // 判定結果を通知するイベント
 
+    public bool isJudgementHandlerRegistered = false;
+
     private void Awake()
     {
         if (Instance != null)
@@ -32,9 +34,14 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded; // シーンがロードされたときに呼ばれるイベントに登録
     }
 
+    private void Start()
+    {
+        RegisterJudgementHandler();
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "integration")
+        if (scene.name == "Integration")
         {
             isGameOver = false;
             isGameCleared = false;
@@ -42,12 +49,25 @@ public class GameManager : MonoBehaviour
             perfectCount = 0;
             goodCount = 0;
             missCount = 0;
-            JudgmentManager.Instance.OnJudgment += CostCount; // 判定結果に応じてスコアやカウントを更新するメソッドを登録
+            RegisterJudgementHandler(); // 判定結果に応じてスコアやカウントを更新するメソッドを登録
 
             OnScoreChanged?.Invoke(""); // スコアやカウントの初期化を通知
         }
     }
 
+    private void RegisterJudgementHandler()
+    {
+        if (isJudgementHandlerRegistered)
+        {
+            return;
+        }
+
+        if (JudgementManager.Instance != null)
+        {
+            JudgementManager.Instance.OnJudgement += CostCount;
+            isJudgementHandlerRegistered = true;
+        }
+    }
 
     /// <summary>
     /// ゲームをスタートするメソッド
@@ -92,6 +112,7 @@ public class GameManager : MonoBehaviour
     /// <param name="judgement">判定結果</param>
     public void CostCount(string judgement)
     {
+        //Debug.Log($"判定結果: {judgement}");
         switch (judgement)
         {
             case "PERFECT":

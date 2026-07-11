@@ -8,7 +8,7 @@ public class PlayerAttack : MonoBehaviour
 
     void Start()
     {
-        JudgmentManager.Instance.OnJudgment += SpawnBullet; // 判定結果を受ける
+        JudgementManager.Instance.OnJudgement += SpawnBullet; // 判定結果を受ける
     }
 
     /// <summary>
@@ -16,6 +16,7 @@ public class PlayerAttack : MonoBehaviour
     /// </summary>
     private void SpawnBullet(string judgement)
     {
+        //Debug.Log($"判定結果: {judgement}");
         if (judgement == "MISS")
         {
             // MISSの場合は弾をスポーンしない

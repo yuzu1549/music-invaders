@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 18a9d32eb0ac6834f869dbf39f8c1478, type: 3}
-  m_Name: ShiningstarNormal
+  m_Name: ShiningStarNormal
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnData
   enemyPoolKey: Invader
   spawnInterval: 3

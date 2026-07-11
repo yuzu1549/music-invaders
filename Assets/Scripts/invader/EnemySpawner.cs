@@ -40,7 +40,7 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        StartCoroutine(SpawnLoop()); // 敵のスポーンループを開始
+        
         EnemySpawnData spawnData = enemySpawnDatabase.GetByName(GameManager.Instance.musicTitle + GameManager.Instance.difficulty); // 敵スポーンデータを取得
         if (spawnData != null)
         {
@@ -51,6 +51,8 @@ public class EnemySpawner : MonoBehaviour
             enemySpeed = spawnData.enemySpeed;
             enemyDownDistance = spawnData.enemyDownDistance;
         }
+
+        StartCoroutine(SpawnLoop()); // 敵のスポーンループを開始
     }
 
     /// <summary>
