@@ -50,7 +50,7 @@ public class NoteManager : MonoBehaviour
 		LoadChart();
 
 		float secondsPerBeat = 60.0f / bpm;
-		float actualDuration = baseDuration / noteSpeed;
+		float actualDuration = 5.0f / noteSpeed;
 
 		// デバッグモード：テスト用の途中再生処理
 		if (isDebugMode && startMeasure > 1)
@@ -179,7 +179,7 @@ public class NoteManager : MonoBehaviour
 			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 		}
 
-		float actualDuration = baseDuration / noteSpeed;
+		float actualDuration = 5.0f / noteSpeed;
 		float secondsPerBeat = 60.0f / bpm;
 
 		for (int i = 0; i < notes.Count; i++)
