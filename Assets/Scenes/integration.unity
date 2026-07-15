@@ -2034,6 +2034,7 @@ MonoBehaviour:
   perfectEffectPrefab: {fileID: 4503054050056049811, guid: 46d919a4594e26a47820b90c797d4b49, type: 3}
   goodEffectPrefab: {fileID: 4503054050056049811, guid: 57226a50cab4d774e97b7ac8a5c94337, type: 3}
   missEffectPrefab: {fileID: 4503054050056049811, guid: a9e30db164e034a41919af79b3d22b18, type: 3}
+  inputOffset: 0.12
 --- !u!4 &1000885325
 Transform:
   m_ObjectHideFlags: 0
@@ -4646,6 +4647,66 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: judgeOffset
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: hitTimingOffset
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: speedCorrection
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: visualTimeOffset
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].time
+      value: 0.7504532
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[2].time
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].value
+      value: 0.90916693
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[2].value
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[0].inSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].inSlope
+      value: 0.41576004
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[0].outSlope
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].outSlope
+      value: 0.41576004
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: moveCurve.m_Curve.Array.data[1].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartText
       value: 
@@ -4660,7 +4721,7 @@ PrefabInstance:
       objectReference: {fileID: 573744520}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartOffset
-      value: 0
+      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: isDebugMode
