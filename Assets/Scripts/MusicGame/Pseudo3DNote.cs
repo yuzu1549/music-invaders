@@ -3,7 +3,8 @@ using UnityEngine;
 public class Pseudo3DNote : MonoBehaviour, IPoolable
 {
 	[Header("判定調整")]
-	public float judgeOffset = 0.05f;
+	[Tooltip("0にすると見た目の判定ラインとパーフェクトが完全に一致します！")]
+	public float judgeOffset = 0.0f; // 🔥デフォルトを0に修正しました
 
 	[Header("レーン設定")]
 	public int lane = 0;
@@ -11,6 +12,10 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	[Header("移動・速度設定")]
 	public float baseDuration = 2.0f;
 	public float noteSpeed = 1.0f;
+
+	[Header("見た目の速度調整（0=2D的, 1=3D的）")]
+	[Range(0f, 1f)]
+	public float perspectiveBlend = 0.5f;
 
 	[Header("座標設定（下から真ん中の場合）")]
 	public float startY = -5f;
@@ -58,46 +63,47 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 	void Update()
 	{
-		// ★追加：まだマネージャーから時間をもらっていない（または 0秒）の時は処理を止める！
-		// これで野良ノーツがいてもエラー（NaN）を出さなくなります。
 		if (actualDuration <= 0f) return;
 
 		timer += Time.deltaTime;
 
 		float t = timer / actualDuration;
-
-		// ★修正：ハードコード（0.1666f）をやめて、JudgementManagerに設定されたMISS判定時間を自動で使うようにします
-		// 万が一マネージャーがいない場合のエラーを防ぐため、存在しない場合は 0.1666f を使います
 		float missWindow = (JudgementManager.Instance != null) ? JudgementManager.Instance.missWindow : 0.1666f;
 
 		// 判定ラインを過ぎて、MISSの猶予時間が過ぎるまで生き残る
 		if (timer <= actualDuration + missWindow)
 		{
-			float moveT = t;
+			float linearT = t;
+
+			float startZ = 1f / startScaleX;
+			float endZ = 1f / endScaleX;
+			float currentZ = Mathf.Lerp(startZ, endZ, t);
+			float currentScaleVal = 1f / currentZ;
+			float true3DT = (currentScaleVal - startScaleX) / (endScaleX - startScaleX);
+
+			float moveT = Mathf.Lerp(linearT, true3DT, perspectiveBlend);
+
 			transform.localPosition = Vector3.LerpUnclamped(startPos, endPos, moveT);
 
-			float clampedT = Mathf.Clamp01(t);
-			float currentScaleX = Mathf.Lerp(startScaleX, endScaleX, clampedT);
-			float currentScaleY = Mathf.Lerp(startScaleY, endScaleY, clampedT);
-			transform.localScale = new Vector3(currentScaleX, currentScaleY, 1f);
+			float clampedT = Mathf.Clamp01(moveT);
+			float currentScaleX_val = Mathf.Lerp(startScaleX, endScaleX, clampedT);
+			float currentScaleY_val = Mathf.Lerp(startScaleY, endScaleY, clampedT);
+			transform.localScale = new Vector3(currentScaleX_val, currentScaleY_val, 1f);
 		}
 		else
 		{
-			// 猶予時間を過ぎても叩かれなかったら「見逃しMISS」
 			Debug.Log("MISS... (見逃し)");
-
-			// ★追加：JudgementManagerに「見逃し用MISSの画面表示」を命令する
 			if (JudgementManager.Instance != null)
 			{
 				JudgementManager.Instance.DisplayMiss();
 			}
-
 			HitAndDespawn();
 		}
 	}
 
 	public float GetTimeDiff()
 	{
-		return (timer - actualDuration) + judgeOffset;
+		// 純粋な時間差だけをマネージャーに返す
+		return timer - actualDuration;
 	}
 }
