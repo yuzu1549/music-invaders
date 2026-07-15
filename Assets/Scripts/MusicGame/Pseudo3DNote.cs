@@ -9,9 +9,6 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	[Header("レーン設定")]
 	public int lane = 0;
 
-	[Header("移動・速度設定")]
-	public float baseDuration = 2.0f;
-	public float noteSpeed = 1.0f;
 
 	[Header("見た目の速度調整（0=2D的, 1=3D的）")]
 	[Range(0f, 1f)]
