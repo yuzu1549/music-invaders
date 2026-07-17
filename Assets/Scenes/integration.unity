@@ -3152,6 +3152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameDebug
   isDebugMode: 1
   gameFinish: {fileID: 1827994862}
+  playerHealth: {fileID: 1989533468}
 --- !u!1 &1535303844
 GameObject:
   m_ObjectHideFlags: 0
