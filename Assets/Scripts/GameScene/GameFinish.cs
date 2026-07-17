@@ -6,6 +6,8 @@ public class GameFinish : MonoBehaviour
 {
     [Header("ゲームオーバー・ゲームクリア表示用のテキスト")]
     [SerializeField] private TMPro.TextMeshProUGUI gameOverText;
+    [Header("オーディオソース")]
+    [SerializeField] private AudioSource audioSource;
 
     /// <summary>
     /// ゲームオーバー処理を行うメソッド
@@ -28,6 +30,7 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
+        audioSource.Pause();
 
         StartCoroutine(LoadResultScene());
 
@@ -55,7 +58,7 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
-
+        audioSource.Pause();
         StartCoroutine(LoadResultScene());
 
         Debug.Log("Game Clear");
@@ -68,6 +71,7 @@ public class GameFinish : MonoBehaviour
         GameManager.Instance.isJudgementHandlerRegistered = false; // 判定結果のイベント登録フラグをリセット
         gameOverText.gameObject.SetActive(false); // 結果表示を非表示にする
         Time.timeScale = 1f; // 時間を元に戻す
+        audioSource.UnPause();
         SceneManager.LoadScene("ResultScene");
     }
 }
