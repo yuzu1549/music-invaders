@@ -11,7 +11,7 @@ public class GameFinish : MonoBehaviour
 
     private void Awake()
     {
-        noteManager = FindObjectOfType<NoteManager>();
+        noteManager = FindFirstObjectByType<NoteManager>();
         if (noteManager == null)
         {
             Debug.LogWarning("NoteManager がシーンに見つかりません。BGM 操作は AudioManager にフォールバックします。");
