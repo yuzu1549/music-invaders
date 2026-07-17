@@ -6,8 +6,18 @@ public class GameFinish : MonoBehaviour
 {
     [Header("ゲームオーバー・ゲームクリア表示用のテキスト")]
     [SerializeField] private TMPro.TextMeshProUGUI gameOverText;
-    [Header("オーディオソース")]
-    [SerializeField] private AudioSource audioSource;
+
+    private NoteManager noteManager;
+
+    private void Awake()
+    {
+        noteManager = FindObjectOfType<NoteManager>();
+        if (noteManager == null)
+        {
+            Debug.LogWarning("NoteManager がシーンに見つかりません。BGM 操作は AudioManager にフォールバックします。");
+        }
+    }
+
 
     /// <summary>
     /// ゲームオーバー処理を行うメソッド
@@ -30,7 +40,14 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
-        audioSource.Pause();
+        if (noteManager != null)
+        {
+            noteManager.StopMusic(); // NoteManager 管理の BGM を停止
+        }
+        else
+        {
+            AudioManager.Instance.PauseBGM(); // フォールバック
+        }
 
         StartCoroutine(LoadResultScene());
 
@@ -58,7 +75,14 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
-        audioSource.Pause();
+        if (noteManager != null)
+        {
+            noteManager.StopMusic(); // NoteManager 管理の BGM を停止
+        }
+        else
+        {
+            AudioManager.Instance.PauseBGM(); // フォールバック
+        }
         StartCoroutine(LoadResultScene());
 
         Debug.Log("Game Clear");
@@ -71,7 +95,6 @@ public class GameFinish : MonoBehaviour
         GameManager.Instance.isJudgementHandlerRegistered = false; // 判定結果のイベント登録フラグをリセット
         gameOverText.gameObject.SetActive(false); // 結果表示を非表示にする
         Time.timeScale = 1f; // 時間を元に戻す
-        audioSource.UnPause();
         SceneManager.LoadScene("ResultScene");
     }
 }

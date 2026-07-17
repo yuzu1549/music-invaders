@@ -208,4 +208,34 @@ public class NoteManager : MonoBehaviour
 			}
 		}
 	}
+
+	/// <summary>
+	/// 音楽の再生を停止します（外部から呼び出す用）。
+	/// </summary>
+	public void StopMusic()
+	{
+		if (audioSource == null) return;
+		// 再生予約・再生を停止し、フラグをリセット
+		audioSource.Stop();
+		isMusicScheduled = false;
+	}
+
+	/// <summary>
+	/// 音楽を一時停止します（必要なら）。
+	/// </summary>
+	public void PauseMusic()
+	{
+		if (audioSource == null) return;
+		audioSource.Pause();
+	}
+
+	/// <summary>
+	/// 一時停止を解除します（必要なら）。
+	/// </summary>
+	public void UnpauseMusic()
+	{
+		if (audioSource == null) return;
+		audioSource.UnPause();
+		isMusicScheduled = audioSource.clip != null;
+	}
 }

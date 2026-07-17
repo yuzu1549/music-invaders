@@ -119,11 +119,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!82 &52728228 stripped
-AudioSource:
-  m_CorrespondingSourceObject: {fileID: 7720345381206146868, guid: 1c1805964aa895a4ab4fde9f70e9886c, type: 3}
-  m_PrefabInstance: {fileID: 5260601556900657729}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &85628688
 GameObject:
   m_ObjectHideFlags: 0
@@ -495,6 +490,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 957203738}
+  - {fileID: 1533527853}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &427216799
@@ -3110,6 +3106,52 @@ RectTransform:
   m_AnchoredPosition: {x: 520, y: 130}
   m_SizeDelta: {x: 200, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!1 &1533527852
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1533527853}
+  - component: {fileID: 1533527854}
+  m_Layer: 0
+  m_Name: GameDebug
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1533527853
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1533527852}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 405087232}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1533527854
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1533527852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 50d31572727a58a409ee1c83f4c9f5a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameDebug
+  isDebugMode: 1
+  gameFinish: {fileID: 1827994862}
 --- !u!1 &1535303844
 GameObject:
   m_ObjectHideFlags: 0
@@ -3817,7 +3859,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameFinish
   gameOverText: {fileID: 427216800}
-  audioSource: {fileID: 52728228}
 --- !u!4 &1827994863
 Transform:
   m_ObjectHideFlags: 0
