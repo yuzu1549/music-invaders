@@ -58,7 +58,7 @@ public class EnemyBullet : MonoBehaviour, IPoolable
         /// <summary>
     /// プールがあればオブジェクトを返す
     /// </summary>
-    private void ReturnToPool()
+    public void ReturnToPool()
     {
         if (ownerPool != null)
         {
@@ -91,7 +91,6 @@ public class EnemyBullet : MonoBehaviour, IPoolable
             {
                 ReturnToPool(); // 貫通力がなくなったら弾を消す
             }
-            
         }
     }
 
