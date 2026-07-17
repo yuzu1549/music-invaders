@@ -7,6 +7,18 @@ public class GameFinish : MonoBehaviour
     [Header("ゲームオーバー・ゲームクリア表示用のテキスト")]
     [SerializeField] private TMPro.TextMeshProUGUI gameOverText;
 
+    private NoteManager noteManager;
+
+    private void Awake()
+    {
+        noteManager = FindObjectOfType<NoteManager>();
+        if (noteManager == null)
+        {
+            Debug.LogWarning("NoteManager がシーンに見つかりません。BGM 操作は AudioManager にフォールバックします。");
+        }
+    }
+
+
     /// <summary>
     /// ゲームオーバー処理を行うメソッド
     /// </summary>
@@ -28,6 +40,14 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
+        if (noteManager != null)
+        {
+            noteManager.StopMusic(); // NoteManager 管理の BGM を停止
+        }
+        else
+        {
+            AudioManager.Instance.PauseBGM(); // フォールバック
+        }
 
         StartCoroutine(LoadResultScene());
 
@@ -55,7 +75,14 @@ public class GameFinish : MonoBehaviour
 
         // ゲーム全体を停止
         Time.timeScale = 0f;
-
+        if (noteManager != null)
+        {
+            noteManager.StopMusic(); // NoteManager 管理の BGM を停止
+        }
+        else
+        {
+            AudioManager.Instance.PauseBGM(); // フォールバック
+        }
         StartCoroutine(LoadResultScene());
 
         Debug.Log("Game Clear");

@@ -63,6 +63,38 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
+    /// BGM のクリップをセットするが再生はしない（別コンポーネントが再生タイミングを制御する場合用）
+    /// </summary>
+    /// <param name="clip">セットする BGM</param>
+    public void SetBGMClip(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (bgmSource == null) return;
+
+        bgmSource.clip = clip;
+        bgmSource.loop = true;
+    }
+
+    /// <summary>
+    /// BGM を DSP 時刻で予約再生します。内部の bgmSource にクリップがセットされていない場合は何もしません。
+    /// </summary>
+    /// <param name="dspTime">AudioSettings.dspTime での再生時刻</param>
+    /// <returns>再生予約できたら true、できなければ false</returns>
+    public bool ScheduleBGMPlay(double dspTime)
+    {
+        if (bgmSource == null) return false;
+        if (bgmSource.clip == null) return false;
+
+        bgmSource.PlayScheduled(dspTime);
+        return true;
+    }
+
+    /// <summary>
+    /// BGM のクリップがセットされているかを返す
+    /// </summary>
+    public bool HasBGMClip => bgmSource != null && bgmSource.clip != null;
+
+    /// <summary>
     /// SE を再生する。
     /// </summary>
     /// <param name="clip">再生する SE</param>
@@ -74,6 +106,62 @@ public class AudioManager : MonoBehaviour
 
         float safeVolumeScale = Mathf.Clamp01(volumeScale);
         seSource.PlayOneShot(clip, safeVolumeScale);
+    }
+
+    /// <summary>
+    /// BGM を一時停止する。
+    /// </summary>
+    public void PauseBGM()
+    {
+        if (bgmSource == null)
+        {
+            Debug.LogWarning("BGM用AudioSourceが設定されていません。");
+            return;
+        }
+
+        bgmSource.Pause();
+    }
+
+    /// <summary>
+    /// BGM の一時停止を解除する。
+    /// </summary>
+    public void UnPauseBGM()
+    {
+        if (bgmSource == null)
+        {
+            Debug.LogWarning("BGM用AudioSourceが設定されていません。");
+            return;
+        }
+
+        bgmSource.UnPause();
+    }
+
+    /// <summary>
+    /// SE を一時停止する。
+    /// </summary>
+    public void PauseSE()
+    {
+        if (seSource == null)
+        {
+            Debug.LogWarning("SE用AudioSourceが設定されていません。");
+            return;
+        }
+
+        seSource.Pause();
+    }
+
+    /// <summary>
+    /// SE の一時停止を解除する。
+    /// </summary>
+    public void UnPauseSE()
+    {
+        if (seSource == null)
+        {
+            Debug.LogWarning("SE用AudioSourceが設定されていません。");
+            return;
+        }
+
+        seSource.UnPause();
     }
 
     /// <summary>

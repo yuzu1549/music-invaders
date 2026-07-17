@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public int goodCount; // グッドの公開プロパティ
     public int missCount; // ミスの公開プロパティ
     public event Action<string> OnScoreChanged; // 判定結果を通知するイベント
+    public event Action<string> OnMusicPlayed; // 音楽再生を通知するイベント
 
     public bool isJudgementHandlerRegistered = false;
 
@@ -98,6 +99,7 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         isGameOver = false;
         isGameCleared = false;
+        OnMusicPlayed?.Invoke(musicTitle);
 
         if (normalizedDifficulty == "Easy")
         {
