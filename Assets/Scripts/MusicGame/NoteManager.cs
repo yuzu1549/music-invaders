@@ -9,6 +9,9 @@ public class NoteManager : MonoBehaviour
 	public ObjectPool pool;
 	public SongDatabase songDatabase;
 
+	[Header("表示上の判定線")]
+	public Transform judgementLineTransform;
+
 	[Header("設定")]
 	public float bpm = 158.0f;
 	public float baseDuration = 2.0f;
@@ -31,6 +34,7 @@ public class NoteManager : MonoBehaviour
 	private List<NoteData> notes = new List<NoteData>();
 	private double dspStartTime;
 	private bool isMusicScheduled = false;
+	private float timingOffsetSeconds = 0f;
 	private bool hasMusicStarted = false;
 
 	// 途中から始めた分の時間を記憶する変数
@@ -46,12 +50,13 @@ public class NoteManager : MonoBehaviour
 	{
 		// 🔥【追加】前のシーンから曲データと難易度が渡されていればセットアップする
 		SetupFromArgs();
+		ApplySettings();
 
 		// 譜面データを読み込む
 		LoadChart();
 
 		float secondsPerBeat = 60.0f / bpm;
-		float actualDuration = 5.0f / noteSpeed;
+		float actualDuration = GetNoteVisibleDurationSeconds();
 
 		// デバッグモード：テスト用の途中再生処理
 		if (isDebugMode && startMeasure > 1)
@@ -67,7 +72,7 @@ public class NoteManager : MonoBehaviour
 			}
 
 			// 既に通り過ぎているべき過去のノーツをリストから削除しておく
-			notes.RemoveAll(n => (n.beat * secondsPerBeat) + chartOffset < debugStartTimeOffset - actualDuration);
+			notes.RemoveAll(n => GetTargetTime(n.beat, secondsPerBeat) < debugStartTimeOffset - actualDuration);
 
 			// コンソールに黄色い警告を出して、テスト中であることを知らせる
 			Debug.LogWarning($"【テストモード作動中】第{startMeasure}小節（{debugStartTimeOffset:F2}秒）から再生します！");
@@ -88,6 +93,24 @@ public class NoteManager : MonoBehaviour
 		{
 			Debug.LogError("AudioSourceまたはClipが設定されていません！");
 		}
+	}
+
+	/// <summary>
+	/// GameSettings に保存されているリズム設定を反映する。
+	/// </summary>
+	private void ApplySettings()
+	{
+		noteSpeed = GameSettings.NoteSpeed;
+		timingOffsetSeconds = GameSettings.TimingOffsetMs / 1000f;
+	}
+
+	/// <summary>
+	/// ノーツが出現してから判定ラインに到達するまでの時間を返す。
+	/// </summary>
+	/// <returns>ノーツ表示時間（秒）</returns>
+	private float GetNoteVisibleDurationSeconds()
+	{
+		return 5.0f / noteSpeed;
 	}
 
 	// 🔥【追加】シーン間のデータ引き継ぎ処理
@@ -188,19 +211,19 @@ public class NoteManager : MonoBehaviour
 			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 		}
 
-		if (hasMusicStarted && !audioSource.isPlaying)
-		{
-			// 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
-			OnMusicEnded();
-			return;
-		}
+if (hasMusicStarted && !audioSource.isPlaying)
+{
+    // 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
+    OnMusicEnded();
+    return;
+}
 
-		float actualDuration = 5.0f / noteSpeed;
+float actualDuration = GetNoteVisibleDurationSeconds();
 		float secondsPerBeat = 60.0f / bpm;
 
 		for (int i = 0; i < notes.Count; i++)
 		{
-			float targetTime = (notes[i].beat * secondsPerBeat) + chartOffset;
+			float targetTime = GetTargetTime(notes[i].beat, secondsPerBeat);
 
 			// 判定ラインに到達する時間 - ノーツが移動する時間
 			if (currentMusicTime >= targetTime - actualDuration)
@@ -236,9 +259,43 @@ public class NoteManager : MonoBehaviour
 			Pseudo3DNote noteScript = obj.GetComponent<Pseudo3DNote>();
 			if (noteScript != null)
 			{
-				noteScript.Init(lane, actualDuration);
+				float judgementLineY = GetJudgementLineLocalY(obj.transform, noteScript.endY);
+				noteScript.Init(lane, actualDuration, judgementLineY);
 			}
 		}
+	}
+
+	/// <summary>
+	/// ノーツが判定位置に到達する曲中時間を返す。
+	/// </summary>
+	/// <param name="beat">譜面上の拍</param>
+	/// <param name="secondsPerBeat">1拍あたりの秒数</param>
+	/// <returns>判定位置に到達する曲中時間</returns>
+	private float GetTargetTime(float beat, float secondsPerBeat)
+	{
+		return (beat * secondsPerBeat) + chartOffset - timingOffsetSeconds;
+	}
+
+	/// <summary>
+	/// 表示上の判定線を、ノーツの親を基準にした Y 座標へ変換する。
+	/// </summary>
+	/// <param name="noteTransform">生成されたノーツの Transform</param>
+	/// <param name="fallbackY">判定線が未設定の場合に使う Y 座標</param>
+	/// <returns>ノーツのローカル座標系における判定線の Y 座標</returns>
+	private float GetJudgementLineLocalY(Transform noteTransform, float fallbackY)
+	{
+		if (judgementLineTransform == null)
+		{
+			return fallbackY;
+		}
+
+		if (noteTransform.parent == null)
+		{
+			return judgementLineTransform.position.y;
+		}
+
+		Vector3 localPosition = noteTransform.parent.InverseTransformPoint(judgementLineTransform.position);
+		return localPosition.y;
 	}
 
 	/// <summary>

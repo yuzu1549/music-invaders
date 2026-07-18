@@ -15,7 +15,7 @@ public static class GameSettings
 	[Header("最小ノーツ速度")]
     public const float MinNoteSpeed = 1.0f;
 	[Header("最大ノーツ速度")]
-    public const float MaxNoteSpeed = 20.0f;
+    public const float MaxNoteSpeed = 25.0f;
 	[Header("デフォルトノーツ速度")]
     public const float DefaultNoteSpeed = 5.0f;
 
