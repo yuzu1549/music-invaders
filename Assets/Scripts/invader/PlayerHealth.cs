@@ -13,7 +13,7 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     [SerializeField] private float blinkInterval = 0.1f;
     [Header("ダメージを受けたときの音")]
     [SerializeField] private AudioClip damageSE; // ダメージを受けたときの音
-    private bool isInvincible = false; // 無敵状態かどうか
+    public bool isInvincible = false; // 無敵状態かどうか
     private ObjectPool ownerPool; // 所属するオブジェクトプール
     private SpriteRenderer spriteRenderer; // スプライトレンダラーの参照
     private bool isDead = false; // 死亡フラグ

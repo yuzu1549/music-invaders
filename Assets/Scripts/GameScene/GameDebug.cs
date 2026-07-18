@@ -7,6 +7,7 @@ public class GameDebug : MonoBehaviour
     [SerializeField] private bool isDebugMode = false; // デバッグモードのフラグ
     
     [SerializeField] private GameFinish gameFinish; // GameFinishスクリプトの参照
+    [SerializeField] private PlayerHealth playerHealth; // PlayerHealthスクリプトの参照
 
     private void Update()
     {
@@ -24,6 +25,12 @@ public class GameDebug : MonoBehaviour
             {
                 Debug.Log("Debug: Game Clear triggered");
                 gameFinish.GameClear();
+            }
+
+            if (Keyboard.current.mKey.wasPressedThisFrame)
+            {
+                Debug.Log("Debug: 無敵モード切り替え");
+                playerHealth.isInvincible = !playerHealth.isInvincible;
             }
         }
     }

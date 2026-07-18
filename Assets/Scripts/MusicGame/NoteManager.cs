@@ -35,6 +35,7 @@ public class NoteManager : MonoBehaviour
 	private double dspStartTime;
 	private bool isMusicScheduled = false;
 	private float timingOffsetSeconds = 0f;
+	private bool hasMusicStarted = false;
 
 	// 途中から始めた分の時間を記憶する変数
 	private float debugStartTimeOffset = 0f;
@@ -81,9 +82,12 @@ public class NoteManager : MonoBehaviour
 
 		if (audioSource != null && audioSource.clip != null)
 		{
+			// 再生終了を正常に検出するため、曲をループしない設定にする
+			audioSource.loop = false;
 			// 精密な時間で再生を予約する
 			audioSource.PlayScheduled(dspStartTime + delayTime);
 			isMusicScheduled = true;
+			hasMusicStarted = false;
 		}
 		else
 		{
@@ -195,6 +199,11 @@ public class NoteManager : MonoBehaviour
 		if (currentDspTime >= delayTime)
 		{
 			currentMusicTime = audioSource.time;
+
+			if (!hasMusicStarted && audioSource.isPlaying)
+			{
+				hasMusicStarted = true;
+			}
 		}
 		else
 		{
@@ -202,7 +211,14 @@ public class NoteManager : MonoBehaviour
 			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 		}
 
-		float actualDuration = GetNoteVisibleDurationSeconds();
+if (hasMusicStarted && !audioSource.isPlaying)
+{
+    // 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
+    OnMusicEnded();
+    return;
+}
+
+float actualDuration = GetNoteVisibleDurationSeconds();
 		float secondsPerBeat = 60.0f / bpm;
 
 		for (int i = 0; i < notes.Count; i++)
@@ -216,6 +232,22 @@ public class NoteManager : MonoBehaviour
 				notes.RemoveAt(i);
 				i--;
 			}
+		}
+	}
+
+	private void OnMusicEnded()
+	{
+		if (GameManager.Instance == null) return;
+		if (GameManager.Instance.isGameOver || GameManager.Instance.isGameCleared) return;
+
+		GameFinish gameFinish = FindFirstObjectByType<GameFinish>();
+		if (gameFinish != null)
+		{
+			gameFinish.GameClear();
+		}
+		else
+		{
+			Debug.LogWarning("GameFinish が見つかりません。曲終了時の GameClear を実行できませんでした。");
 		}
 	}
 

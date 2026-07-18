@@ -30,5 +30,19 @@ public class EnemyDeathLine : MonoBehaviour
 
             playerHealth?.TakeDamage(1); // プレイヤーの体力を1減らす
         }
+
+        if (collision.CompareTag("Bullet"))
+        {
+            EnemyBullet enemyBullet = collision.GetComponent<EnemyBullet>();
+            if (enemyBullet != null)
+            {
+                enemyBullet.penetration--; // 貫通力を減らす
+                if (enemyBullet.penetration <= 0)
+                {
+                    enemyBullet.ReturnToPool(); // 貫通力がなくなったら弾を消す
+                }
+            }
+        }
     }
+
 }
