@@ -1,38 +1,41 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class MusicSelectController : MonoBehaviour
 {
     [Header("曲選択UI")]
+    [Tooltip("上・中央・下の順番で3つ登録してください")]
     [SerializeField] private SongItem[] songItems;
+
     [SerializeField] private SongInfoPanel songInfoPanel;
+
+    [Header("曲移動ボタン")]
+    [SerializeField] private Button upButton;
+    [SerializeField] private Button downButton;
+
+    [Header("難易度ボタン")]
+    [SerializeField] private Button easyButton;
+    [SerializeField] private Button normalButton;
+    [SerializeField] private Button hardButton;
 
     [Header("READY画面")]
     [SerializeField] private GameObject readyPanel;
     [SerializeField] private Button playButton;
+    [SerializeField] private Button readyBackButton;
 
     [Header("設定画面")]
     [Tooltip("OptionsPanelではなく、親のOptionsOverlayを登録してください")]
     [SerializeField] private GameObject settingsPanel;
 
-    [Header("シーン")]
-    [SerializeField] private string titleSceneName = "TitleScene";
-
     private readonly string[] songNames =
     {
         "ShiningStar",
         "title2",
-        "title3",
-        "title4",
-        "title5"
+        "title3"
     };
 
     private readonly Sprite[] jacketSprites =
     {
-        null,
-        null,
         null,
         null,
         null
@@ -45,7 +48,10 @@ public class MusicSelectController : MonoBehaviour
         "Hard"
     };
 
+    // 中央に表示されている曲
     private int centerSongIndex = 0;
+
+    // 最初の難易度
     private int selectedDifficultyIndex = 1;
 
     private string currentSongName = string.Empty;
@@ -54,191 +60,175 @@ public class MusicSelectController : MonoBehaviour
     public string CurrentSongName => currentSongName;
     public string CurrentDifficultyName => currentDifficultyName;
 
-    private const int centerItemIndex = 2;
-
-    private enum SelectMode
-    {
-        MusicSelect,
-        DifficultySelect,
-        Ready
-    }
-
-    private SelectMode currentMode = SelectMode.MusicSelect;
+    // SongItemが3つなので中央はElement 1
+    private const int centerItemIndex = 1;
 
     private bool isSettingsOpen = false;
+    private bool isReadyOpen = false;
 
     private void Start()
     {
-        currentMode = SelectMode.MusicSelect;
+        RegisterButtonEvents();
+
         isSettingsOpen = false;
+        isReadyOpen = false;
+
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
 
         if (readyPanel != null)
         {
             readyPanel.SetActive(false);
         }
-
-        // OptionsOverlay全体を非表示にする
-        if (settingsPanel != null)
-        {
-            settingsPanel.SetActive(false);
-        }
         else
         {
             Debug.LogWarning(
-                "Settings PanelにOptionsOverlayを登録してください。"
+                "Ready Panelが登録されていません。"
             );
         }
 
         UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
-        UpdateDifficultySelection();
+        UpdateDifficultySelection(false);
     }
 
-    private void Update()
+    /// <summary>
+    /// ボタンのイベントを登録する
+    /// </summary>
+    private void RegisterButtonEvents()
     {
-        if (Keyboard.current == null)
+        if (upButton != null)
+        {
+            upButton.onClick.AddListener(MoveUp);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Up Buttonが登録されていません。"
+            );
+        }
+
+        if (downButton != null)
+        {
+            downButton.onClick.AddListener(MoveDown);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Down Buttonが登録されていません。"
+            );
+        }
+
+        if (easyButton != null)
+        {
+            easyButton.onClick.AddListener(SelectEasy);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Easy Buttonが登録されていません。"
+            );
+        }
+
+        if (normalButton != null)
+        {
+            normalButton.onClick.AddListener(SelectNormal);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Normal Buttonが登録されていません。"
+            );
+        }
+
+        if (hardButton != null)
+        {
+            hardButton.onClick.AddListener(SelectHard);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Hard Buttonが登録されていません。"
+            );
+        }
+
+        if (playButton != null)
+        {
+            playButton.onClick.AddListener(StartSelectedGame);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Play Buttonが登録されていません。"
+            );
+        }
+
+        if (readyBackButton != null)
+        {
+            readyBackButton.onClick.AddListener(CloseReadyPanel);
+        }
+        else
+        {
+            Debug.LogWarning(
+                "Ready Back Buttonが登録されていません。"
+            );
+        }
+    }
+
+    /// <summary>
+    /// ボタンのイベントを解除する
+    /// </summary>
+    private void OnDestroy()
+    {
+        if (upButton != null)
+        {
+            upButton.onClick.RemoveListener(MoveUp);
+        }
+
+        if (downButton != null)
+        {
+            downButton.onClick.RemoveListener(MoveDown);
+        }
+
+        if (easyButton != null)
+        {
+            easyButton.onClick.RemoveListener(SelectEasy);
+        }
+
+        if (normalButton != null)
+        {
+            normalButton.onClick.RemoveListener(SelectNormal);
+        }
+
+        if (hardButton != null)
+        {
+            hardButton.onClick.RemoveListener(SelectHard);
+        }
+
+        if (playButton != null)
+        {
+            playButton.onClick.RemoveListener(StartSelectedGame);
+        }
+
+        if (readyBackButton != null)
+        {
+            readyBackButton.onClick.RemoveListener(CloseReadyPanel);
+        }
+    }
+
+    /// <summary>
+    /// 上の三角ボタンを押したとき
+    /// </summary>
+    public void MoveUp()
+    {
+        if (isSettingsOpen || isReadyOpen)
         {
             return;
         }
 
-        // 設定画面が開いている場合
-        if (isSettingsOpen)
-        {
-            // SまたはEscで設定画面を閉じる
-            if (Keyboard.current.sKey.wasPressedThisFrame ||
-                Keyboard.current.escapeKey.wasPressedThisFrame)
-            {
-                CloseSettings();
-            }
-
-            return;
-        }
-
-        // どの選択画面にいてもSキーで設定画面を開く
-        if (Keyboard.current.sKey.wasPressedThisFrame)
-        {
-            OpenSettings();
-            return;
-        }
-
-        switch (currentMode)
-        {
-            case SelectMode.MusicSelect:
-                UpdateMusicSelectMode();
-                break;
-
-            case SelectMode.DifficultySelect:
-                UpdateDifficultySelectMode();
-                break;
-
-            case SelectMode.Ready:
-                UpdateReadyMode();
-                break;
-        }
-    }
-
-    private void UpdateMusicSelectMode()
-    {
-        if (Keyboard.current.downArrowKey.wasPressedThisFrame)
-        {
-            MoveDown();
-        }
-
-        if (Keyboard.current.upArrowKey.wasPressedThisFrame)
-        {
-            MoveUp();
-        }
-
-        if (IsEnterPressed())
-        {
-            StartDifficultySelect();
-            return;
-        }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            BackToTitleScene();
-        }
-    }
-
-    private void UpdateDifficultySelectMode()
-    {
-        if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
-        {
-            selectedDifficultyIndex++;
-
-            if (selectedDifficultyIndex >= difficultyNames.Length)
-            {
-                selectedDifficultyIndex = 0;
-            }
-
-            UpdateSelectedValues();
-            UpdateDifficultySelection();
-        }
-
-        if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
-        {
-            selectedDifficultyIndex--;
-
-            if (selectedDifficultyIndex < 0)
-            {
-                selectedDifficultyIndex = difficultyNames.Length - 1;
-            }
-
-            UpdateSelectedValues();
-            UpdateDifficultySelection();
-        }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            BackToMusicSelect();
-            return;
-        }
-
-        if (IsEnterPressed())
-        {
-            ShowReadyPanel();
-        }
-    }
-
-    private void UpdateReadyMode()
-    {
-        if (IsEnterPressed())
-        {
-            StartSelectedGame();
-            return;
-        }
-
-        if (Keyboard.current.escapeKey.wasPressedThisFrame)
-        {
-            BackToDifficultySelect();
-        }
-    }
-
-    private bool IsEnterPressed()
-    {
-        return Keyboard.current.enterKey.wasPressedThisFrame ||
-               Keyboard.current.numpadEnterKey.wasPressedThisFrame;
-    }
-
-    private void MoveDown()
-    {
-        centerSongIndex++;
-
-        if (centerSongIndex >= songNames.Length)
-        {
-            centerSongIndex = 0;
-        }
-
-        UpdateSelectedValues();
-        UpdateSongList();
-        UpdateRightPanel();
-        UpdateDifficultySelection();
-    }
-
-    private void MoveUp()
-    {
         centerSongIndex--;
 
         if (centerSongIndex < 0)
@@ -246,20 +236,143 @@ public class MusicSelectController : MonoBehaviour
             centerSongIndex = songNames.Length - 1;
         }
 
+        UpdateMusicDisplay();
+
+        Debug.Log(
+            "上へ移動：" +
+            currentSongName
+        );
+    }
+
+    /// <summary>
+    /// 下の三角ボタンを押したとき
+    /// </summary>
+    public void MoveDown()
+    {
+        if (isSettingsOpen || isReadyOpen)
+        {
+            return;
+        }
+
+        centerSongIndex++;
+
+        if (centerSongIndex >= songNames.Length)
+        {
+            centerSongIndex = 0;
+        }
+
+        UpdateMusicDisplay();
+
+        Debug.Log(
+            "下へ移動：" +
+            currentSongName
+        );
+    }
+
+    /// <summary>
+    /// 曲表示を更新する
+    /// </summary>
+    private void UpdateMusicDisplay()
+    {
         UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
-        UpdateDifficultySelection();
     }
 
-    private void UpdateSelectedValues()
+    public void SelectEasy()
     {
-        currentSongName = songNames[centerSongIndex];
-        currentDifficultyName = difficultyNames[selectedDifficultyIndex];
+        SelectDifficultyAndShowReady(0);
     }
 
+    public void SelectNormal()
+    {
+        SelectDifficultyAndShowReady(1);
+    }
+
+    public void SelectHard()
+    {
+        SelectDifficultyAndShowReady(2);
+    }
+
+    /// <summary>
+    /// 難易度を選択し、READY画面を表示する
+    /// </summary>
+    private void SelectDifficultyAndShowReady(
+        int difficultyIndex
+    )
+    {
+        if (isSettingsOpen || isReadyOpen)
+        {
+            return;
+        }
+
+        if (difficultyIndex < 0 ||
+            difficultyIndex >= difficultyNames.Length)
+        {
+            Debug.LogWarning(
+                "存在しない難易度が指定されました。"
+            );
+
+            return;
+        }
+
+        selectedDifficultyIndex = difficultyIndex;
+
+        UpdateSelectedValues();
+        UpdateDifficultySelection(true);
+        ShowReadyPanel();
+
+        Debug.Log(
+            "選択：" +
+            currentSongName +
+            " / " +
+            currentDifficultyName
+        );
+    }
+
+    /// <summary>
+    /// READY画面を表示する
+    /// </summary>
+    private void ShowReadyPanel()
+    {
+        isReadyOpen = true;
+
+        if (readyPanel != null)
+        {
+            readyPanel.SetActive(true);
+        }
+    }
+
+    /// <summary>
+    /// BACKボタンでREADY画面を閉じる
+    /// </summary>
+    public void CloseReadyPanel()
+    {
+        isReadyOpen = false;
+
+        if (readyPanel != null)
+        {
+            readyPanel.SetActive(false);
+        }
+
+        // 難易度の選択表示を通常状態に戻す
+        UpdateDifficultySelection(false);
+
+        Debug.Log(
+            "READY画面を閉じました。"
+        );
+    }
+
+    /// <summary>
+    /// 選択した曲と難易度でゲームを開始する
+    /// </summary>
     public void StartSelectedGame()
     {
+        if (!isReadyOpen || isSettingsOpen)
+        {
+            return;
+        }
+
         UpdateSelectedValues();
 
         if (GameManager.Instance != null)
@@ -271,140 +384,36 @@ public class MusicSelectController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("GameManagerが見つかりませんでした。")
-;        }
-    }
-
-    private void StartDifficultySelect()
-    {
-        currentMode = SelectMode.DifficultySelect;
-        selectedDifficultyIndex = 1;
-
-        if (readyPanel != null)
-        {
-            readyPanel.SetActive(false);
-        }
-
-        UpdateSelectedValues();
-        UpdateDifficultySelection();
-
-        Debug.Log(
-            "難易度選択に移動：" +
-            currentSongName
-        );
-    }
-
-    private void BackToMusicSelect()
-    {
-        currentMode = SelectMode.MusicSelect;
-
-        if (readyPanel != null)
-        {
-            readyPanel.SetActive(false);
-        }
-
-        UpdateSelectedValues();
-        UpdateDifficultySelection();
-
-        Debug.Log(
-            "曲選択に戻る：" +
-            currentSongName
-        );
-    }
-
-    private void ShowReadyPanel()
-    {
-        currentMode = SelectMode.Ready;
-
-        if (readyPanel != null)
-        {
-            readyPanel.SetActive(true);
-        }
-        else
-        {
             Debug.LogWarning(
-                "Ready Panelが登録されていません。"
+                "GameManagerが見つかりませんでした。"
             );
         }
-
-        UpdateSelectedValues();
-        UpdateDifficultySelection();
-
-        Debug.Log(
-            "決定：" +
-            currentSongName +
-            " / " +
-            currentDifficultyName
-        );
     }
 
-    private void BackToDifficultySelect()
+    /// <summary>
+    /// 現在の曲名と難易度名を更新する
+    /// </summary>
+    private void UpdateSelectedValues()
     {
-        currentMode = SelectMode.DifficultySelect;
+        currentSongName =
+            songNames[centerSongIndex];
 
-        if (readyPanel != null)
-        {
-            readyPanel.SetActive(false);
-        }
-
-        UpdateSelectedValues();
-        UpdateDifficultySelection();
-
-        Debug.Log(
-            "難易度選択に戻る：" +
-            currentSongName +
-            " / " +
-            currentDifficultyName
-        );
+        currentDifficultyName =
+            difficultyNames[selectedDifficultyIndex];
     }
 
-    public void OpenSettings()
-    {
-        if (settingsPanel == null)
-        {
-            Debug.LogWarning(
-                "Settings PanelにOptionsOverlayを登録してください。"
-            );
-
-            return;
-        }
-
-        isSettingsOpen = true;
-        settingsPanel.SetActive(true);
-
-        Debug.Log("設定画面を開きました");
-    }
-
-    public void CloseSettings()
-    {
-        isSettingsOpen = false;
-
-        if (settingsPanel != null)
-        {
-            settingsPanel.SetActive(false);
-        }
-
-        Debug.Log("設定画面を閉じました");
-    }
-
-    private void BackToTitleScene()
-    {
-        if (string.IsNullOrWhiteSpace(titleSceneName))
-        {
-            Debug.LogError(
-                "Title Scene Nameが設定されていません。"
-            );
-
-            return;
-        }
-
-        SceneManager.LoadScene(titleSceneName);
-    }
-
+    /// <summary>
+    /// 上・中央・下の曲名を更新する
+    /// </summary>
     private void UpdateSongList()
     {
-        if (songItems == null || songItems.Length == 0)
+        if (songItems == null ||
+            songItems.Length != 3)
         {
+            Debug.LogWarning(
+                "Song ItemsのSizeを3にしてください。"
+            );
+
             return;
         }
 
@@ -416,7 +425,9 @@ public class MusicSelectController : MonoBehaviour
             }
 
             int offset = i - centerItemIndex;
-            int songIndex = centerSongIndex + offset;
+
+            int songIndex =
+                centerSongIndex + offset;
 
             while (songIndex < 0)
             {
@@ -438,6 +449,9 @@ public class MusicSelectController : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 右側の曲情報を更新する
+    /// </summary>
     private void UpdateRightPanel()
     {
         if (songInfoPanel == null)
@@ -451,20 +465,50 @@ public class MusicSelectController : MonoBehaviour
         );
     }
 
-    private void UpdateDifficultySelection()
+    /// <summary>
+    /// 難易度表示を更新する
+    /// </summary>
+    private void UpdateDifficultySelection(
+        bool isSelected
+    )
     {
         if (songInfoPanel == null)
         {
             return;
         }
 
-        bool isDifficultySelecting =
-            currentMode == SelectMode.DifficultySelect ||
-            currentMode == SelectMode.Ready;
-
         songInfoPanel.SetDifficultySelected(
             selectedDifficultyIndex,
-            isDifficultySelecting
+            isSelected
         );
+    }
+
+    /// <summary>
+    /// 設定画面を開く
+    /// 別のスクリプトやButtonのOnClickから使用可能
+    /// </summary>
+    public void OpenSettings()
+    {
+        if (settingsPanel == null)
+        {
+            return;
+        }
+
+        isSettingsOpen = true;
+        settingsPanel.SetActive(true);
+    }
+
+    /// <summary>
+    /// 設定画面を閉じる
+    /// 別のスクリプトやButtonのOnClickから使用可能
+    /// </summary>
+    public void CloseSettings()
+    {
+        isSettingsOpen = false;
+
+        if (settingsPanel != null)
+        {
+            settingsPanel.SetActive(false);
+        }
     }
 }
