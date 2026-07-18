@@ -35,10 +35,6 @@ public class JudgementManager : MonoBehaviour
 	public GameObject goodEffectPrefab;
 	public GameObject missEffectPrefab;
 
-	[Header("タップ判定のズレ調整")]
-	[Tooltip("プラスにすると早め（上）のタップが、マイナスにすると遅め（下）のタップがPerfectになります")]
-	public float inputOffset = 0.0f;
-
 	// ★追加：起動時に自分自身をInstanceに登録する
 	void Awake()
 	{
@@ -83,9 +79,8 @@ public class JudgementManager : MonoBehaviour
 
 			if (note != null && note.lane == laneIndex)
 			{
-				// 🔥修正：ノーツの純粋な時間差に、マネージャー側で設定したオフセットを足す
 				float rawTimeDiff = note.GetTimeDiff();
-				float adjustedTimeDiff = Mathf.Abs(rawTimeDiff + inputOffset);
+				float adjustedTimeDiff = Mathf.Abs(rawTimeDiff);
 
 				if (adjustedTimeDiff < minTimeDiff)
 				{

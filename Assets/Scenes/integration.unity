@@ -1792,7 +1792,6 @@ MonoBehaviour:
   perfectEffectPrefab: {fileID: 4503054050056049811, guid: 46d919a4594e26a47820b90c797d4b49, type: 3}
   goodEffectPrefab: {fileID: 4503054050056049811, guid: 57226a50cab4d774e97b7ac8a5c94337, type: 3}
   missEffectPrefab: {fileID: 4503054050056049811, guid: a9e30db164e034a41919af79b3d22b18, type: 3}
-  inputOffset: 0.12
 --- !u!4 &1000885325
 Transform:
   m_ObjectHideFlags: 0
@@ -4411,6 +4410,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1197963463165435476, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.2
+      objectReference: {fileID: 0}
     - target: {fileID: 5904120985854620774, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -4539,6 +4542,10 @@ PrefabInstance:
       propertyPath: startMeasure
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: judgementLineTransform
+      value: 
+      objectReference: {fileID: 131792558329482544}
     - target: {fileID: 6528076457382009528, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: maxSize
       value: 100
@@ -4551,6 +4558,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: NotesContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 9089392859176674323, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: m_Name
+      value: JudgementLine
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
@@ -4559,6 +4570,11 @@ PrefabInstance:
       addedObject: {fileID: 1505474804}
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+--- !u!4 &131792558329482544 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1197963463165435476, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+  m_PrefabInstance: {fileID: 131792558329482543}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &352889215531869162
 PrefabInstance:
   m_ObjectHideFlags: 0
