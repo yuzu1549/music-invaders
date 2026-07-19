@@ -1842,7 +1842,7 @@ MonoBehaviour:
     charts:
     - difficultyName: Normal
       chartFile: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
-      defaultOffset: 0.5
+      defaultOffset: 0.3
     - difficultyName: Hard
       chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
       defaultOffset: 0.1
@@ -4529,7 +4529,7 @@ PrefabInstance:
       objectReference: {fileID: 573744520}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartOffset
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: isDebugMode

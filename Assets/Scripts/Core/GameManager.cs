@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (scene.name == "Integration")
+        if (scene.name == "GameScene")
         {
             isGameOver = false;
             isGameCleared = false;
@@ -91,9 +91,9 @@ public class GameManager : MonoBehaviour
 		GameSceneArgs.SelectedMusic = musicTitle;
 		GameSceneArgs.SelectedDifficulty = normalizedDifficulty;
 
-		SceneManager.LoadScene("Integration");
+		SceneManager.LoadScene("GameScene");
 
-        
+
 
         // ゲーム全体を再開
         Time.timeScale = 1f;
