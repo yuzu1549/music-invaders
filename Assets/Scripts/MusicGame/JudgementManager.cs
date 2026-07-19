@@ -52,6 +52,14 @@ public class JudgementManager : MonoBehaviour
 		}
 	}
 
+	private void OnDestroy()
+	{
+		if (Instance == this)
+		{
+			Instance = null;
+		}
+	}
+
 	void Start()
 	{
 		if (inputReader == null)

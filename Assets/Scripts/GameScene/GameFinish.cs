@@ -6,7 +6,9 @@ public class GameFinish : MonoBehaviour
 {
     [Header("ゲームオーバー・ゲームクリア表示用のテキスト")]
     [SerializeField] private TMPro.TextMeshProUGUI gameOverText;
-
+    [Header("ゲームクリア・ゲームオーバー時のBGM")]
+    [SerializeField] private AudioClip gameClearSound;
+    [SerializeField] private AudioClip gameOverSound;
     private NoteManager noteManager;
 
     private void Awake()
@@ -49,6 +51,11 @@ public class GameFinish : MonoBehaviour
             AudioManager.Instance.PauseBGM(); // フォールバック
         }
 
+        if (gameOverSound != null)
+        {
+            AudioManager.Instance.PlaySE(gameOverSound); // ゲームオーバー音を再生
+        }
+
         StartCoroutine(LoadResultScene());
 
         Debug.Log("Game Over");
@@ -83,6 +90,13 @@ public class GameFinish : MonoBehaviour
         {
             AudioManager.Instance.PauseBGM(); // フォールバック
         }
+
+        if (gameClearSound != null)
+        {
+            Debug.Log("Playing game clear sound");
+            AudioManager.Instance.PlaySE(gameClearSound); // ゲームクリア音を再生
+        }
+
         StartCoroutine(LoadResultScene());
 
         Debug.Log("Game Clear");
@@ -91,8 +105,9 @@ public class GameFinish : MonoBehaviour
     private IEnumerator LoadResultScene()
     {
         yield return new WaitForSecondsRealtime(4f); // 4秒待機（リアルタイムで待機）
-        JudgementManager.Instance.OnJudgement -= GameManager.Instance.CostCount; // 判定結果のイベントからメソッドを解除
-        GameManager.Instance.isJudgementHandlerRegistered = false; // 判定結果のイベント登録フラグをリセット
+        GameManager.Instance.UnregisterJudgementHandler();
+        //GameManager.Instance.isGameOver = false; // ゲームオーバーフラグをリセット
+        //GameManager.Instance.isGameCleared = false; // ゲームクリアフラグをリセット
         gameOverText.gameObject.SetActive(false); // 結果表示を非表示にする
         Time.timeScale = 1f; // 時間を元に戻す
         SceneManager.LoadScene("ResultScene");

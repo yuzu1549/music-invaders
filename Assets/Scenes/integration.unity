@@ -3860,6 +3860,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameFinish
   gameOverText: {fileID: 427216800}
+  gameClearSound: {fileID: 8300000, guid: 67b3de2c02d84e546b5e7e560e1bffe4, type: 3}
+  gameOverSound: {fileID: 0}
 --- !u!4 &1827994863
 Transform:
   m_ObjectHideFlags: 0

@@ -64,6 +64,14 @@ public class IntegrationSceneUI : MonoBehaviour
         GameManager.Instance.OnScoreChanged += UpdateScoreTexts; // 判定結果のイベントにメソッドを登録
     }
 
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnScoreChanged -= UpdateScoreTexts;
+        }
+    }
+
     private void Update()
     {
         if (isGameOver)

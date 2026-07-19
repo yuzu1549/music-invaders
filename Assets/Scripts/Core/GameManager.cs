@@ -20,6 +20,7 @@ public class GameManager : MonoBehaviour
     public event Action<string> OnMusicPlayed; // 音楽再生を通知するイベント
 
     public bool isJudgementHandlerRegistered = false;
+    private JudgementManager registeredJudgementManager;
 
     private void Awake()
     {
@@ -40,6 +41,18 @@ public class GameManager : MonoBehaviour
         RegisterJudgementHandler();
     }
 
+    private void OnDestroy()
+    {
+        if (Instance != this)
+        {
+            return;
+        }
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        UnregisterJudgementHandler();
+        Instance = null;
+    }
+
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         if (scene.name == "Integration")
@@ -56,18 +69,46 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
     private void RegisterJudgementHandler()
     {
-        if (isJudgementHandlerRegistered)
+        JudgementManager currentJudgementManager = JudgementManager.Instance;
+
+        if (currentJudgementManager == null)
         {
+            currentJudgementManager = FindFirstObjectByType<JudgementManager>();
+        }
+
+        if (registeredJudgementManager == currentJudgementManager && currentJudgementManager != null)
+        {
+            isJudgementHandlerRegistered = true;
             return;
         }
 
-        if (JudgementManager.Instance != null)
+        UnregisterJudgementHandler();
+
+        if (currentJudgementManager != null)
         {
-            JudgementManager.Instance.OnJudgement += CostCount;
+            currentJudgementManager.OnJudgement -= CostCount;
+            currentJudgementManager.OnJudgement += CostCount;
+            registeredJudgementManager = currentJudgementManager;
             isJudgementHandlerRegistered = true;
         }
+    }
+
+    public void UnregisterJudgementHandler()
+    {
+        if (registeredJudgementManager != null)
+        {
+            registeredJudgementManager.OnJudgement -= CostCount;
+        }
+        else if (JudgementManager.Instance != null)
+        {
+            JudgementManager.Instance.OnJudgement -= CostCount;
+        }
+
+        registeredJudgementManager = null;
+        isJudgementHandlerRegistered = false;
     }
 
     /// <summary>
