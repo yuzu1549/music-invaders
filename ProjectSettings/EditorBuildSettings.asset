@@ -12,13 +12,13 @@ EditorBuildSettings:
     path: Assets/Scenes/Main/MusicSelectScene.unity
     guid: d3926edda3322754680520373f5414ca
   - enabled: 1
-    path: Assets/Scenes/Test/GameScene.unity
+    path: Assets/Scenes/GameScene.unity
     guid: 3a6c7d8e9f104b2c8d5e6f7a8b9c0d1e
   - enabled: 1
     path: Assets/Scenes/Prototype/invader.unity
     guid: 512d664319e72f34691031fe7a1faee7
   - enabled: 1
-    path: Assets/Scenes/Main/integration.unity
+    path: Assets/Scenes/Main/GameScene.unity
     guid: a14906d7e88e85f4ab67926ec5eab6ff
   - enabled: 1
     path: Assets/Scenes/Main/ResultScene.unity
