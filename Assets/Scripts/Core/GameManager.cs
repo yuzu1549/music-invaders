@@ -19,7 +19,7 @@ public class GameManager : MonoBehaviour
     public event Action<string> OnScoreChanged; // 判定結果を通知するイベント
     public event Action<string> OnMusicPlayed; // 音楽再生を通知するイベント
 
-    public bool isJudgementHandlerRegistered = false;
+    private JudgementManager registeredJudgementManager;
 
     private void Awake()
     {
@@ -56,18 +56,48 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private void RegisterJudgementHandler()
+    private void OnDestroy()
     {
-        if (isJudgementHandlerRegistered)
+        if (Instance != this)
         {
             return;
         }
 
-        if (JudgementManager.Instance != null)
+        UnregisterJudgementHandler();
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        Instance = null;
+    }
+
+    private void RegisterJudgementHandler()
+    {
+        JudgementManager currentJudgementManager = JudgementManager.Instance;
+
+        if (currentJudgementManager == null)
         {
-            JudgementManager.Instance.OnJudgement += CostCount;
-            isJudgementHandlerRegistered = true;
+            return;
         }
+
+        if (registeredJudgementManager == currentJudgementManager)
+        {
+            return;
+        }
+
+        UnregisterJudgementHandler();
+
+        currentJudgementManager.OnJudgement += CostCount;
+        registeredJudgementManager = currentJudgementManager;
+    }
+
+    private void UnregisterJudgementHandler()
+    {
+        if (registeredJudgementManager == null)
+        {
+            registeredJudgementManager = null;
+            return;
+        }
+
+        registeredJudgementManager.OnJudgement -= CostCount;
+        registeredJudgementManager = null;
     }
 
     /// <summary>
@@ -125,7 +155,7 @@ public class GameManager : MonoBehaviour
     /// <param name="judgement">判定結果</param>
     public void CostCount(string judgement)
     {
-        //Debug.Log($"判定結果: {judgement}");
+        Debug.Log($"判定結果: {judgement}");
         switch (judgement)
         {
             case "PERFECT":
