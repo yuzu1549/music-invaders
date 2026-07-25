@@ -85,7 +85,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2413806693520163455, guid: a86470a33a6bf42c4b3595704624658b, type: 3}
+  m_Sprite: {fileID: 1104778580331295467, guid: e00d304104fa4b54993d7acb014656a4, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -138,6 +138,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMove
   moveSpeed: 5
+  inputReader: {fileID: 0}
 --- !u!114 &7159400671233726800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -152,6 +153,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 3
   currentHealth: 0
+  invincibleTime: 1
+  blinkInterval: 0.1
+  damageSE: {fileID: 0}
+  isInvincible: 0
+  gameFinish: {fileID: 0}
 --- !u!1 &8408804552157388020
 GameObject:
   m_ObjectHideFlags: 0

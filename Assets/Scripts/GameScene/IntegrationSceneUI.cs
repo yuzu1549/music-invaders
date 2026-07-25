@@ -8,10 +8,10 @@ public class IntegrationSceneUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI artistText;
     [SerializeField] private TextMeshProUGUI difficultyText;
-    [SerializeField] private TextMeshProUGUI timeText;
-    [SerializeField] private TextMeshProUGUI optionTitleText;
-    [SerializeField] private TextMeshProUGUI notesSpeedText;
-    [SerializeField] private TextMeshProUGUI timingOffsetText;
+    //[SerializeField] private TextMeshProUGUI timeText;
+    //[SerializeField] private TextMeshProUGUI optionTitleText;
+    //[SerializeField] private TextMeshProUGUI notesSpeedText;
+    //[SerializeField] private TextMeshProUGUI timingOffsetText;
 
     [Header("Right UI Text")]
     [SerializeField] private TextMeshProUGUI lifeText;
@@ -95,9 +95,7 @@ public class IntegrationSceneUI : MonoBehaviour
 
     private void UpdateMusicTexts()
     {
-        string songTitle = "Unknown";
         string currentTimeText = FormatTime(currentTime);
-        string totalTimeText = "00:00";
 
         //if (musicClip != null)
         //{
@@ -107,48 +105,69 @@ public class IntegrationSceneUI : MonoBehaviour
 
         if (titleText != null)
         {
-            titleText.text = $"Title: {songTitle}";
-            titleText.fontSize = 24;
+            if (string.IsNullOrEmpty(GameManager.Instance.musicTitle))
+            {
+                titleText.text = "Title: Unknown";
+            }
+            else
+            {
+                titleText.text = $"Title: {GameManager.Instance.musicTitle}";
+            }
+            titleText.fontSize = 40;
         }
 
         if (artistText != null)
         {
-            artistText.text = $"Artist: {artistName}";
-            artistText.fontSize = 24;
+            if (string.IsNullOrEmpty(GameManager.Instance.artistName))
+            {
+                artistText.text = "Artist: Unknown";
+            }
+            else
+            {
+                artistText.text = $"Artist: {GameManager.Instance.artistName}";
+            }
+            artistText.fontSize = 40;
         }
 
         if (difficultyText != null)
         {
-            difficultyText.text = $"Difficulty: {difficulty}";
-            difficultyText.fontSize = 24;
+            if (string.IsNullOrEmpty(GameManager.Instance.difficulty))
+            {
+                difficultyText.text = "Difficulty: Unknown";
+            }
+            else
+            {
+                difficultyText.text = $"Difficulty: {GameManager.Instance.difficulty}";
+            }
+            difficultyText.fontSize = 40;
         }
 
-        if (timeText != null)
-        {
-            timeText.text = $"Time:\n{currentTimeText} / {totalTimeText}";
-            timeText.fontSize = 32;
-        }
+        //[if (timeText != null)
+        //{
+            //timeText.text = $"Time:\n{currentTimeText} / {totalTimeText}";
+            //timeText.fontSize = 32;
+        //}
     }
 
     private void UpdateOptionTexts()
     {
-        if (optionTitleText != null)
-        {
-            optionTitleText.text = "Option";
-            optionTitleText.fontSize = 28;
-        }
+        // if (optionTitleText != null)
+        // {
+        //     optionTitleText.text = "Option";
+        //     optionTitleText.fontSize = 28;
+        // }
 
-        if (notesSpeedText != null)
-        {
-            notesSpeedText.text = $"Notes Speed: {GameSettings.NoteSpeed:F1}";
-            notesSpeedText.fontSize = 24;
-        }
+        // if (notesSpeedText != null)
+        // {
+        //     notesSpeedText.text = $"Notes Speed: {GameSettings.NoteSpeed:F1}";
+        //     notesSpeedText.fontSize = 24;
+        // }
 
-        if (timingOffsetText != null)
-        {
-            timingOffsetText.text = $"Timing Offset: {GameSettings.TimingOffsetMs} ms";
-            timingOffsetText.fontSize = 24;
-        }
+        // if (timingOffsetText != null)
+        // {
+        //     timingOffsetText.text = $"Timing Offset: {GameSettings.TimingOffsetMs} ms";
+        //     timingOffsetText.fontSize = 24;
+        // }
     }
 
     private void UpdateScoreTexts(string judgement)
