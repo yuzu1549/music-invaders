@@ -18,6 +18,7 @@ public class SongData
 {
 	public string songName;       // 例："test1"
 	public AudioClip bgm;         // 音源ファイル
+	public float bpm = 120.0f;
 	public List<ChartData> charts; // この曲の各難易度の譜面リスト
 
 }
