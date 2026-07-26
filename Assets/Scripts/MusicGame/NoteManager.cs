@@ -48,7 +48,7 @@ public class NoteManager : MonoBehaviour
 
 	void Start()
 	{
-		// 🔥【追加】前のシーンから曲データと難易度が渡されていればセットアップする
+		// 前のシーンから曲データと難易度が渡されていればセットアップする
 		SetupFromArgs();
 		ApplySettings();
 
@@ -113,9 +113,9 @@ public class NoteManager : MonoBehaviour
 		return 5.0f / noteSpeed;
 	}
 
-	// 🔥【追加】シーン間のデータ引き継ぎ処理
-	// 🔥修正：Resourcesではなく、SongDatabaseから検索してロードする
-	// 🔥修正：曲ごとではなく「譜面（難易度）ごと」のオフセットを取得して適用する
+	// シーン間のデータ引き継ぎ処理
+	// Resourcesではなく、SongDatabaseから検索してロードする
+	// 曲ごとではなく「譜面（難易度）ごと」のオフセットを取得して適用する
 	void SetupFromArgs()
 	{
 		string targetSongName = GameSceneArgs.SelectedMusic;
@@ -140,7 +140,11 @@ public class NoteManager : MonoBehaviour
 		{
 			// 曲をセット
 			audioSource.clip = foundSong.bgm;
-			Debug.Log($"🎵 BGMをセットしました: {targetSongName}");
+
+			// 🔥【追加】データベースのBPMで、NoteManagerのBPMを上書きする！
+			bpm = foundSong.bpm;
+
+			Debug.Log($"🎵 BGMをセットしました: {targetSongName} (BPM: {bpm})");
 
 			// 2. その曲の中から、難易度が一致する譜面を検索
 			ChartData foundChart = foundSong.charts.Find(c => c.difficultyName == targetDifficulty);
@@ -151,7 +155,7 @@ public class NoteManager : MonoBehaviour
 				chartText = foundChart.chartFile;
 				Debug.Log($"✨ 譜面をセットしました: {targetSongName} - {targetDifficulty}");
 
-				// 🔥【変更】見つかった「譜面」固有のデフォルトオフセットを、設定用の全体オフセットに加算する
+				// 見つかった「譜面」固有のデフォルトオフセットを、設定用の全体オフセットに加算する
 				chartOffset += foundChart.defaultOffset;
 				Debug.Log($"🔧 譜面固有({targetDifficulty})のオフセットを適用しました: {foundChart.defaultOffset:F3}秒 (合計オフセット: {chartOffset:F3}秒)");
 			}
