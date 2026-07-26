@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -42,6 +43,8 @@ public class OptionsOverlayController : MonoBehaviour
 
     private bool isInitializing; // Slider 初期化中かどうか
 
+    public event Action RhythmSettingsChanged;
+
     private void Start()
     {
         isInitializing = true;
@@ -85,6 +88,7 @@ public class OptionsOverlayController : MonoBehaviour
         noteSpeedSlider.SetValueWithoutNotify(GameSettings.NoteSpeed);
         RefreshTexts();
         GameSettings.Save();
+        RhythmSettingsChanged?.Invoke();
     }
 
     /// <summary>
@@ -134,6 +138,7 @@ public class OptionsOverlayController : MonoBehaviour
         timingOffsetSlider.SetValueWithoutNotify(GameSettings.TimingOffsetMs);
         RefreshTexts();
         GameSettings.Save();
+        RhythmSettingsChanged?.Invoke();
     }
 
     /// <summary>

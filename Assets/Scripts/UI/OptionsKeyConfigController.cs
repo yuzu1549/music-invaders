@@ -49,6 +49,8 @@ public class OptionsKeyConfigController : MonoBehaviour
 
     private KeyConfigTarget selectedTarget = KeyConfigTarget.None;
 
+    public bool WasCancelInputConsumedThisFrame { get; private set; }
+
     private void Start()
     {
         RefreshKeyTexts();
@@ -57,6 +59,8 @@ public class OptionsKeyConfigController : MonoBehaviour
 
     private void Update()
     {
+        WasCancelInputConsumedThisFrame = false;
+
         if (selectedTarget == KeyConfigTarget.None || Keyboard.current == null)
         {
             return;
@@ -64,6 +68,7 @@ public class OptionsKeyConfigController : MonoBehaviour
 
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
+            WasCancelInputConsumedThisFrame = true;
             ClearSelection();
             return;
         }
@@ -101,6 +106,14 @@ public class OptionsKeyConfigController : MonoBehaviour
     public void SelectInvaderRight()
     {
         SelectTarget(KeyConfigTarget.InvaderRight);
+    }
+
+    /// <summary>
+    /// キー割り当ての入力待ち状態を解除する。
+    /// </summary>
+    public void CancelKeySelection()
+    {
+        ClearSelection();
     }
 
     /// <summary>
