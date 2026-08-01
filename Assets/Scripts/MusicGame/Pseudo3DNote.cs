@@ -4,7 +4,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 {
 	[Header("判定調整")]
 	[Tooltip("0にすると見た目の判定ラインとパーフェクトが完全に一致します！")]
-	public float judgeOffset = 0.0f; 
+	public float judgeOffset = 0.0f;
 
 	[Header("レーン設定")]
 	public int lane = 0;
@@ -46,7 +46,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 		Init(targetLane, calculatedDuration, endY, 0f);
 	}
 
-	public void Init(int targetLane, float calculatedDuration, float targetY)
+	public void Init(int targetLane, float calculatedDuration, float judgementLineY)
 	{
 		Init(targetLane, calculatedDuration, judgementLineY, 0f);
 	}
