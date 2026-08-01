@@ -36,10 +36,36 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	private Vector3 startPos;
 	private Vector3 endPos;
 	private ObjectPool _pool;
+	private SpriteRenderer spriteRenderer;
+
+	private void Awake()
+	{
+		spriteRenderer = GetComponent<SpriteRenderer>();
+		if (spriteRenderer == null)
+		{
+			spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		}
+	}
 
 	public void SetPool(ObjectPool pool) => _pool = pool;
 	public void OnSpawn() { timer = 0f; gameObject.SetActive(true); }
 	public void OnDespawn() { gameObject.SetActive(false); }
+
+	/// <summary>
+	/// ノーツをSpriteMaskの内側だけ表示するか設定する。
+	/// </summary>
+	/// <param name="isEnabled">SpriteMaskを使用する場合はtrue</param>
+	public void SetVisibilityMaskEnabled(bool isEnabled)
+	{
+		if (spriteRenderer == null)
+		{
+			return;
+		}
+
+		spriteRenderer.maskInteraction = isEnabled
+			? SpriteMaskInteraction.VisibleInsideMask
+			: SpriteMaskInteraction.None;
+	}
 
 	public void Init(int targetLane, float calculatedDuration)
 	{
@@ -59,27 +85,20 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	{
 		this.lane = targetLane;
 
-		// 🔥修正：インスペクターの割り当てミスを防ぐため、自分自身の画像を自動で取得する
-		SpriteRenderer sr = GetComponent<SpriteRenderer>();
-		if (sr == null)
-		{
-			sr = GetComponentInChildren<SpriteRenderer>();
-		}
-
 		// レーンによって色を切り替える
-		if (sr != null)
+		if (spriteRenderer != null)
 		{
 			if (this.lane < 0) // レーンが -1 などの場合
 			{
-				sr.color = leftColor; // 左なら緑
+				spriteRenderer.color = leftColor;
 			}
 			else if (this.lane > 0) // レーンが 1 などの場合
 			{
-				sr.color = rightColor; // 右なら青
+				spriteRenderer.color = rightColor;
 			}
 			else
 			{
-				sr.color = Color.white; // レーンが 0（真ん中）の場合は白にする
+				spriteRenderer.color = Color.white;
 			}
 		}
 
