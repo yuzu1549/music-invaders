@@ -12,6 +12,9 @@ public class NoteManager : MonoBehaviour
 	[Header("表示上の判定線")]
 	public Transform judgementLineTransform;
 
+	[Header("ノーツをSpriteMaskの内側だけ表示するか")]
+	[SerializeField] private bool useNoteVisibilityMask = false;
+
 	[Header("設定")]
 	public float bpm = 158.0f;
 	public float baseDuration = 2.0f;
@@ -318,6 +321,9 @@ public class NoteManager : MonoBehaviour
 			Pseudo3DNote noteScript = obj.GetComponent<Pseudo3DNote>();
 			if (noteScript != null)
 			{
+				noteScript.SetVisibilityMaskEnabled(
+					useNoteVisibilityMask);
+
 				float judgementLineY = GetJudgementLineLocalY(obj.transform, noteScript.endY);
 				noteScript.Init(
 					lane,
