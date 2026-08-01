@@ -109,6 +109,26 @@ public class AudioManager : MonoBehaviour
     }
 
     /// <summary>
+    /// BGM の再生と予約再生を停止する。
+    /// </summary>
+    public void StopBGM()
+    {
+        if (bgmSource == null) return;
+
+        bgmSource.Stop();
+    }
+
+    /// <summary>
+    /// 再生中の SE をすべて停止する。
+    /// </summary>
+    public void StopSE()
+    {
+        if (seSource == null) return;
+
+        seSource.Stop();
+    }
+
+    /// <summary>
     /// BGM を一時停止する。
     /// </summary>
     public void PauseBGM()

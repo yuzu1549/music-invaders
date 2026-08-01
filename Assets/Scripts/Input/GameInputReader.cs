@@ -6,13 +6,18 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class GameInputReader : MonoBehaviour
 {
+    private const string UiMapName = "UI";
+    private const string PauseActionName = "Pause";
+
     [Header("ゲーム操作を定義した Input Actions")]
     [SerializeField] private InputActionAsset inputActions;
 
     private InputActionMap gameplayMap;
+    private InputActionMap uiMap;
     private InputAction rhythmLeftAction;
     private InputAction rhythmRightAction;
     private InputAction invaderMoveAction;
+    private InputAction pauseAction;
 
     private void Awake()
     {
@@ -22,11 +27,13 @@ public class GameInputReader : MonoBehaviour
     private void OnEnable()
     {
         gameplayMap?.Enable();
+        uiMap?.Enable();
     }
 
     private void OnDisable()
     {
         gameplayMap?.Disable();
+        uiMap?.Disable();
     }
 
     /// <summary>
@@ -59,6 +66,36 @@ public class GameInputReader : MonoBehaviour
         }
 
         return invaderMoveAction.ReadValue<float>();
+    }
+
+    /// <summary>
+    /// ポーズ入力が押された瞬間かどうかを返す。
+    /// </summary>
+    /// <returns>ポーズ入力が押された瞬間なら true</returns>
+    public bool WasPausePressed()
+    {
+        return pauseAction != null && pauseAction.WasPressedThisFrame();
+    }
+
+    /// <summary>
+    /// リズム入力とインベーダー移動入力の有効状態を切り替える。
+    /// </summary>
+    /// <param name="isEnabled">ゲームプレイ入力を有効にする場合は true</param>
+    public void SetGameplayInputEnabled(bool isEnabled)
+    {
+        if (gameplayMap == null)
+        {
+            return;
+        }
+
+        if (isEnabled)
+        {
+            gameplayMap.Enable();
+        }
+        else
+        {
+            gameplayMap.Disable();
+        }
     }
 
     /// <summary>
@@ -96,6 +133,16 @@ public class GameInputReader : MonoBehaviour
         WarnIfActionIsMissing(
             invaderMoveAction,
             GameInputBindingSettings.InvaderMoveActionName);
+
+        uiMap = inputActions.FindActionMap(UiMapName);
+        if (uiMap == null)
+        {
+            Debug.LogWarning($"{UiMapName} Action Map が見つかりません。");
+            return;
+        }
+
+        pauseAction = uiMap.FindAction(PauseActionName);
+        WarnIfActionIsMissing(pauseAction, PauseActionName);
     }
 
     /// <summary>

@@ -36,6 +36,10 @@ public class NoteManager : MonoBehaviour
 	private bool isMusicScheduled = false;
 	private float timingOffsetSeconds = 0f;
 	private bool hasMusicStarted = false;
+	private bool isPaused = false;
+	private bool wasMusicPlayingBeforePause = false;
+	private double pauseStartedDspTime;
+	private float pausedAudioTime;
 
 	// 途中から始めた分の時間を記憶する変数
 	private float debugStartTimeOffset = 0f;
@@ -102,6 +106,52 @@ public class NoteManager : MonoBehaviour
 	{
 		noteSpeed = GameSettings.NoteSpeed;
 		timingOffsetSeconds = GameSettings.TimingOffsetMs / 1000f;
+	}
+
+	/// <summary>
+	/// ポーズ中に変更されたリズム設定を未判定ノーツへ反映する。
+	/// </summary>
+	public void ApplySettingsForResume()
+	{
+		float previousTimingOffsetSeconds = timingOffsetSeconds;
+		ApplySettings();
+
+		float noteVisibleDuration = GetNoteVisibleDurationSeconds();
+		float timingOffsetDeltaSeconds =
+			timingOffsetSeconds - previousTimingOffsetSeconds;
+		bool shouldResolveMisses = hasMusicStarted;
+
+		ApplySettingsToActiveNotes(
+			noteVisibleDuration,
+			timingOffsetDeltaSeconds,
+			shouldResolveMisses);
+		SpawnOrMissPendingNotes(
+			noteVisibleDuration,
+			shouldResolveMisses);
+	}
+
+	/// <summary>
+	/// ポーズ中の設定変更を画面上のノーツへ即座に反映する。
+	/// </summary>
+	public void PreviewSettingsWhilePaused()
+	{
+		if (!isPaused)
+		{
+			return;
+		}
+
+		float previousTimingOffsetSeconds = timingOffsetSeconds;
+		ApplySettings();
+
+		float noteVisibleDuration = GetNoteVisibleDurationSeconds();
+		float timingOffsetDeltaSeconds =
+			timingOffsetSeconds - previousTimingOffsetSeconds;
+
+		ApplySettingsToActiveNotes(
+			noteVisibleDuration,
+			timingOffsetDeltaSeconds,
+			false);
+		SpawnOrMissPendingNotes(noteVisibleDuration, false);
 	}
 
 	/// <summary>
@@ -194,7 +244,7 @@ public class NoteManager : MonoBehaviour
 
 	void Update()
 	{
-		if (audioSource == null || !isMusicScheduled) return;
+		if (audioSource == null || !isMusicScheduled || isPaused) return;
 
 		double currentDspTime = AudioSettings.dspTime - dspStartTime;
 		float currentMusicTime;
@@ -215,14 +265,14 @@ public class NoteManager : MonoBehaviour
 			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 		}
 
-if (hasMusicStarted && !audioSource.isPlaying)
-{
-    // 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
-    OnMusicEnded();
-    return;
-}
+		if (hasMusicStarted && !audioSource.isPlaying)
+		{
+			// 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
+			OnMusicEnded();
+			return;
+		}
 
-float actualDuration = GetNoteVisibleDurationSeconds();
+		float actualDuration = GetNoteVisibleDurationSeconds();
 		float secondsPerBeat = 60.0f / bpm;
 
 		for (int i = 0; i < notes.Count; i++)
@@ -257,6 +307,11 @@ float actualDuration = GetNoteVisibleDurationSeconds();
 
 	void SpawnNote(int lane, float actualDuration)
 	{
+		SpawnNote(lane, actualDuration, 0f);
+	}
+
+	void SpawnNote(int lane, float actualDuration, float elapsedTime)
+	{
 		GameObject obj = pool.Get();
 		if (obj != null)
 		{
@@ -264,9 +319,109 @@ float actualDuration = GetNoteVisibleDurationSeconds();
 			if (noteScript != null)
 			{
 				float judgementLineY = GetJudgementLineLocalY(obj.transform, noteScript.endY);
-				noteScript.Init(lane, actualDuration, judgementLineY);
+				noteScript.Init(
+					lane,
+					actualDuration,
+					judgementLineY,
+					elapsedTime);
 			}
 		}
+	}
+
+	/// <summary>
+	/// 画面上に存在する未判定ノーツへ変更後の設定を反映する。
+	/// </summary>
+	private void ApplySettingsToActiveNotes(
+		float noteVisibleDuration,
+		float timingOffsetDeltaSeconds,
+		bool shouldResolveMisses)
+	{
+		if (pool == null || pool.container == null)
+		{
+			return;
+		}
+
+		Pseudo3DNote[] activeNotes =
+			pool.container.GetComponentsInChildren<Pseudo3DNote>(false);
+
+		foreach (Pseudo3DNote activeNote in activeNotes)
+		{
+			float judgementLineY = GetJudgementLineLocalY(
+				activeNote.transform,
+				activeNote.endY);
+
+			activeNote.ApplyPlaybackSettings(
+				noteVisibleDuration,
+				timingOffsetDeltaSeconds,
+				judgementLineY,
+				shouldResolveMisses);
+		}
+	}
+
+	/// <summary>
+	/// 設定変更後の時刻を基準に、未生成ノーツの生成または MISS を行う。
+	/// </summary>
+	/// <param name="noteVisibleDuration">変更後のノーツ表示時間</param>
+	/// <param name="shouldResolveMisses">
+	/// 強制 MISS 時刻を過ぎたノーツを確定する場合は true
+	/// </param>
+	private void SpawnOrMissPendingNotes(
+		float noteVisibleDuration,
+		bool shouldResolveMisses)
+	{
+		float currentMusicTime = GetCurrentMusicTime();
+		float secondsPerBeat = 60.0f / bpm;
+		float missWindow = (JudgementManager.Instance != null)
+			? JudgementManager.Instance.missWindow
+			: 0.1666f;
+
+		for (int i = 0; i < notes.Count; i++)
+		{
+			float targetTime = GetTargetTime(notes[i].beat, secondsPerBeat);
+			float timeDiff = currentMusicTime - targetTime;
+
+			if (shouldResolveMisses && missWindow < timeDiff)
+			{
+				JudgementManager.Instance?.DisplayMiss();
+				notes.RemoveAt(i);
+				i--;
+				continue;
+			}
+
+			if (-noteVisibleDuration <= timeDiff)
+			{
+				float elapsedTime = noteVisibleDuration + timeDiff;
+
+				SpawnNote(notes[i].lane, noteVisibleDuration, elapsedTime);
+				notes.RemoveAt(i);
+				i--;
+			}
+		}
+	}
+
+	/// <summary>
+	/// ポーズ状態を考慮した現在の楽曲時間を返す。
+	/// </summary>
+	/// <returns>現在の楽曲時間（秒）</returns>
+	private float GetCurrentMusicTime()
+	{
+		if (audioSource == null)
+		{
+			return 0f;
+		}
+
+		double referenceDspTime = isPaused
+			? pauseStartedDspTime
+			: AudioSettings.dspTime;
+		double currentDspTime = referenceDspTime - dspStartTime;
+
+		if (delayTime <= currentDspTime)
+		{
+			return audioSource.time;
+		}
+
+		return (float)(currentDspTime - delayTime)
+			+ debugStartTimeOffset;
 	}
 
 	/// <summary>
@@ -308,27 +463,71 @@ float actualDuration = GetNoteVisibleDurationSeconds();
 	public void StopMusic()
 	{
 		if (audioSource == null) return;
+
 		// 再生予約・再生を停止し、フラグをリセット
 		audioSource.Stop();
 		isMusicScheduled = false;
+		isPaused = false;
+		wasMusicPlayingBeforePause = false;
 	}
 
 	/// <summary>
-	/// 音楽を一時停止します（必要なら）。
+	/// 音楽と楽曲時間の進行を一時停止する。
 	/// </summary>
 	public void PauseMusic()
 	{
-		if (audioSource == null) return;
-		audioSource.Pause();
+		if (audioSource == null || isPaused) return;
+
+		isPaused = true;
+		pauseStartedDspTime = AudioSettings.dspTime;
+		double elapsedDspTime = pauseStartedDspTime - dspStartTime;
+		bool hasReachedScheduledStart = delayTime <= elapsedDspTime;
+		wasMusicPlayingBeforePause =
+			hasReachedScheduledStart && audioSource.isPlaying;
+		pausedAudioTime = wasMusicPlayingBeforePause
+			? audioSource.time
+			: 0f;
+
+		if (wasMusicPlayingBeforePause)
+		{
+			hasMusicStarted = true;
+		}
+
+		if (wasMusicPlayingBeforePause)
+		{
+			audioSource.Pause();
+			return;
+		}
+
+		// 開始待機中の予約再生は、再開時に残り待機時間を保って組み直す。
+		if (isMusicScheduled)
+		{
+			audioSource.Stop();
+		}
 	}
 
 	/// <summary>
-	/// 一時停止を解除します（必要なら）。
+	/// 音楽と楽曲時間の進行を再開する。
 	/// </summary>
 	public void UnpauseMusic()
 	{
-		if (audioSource == null) return;
-		audioSource.UnPause();
-		isMusicScheduled = audioSource.clip != null;
+		if (audioSource == null || !isPaused) return;
+
+		double resumeDspTime = AudioSettings.dspTime;
+		double pauseDuration = resumeDspTime - pauseStartedDspTime;
+		dspStartTime += pauseDuration;
+
+		if (wasMusicPlayingBeforePause)
+		{
+			audioSource.UnPause();
+		}
+		else if (isMusicScheduled && audioSource.clip != null)
+		{
+			audioSource.time = Mathf.Min(pausedAudioTime, audioSource.clip.length);
+			audioSource.PlayScheduled(dspStartTime + delayTime);
+		}
+
+		isPaused = false;
+		wasMusicPlayingBeforePause = false;
 	}
 }

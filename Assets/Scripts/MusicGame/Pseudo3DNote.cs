@@ -43,19 +43,21 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 	public void Init(int targetLane, float calculatedDuration)
 	{
-		Init(targetLane, calculatedDuration, endY);
+		Init(targetLane, calculatedDuration, endY, 0f);
 	}
 
 	public void Init(int targetLane, float calculatedDuration, float targetY)
 	{
+		Init(targetLane, calculatedDuration, judgementLineY, 0f);
+	}
+
+	public void Init(
+		int targetLane,
+		float calculatedDuration,
+		float judgementLineY,
+		float elapsedTime)
+	{
 		this.lane = targetLane;
-
-		// 1. 判定ラインに到達するまでの時間
-		this.judgementDuration = calculatedDuration;
-
-		// 2. 判定ラインの位置（targetY）から逆算した、全体の移動時間
-		float timeRatio = GetNormalizedTimeAtY(targetY);
-		this.movementDuration = calculatedDuration / timeRatio;
 
 		// 🔥修正：インスペクターの割り当てミスを防ぐため、自分自身の画像を自動で取得する
 		SpriteRenderer sr = GetComponent<SpriteRenderer>();
@@ -85,8 +87,41 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 		startPos = new Vector3(startSpread * direction, startY, 0);
 		endPos = new Vector3(endSpread * direction, endY, 0);
 
-		transform.localPosition = startPos;
-		transform.localScale = new Vector3(startScaleX, startScaleY, 1f);
+		SetDurations(calculatedDuration, judgementLineY);
+		timer = elapsedTime;
+
+		UpdateVisual();
+	}
+
+	/// <summary>
+	/// 再開時のノーツ速度とタイミング調整を未判定ノーツへ反映する。
+	/// </summary>
+	/// <param name="calculatedDuration">変更後のノーツ表示時間</param>
+	/// <param name="timingOffsetDeltaSeconds">
+	/// 変更前後のタイミング調整値の差（秒）
+	/// </param>
+	/// <param name="judgementLineY">判定線のローカル Y 座標</param>
+	/// <param name="shouldResolveMiss">
+	/// 強制 MISS 時刻を過ぎたノーツを確定する場合は true
+	/// </param>
+	public void ApplyPlaybackSettings(
+		float calculatedDuration,
+		float timingOffsetDeltaSeconds,
+		float judgementLineY,
+		bool shouldResolveMiss)
+	{
+		float adjustedTimeDiff = GetTimeDiff() + timingOffsetDeltaSeconds;
+
+		SetDurations(calculatedDuration, judgementLineY);
+		timer = judgementDuration + adjustedTimeDiff;
+
+		if (shouldResolveMiss && GetMissWindow() < adjustedTimeDiff)
+		{
+			MissAndDespawn();
+			return;
+		}
+
+		UpdateVisual();
 	}
 
 	public void HitAndDespawn()
@@ -104,29 +139,14 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 		timer += Time.deltaTime;
 
-		float t = timer / movementDuration;
-		float missWindow = (JudgementManager.Instance != null) ? JudgementManager.Instance.missWindow : 0.1666f;
-
 		// 判定ラインを過ぎて、MISSの猶予時間が過ぎるまで生き残る
-		if (timer <= judgementDuration + missWindow)
+		if (timer <= judgementDuration + GetMissWindow())
 		{
-			float moveT = GetMoveProgress(t);
-
-			transform.localPosition = Vector3.LerpUnclamped(startPos, endPos, moveT);
-
-			float clampedT = Mathf.Clamp01(moveT);
-			float currentScaleX_val = Mathf.Lerp(startScaleX, endScaleX, clampedT);
-			float currentScaleY_val = Mathf.Lerp(startScaleY, endScaleY, clampedT);
-			transform.localScale = new Vector3(currentScaleX_val, currentScaleY_val, 1f);
+			UpdateVisual();
 		}
 		else
 		{
-			Debug.Log("MISS... (見逃し)");
-			if (JudgementManager.Instance != null)
-			{
-				JudgementManager.Instance.DisplayMiss();
-			}
-			HitAndDespawn();
+			MissAndDespawn();
 		}
 	}
 
@@ -134,6 +154,65 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	{
 		// 純粋な時間差だけをマネージャーに返す
 		return timer - judgementDuration;
+	}
+
+	/// <summary>
+	/// 表示時間と判定線から、判定時刻と移動時間を設定する。
+	/// </summary>
+	private void SetDurations(float calculatedDuration, float judgementLineY)
+	{
+		judgementDuration = calculatedDuration;
+
+		float judgementNormalizedTime = GetNormalizedTimeAtY(judgementLineY);
+		movementDuration = judgementDuration / judgementNormalizedTime;
+	}
+
+	/// <summary>
+	/// 現在の経過時間に対応する位置と大きさを反映する。
+	/// </summary>
+	private void UpdateVisual()
+	{
+		if (movementDuration <= 0f)
+		{
+			return;
+		}
+
+		float moveT = GetMoveProgress(timer / movementDuration);
+		transform.localPosition = Vector3.LerpUnclamped(startPos, endPos, moveT);
+
+		float clampedMoveT = Mathf.Clamp01(moveT);
+		float currentScaleX =
+			Mathf.Lerp(startScaleX, endScaleX, clampedMoveT);
+		float currentScaleY =
+			Mathf.Lerp(startScaleY, endScaleY, clampedMoveT);
+		transform.localScale =
+			new Vector3(currentScaleX, currentScaleY, 1f);
+	}
+
+	/// <summary>
+	/// 現在設定されている強制 MISS までの猶予時間を返す。
+	/// </summary>
+	/// <returns>強制 MISS までの猶予時間（秒）</returns>
+	private float GetMissWindow()
+	{
+		return (JudgementManager.Instance != null)
+			? JudgementManager.Instance.missWindow
+			: 0.1666f;
+	}
+
+	/// <summary>
+	/// 見逃しを記録してノーツをプールへ戻す。
+	/// </summary>
+	private void MissAndDespawn()
+	{
+		Debug.Log("MISS... (見逃し)");
+
+		if (JudgementManager.Instance != null)
+		{
+			JudgementManager.Instance.DisplayMiss();
+		}
+
+		HitAndDespawn();
 	}
 
 	/// <summary>
