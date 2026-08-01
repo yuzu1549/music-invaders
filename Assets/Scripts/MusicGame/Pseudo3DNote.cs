@@ -4,7 +4,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 {
 	[Header("判定調整")]
 	[Tooltip("0にすると見た目の判定ラインとパーフェクトが完全に一致します！")]
-	public float judgeOffset = 0.0f; // 🔥デフォルトを0に修正しました
+	public float judgeOffset = 0.0f; 
 
 	[Header("レーン設定")]
 	public int lane = 0;
@@ -13,6 +13,10 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	[Header("見た目の速度調整（0=2D的, 1=3D的）")]
 	[Range(0f, 1f)]
 	public float perspectiveBlend = 0.5f;
+
+	[Header("見た目の設定（色分け）")]
+	private Color leftColor = Color.white; // 左レーンの色
+	private Color rightColor = Color.black; // 右レーンの色
 
 	[Header("座標設定（下から真ん中の場合）")]
 	public float startY = -5f;
@@ -42,7 +46,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 		Init(targetLane, calculatedDuration, endY, 0f);
 	}
 
-	public void Init(int targetLane, float calculatedDuration, float judgementLineY)
+	public void Init(int targetLane, float calculatedDuration, float targetY)
 	{
 		Init(targetLane, calculatedDuration, judgementLineY, 0f);
 	}
@@ -54,6 +58,30 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 		float elapsedTime)
 	{
 		this.lane = targetLane;
+
+		// 🔥修正：インスペクターの割り当てミスを防ぐため、自分自身の画像を自動で取得する
+		SpriteRenderer sr = GetComponent<SpriteRenderer>();
+		if (sr == null)
+		{
+			sr = GetComponentInChildren<SpriteRenderer>();
+		}
+
+		// レーンによって色を切り替える
+		if (sr != null)
+		{
+			if (this.lane < 0) // レーンが -1 などの場合
+			{
+				sr.color = leftColor; // 左なら緑
+			}
+			else if (this.lane > 0) // レーンが 1 などの場合
+			{
+				sr.color = rightColor; // 右なら青
+			}
+			else
+			{
+				sr.color = Color.white; // レーンが 0（真ん中）の場合は白にする
+			}
+		}
 
 		float direction = (float)this.lane;
 		startPos = new Vector3(startSpread * direction, startY, 0);

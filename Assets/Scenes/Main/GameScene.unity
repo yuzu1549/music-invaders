@@ -3160,9 +3160,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: 90e3c0256bc460a4a94bffe8460ab405, type: 3}
-  bpm: 158
-  outputFileName: test.txt
+  osuTextFile: {fileID: 4900000, guid: d63cbcd55a5bd7643beab36d7435b579, type: 3}
+  bpm: 132
+  outputFileName: MereFancy_Easy.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
@@ -7898,8 +7898,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6939410eb7e32d3498113ac924e4cd8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestDataInjector
-  testSongName: ShiningStar
-  testDifficulty: Normal
+  testSongName: MereFancy
+  testDifficulty: Easy
 --- !u!4 &957203738
 Transform:
   m_ObjectHideFlags: 0
@@ -8598,10 +8598,21 @@ MonoBehaviour:
   songs:
   - songName: ShiningStar
     bgm: {fileID: 8300000, guid: fa9a85d9a140a4640a0c6e5d338d56ec, type: 3}
+    bpm: 158
     charts:
     - difficultyName: Normal
       chartFile: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
       defaultOffset: 0.5
+    - difficultyName: Hard
+      chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
+      defaultOffset: 0.1
+  - songName: MereFancy
+    bgm: {fileID: 8300000, guid: 58a1838a0a8f8474ebda25ee20c570f4, type: 3}
+    bpm: 132
+    charts:
+    - difficultyName: Easy
+      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
+      defaultOffset: 0
     - difficultyName: Hard
       chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
       defaultOffset: 0.1
@@ -19154,6 +19165,30 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: leftColor.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: leftColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: leftColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: rightColor.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: rightColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: spriteRenderer
+      value: 
+      objectReference: {fileID: 5652432877266010268, guid: e90437101e7ebbe4c9dc1b61055e99f2, type: 3}
+    - target: {fileID: 5932979599672166230, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: hitTimingOffset
       value: 0.5
       objectReference: {fileID: 0}
@@ -19210,6 +19245,10 @@ PrefabInstance:
       value: 0.33333334
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: bpm
+      value: 132
+      objectReference: {fileID: 0}
+    - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartText
       value: 
       objectReference: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
@@ -19223,7 +19262,7 @@ PrefabInstance:
       objectReference: {fileID: 573744520}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: chartOffset
-      value: 0.5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: isDebugMode
