@@ -8595,7 +8595,7 @@ MonoBehaviour:
       defaultOffset: 0.1
   - songName: MereFancy
     bgm: {fileID: 8300000, guid: 58a1838a0a8f8474ebda25ee20c570f4, type: 3}
-    bpm: 120
+    bpm: 132
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
@@ -11663,6 +11663,7 @@ GameObject:
   - component: {fileID: 1345244422}
   - component: {fileID: 1345244424}
   - component: {fileID: 1345244423}
+  - component: {fileID: 1345244425}
   m_Layer: 5
   m_Name: JudgementText
   m_TagString: Untagged
@@ -11789,6 +11790,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1345244421}
   m_CullTransparentMesh: 1
+--- !u!114 &1345244425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1345244421}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12d2c66f941f08f4dacdd916dc555599, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::UIFollowTarget
+  target: {fileID: 734541124}
+  screenOffset: {x: 0, y: -50, z: 0}
 --- !u!1 &1349880000
 GameObject:
   m_ObjectHideFlags: 0
@@ -19590,6 +19605,10 @@ PrefabInstance:
     - target: {fileID: 7657337028167500128, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_Name
       value: NotesContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 7867862906365571113, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9089392859176674323, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: m_Name

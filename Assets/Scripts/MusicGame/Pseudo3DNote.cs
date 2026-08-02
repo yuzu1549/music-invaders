@@ -16,7 +16,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 	[Header("見た目の設定（色分け）")]
 	private Color leftColor = Color.white; // 左レーンの色
-	private Color rightColor = Color.black; // 右レーンの色
+	private Color rightColor = Color.gray; // 右レーンの色
 
 	[Header("座標設定（下から真ん中の場合）")]
 	public float startY = -5f;
