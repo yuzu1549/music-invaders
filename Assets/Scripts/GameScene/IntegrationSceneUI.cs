@@ -8,6 +8,8 @@ public class IntegrationSceneUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI titleText;
     [SerializeField] private TextMeshProUGUI artistText;
     [SerializeField] private TextMeshProUGUI difficultyText;
+    [SerializeField] private TextMeshProUGUI highScoreText;
+    [SerializeField] private TextMeshProUGUI rankText;
     //[SerializeField] private TextMeshProUGUI timeText;
     //[SerializeField] private TextMeshProUGUI optionTitleText;
     //[SerializeField] private TextMeshProUGUI notesSpeedText;
@@ -28,10 +30,6 @@ public class IntegrationSceneUI : MonoBehaviour
 
     [Header("Audio Source")]
     [SerializeField] private AudioSource musicAudioSource;
-
-    [Header("Music Info")]
-    [SerializeField] private string artistName = "Unknown";
-    [SerializeField] private string difficulty = "Unknown";
 
     [Header("Test Timer")]
     [SerializeField] private bool startTimerOnAwake = true;
@@ -95,7 +93,7 @@ public class IntegrationSceneUI : MonoBehaviour
 
     private void UpdateMusicTexts()
     {
-        string currentTimeText = FormatTime(currentTime);
+        //string currentTimeText = FormatTime(currentTime);
 
         //if (musicClip != null)
         //{
@@ -120,12 +118,13 @@ public class IntegrationSceneUI : MonoBehaviour
         {
             if (string.IsNullOrEmpty(GameManager.Instance.artistName))
             {
-                artistText.text = "Artist: Unknown";
+                artistText.text = "Artist\nUnknown";
             }
             else
             {
-                artistText.text = $"Artist: {GameManager.Instance.artistName}";
+                artistText.text = $"Artist\n{GameManager.Instance.artistName}";
             }
+
             artistText.fontSize = 40;
         }
 
@@ -140,6 +139,19 @@ public class IntegrationSceneUI : MonoBehaviour
                 difficultyText.text = $"Difficulty: {GameManager.Instance.difficulty}";
             }
             difficultyText.fontSize = 40;
+        }
+
+        if (highScoreText != null)
+        {
+            highScoreText.text = "最高スコア：---";
+            highScoreText.fontSize = 32;
+        }
+
+        // 最高スコアと最高ランクのUI
+        if (rankText != null)
+        {
+            rankText.text = "ランク：---";
+            rankText.fontSize = 32;
         }
 
         //[if (timeText != null)
