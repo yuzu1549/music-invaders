@@ -104,7 +104,7 @@ public class GameManager : MonoBehaviour
     /// <summary>
     /// ゲームをスタートするメソッド
     /// </summary>
-    public void StartGame(string musicTitle, string difficulty)
+    public void StartGame(string musicTitle, string artistName, string difficulty)
     {
         string normalizedDifficulty = difficulty;
 
@@ -118,9 +118,12 @@ public class GameManager : MonoBehaviour
         }
 
         this.musicTitle = musicTitle;
+        this.artistName = artistName;
         this.difficulty = normalizedDifficulty;
-		GameSceneArgs.SelectedMusic = musicTitle;
-		GameSceneArgs.SelectedDifficulty = normalizedDifficulty;
+
+        GameSceneArgs.SelectedMusic = musicTitle;
+        GameSceneArgs.SelectedArtist = artistName;
+        GameSceneArgs.SelectedDifficulty = normalizedDifficulty;
 
 		SceneManager.LoadScene("GameScene");
 

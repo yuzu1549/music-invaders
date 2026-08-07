@@ -9,6 +9,10 @@ public class MusicSelectController : MonoBehaviour
 
     [SerializeField] private SongInfoPanel songInfoPanel;
 
+    [Header("曲プレビュー")]
+    [SerializeField] private AudioSource previewAudioSource;
+    [SerializeField] private AudioClip[] songClips;
+
     [Header("曲移動ボタン")]
     [SerializeField] private Button upButton;
     [SerializeField] private Button downButton;
@@ -34,6 +38,13 @@ public class MusicSelectController : MonoBehaviour
         "title3"
     };
 
+    private readonly string[] artistNames =
+    {
+        "森田交一",
+        "kさん",
+        "sさん"
+    };
+
     private readonly Sprite[] jacketSprites =
     {
         null,
@@ -55,6 +66,7 @@ public class MusicSelectController : MonoBehaviour
     private int selectedDifficultyIndex = 1;
 
     private string currentSongName = string.Empty;
+    private string currentArtistName = string.Empty;
     private string currentDifficultyName = string.Empty;
 
     public string CurrentSongName => currentSongName;
@@ -93,6 +105,7 @@ public class MusicSelectController : MonoBehaviour
         UpdateSongList();
         UpdateRightPanel();
         UpdateDifficultySelection(false);
+        PlaySelectedMusic();
     }
 
     /// <summary>
@@ -277,6 +290,7 @@ public class MusicSelectController : MonoBehaviour
         UpdateSelectedValues();
         UpdateSongList();
         UpdateRightPanel();
+        PlaySelectedMusic();
     }
 
     public void SelectEasy()
@@ -379,6 +393,7 @@ public class MusicSelectController : MonoBehaviour
         {
             GameManager.Instance.StartGame(
                 currentSongName,
+                currentArtistName,
                 currentDifficultyName
             );
         }
@@ -397,6 +412,9 @@ public class MusicSelectController : MonoBehaviour
     {
         currentSongName =
             songNames[centerSongIndex];
+
+        currentArtistName =
+            artistNames[centerSongIndex];
 
         currentDifficultyName =
             difficultyNames[selectedDifficultyIndex];
@@ -510,5 +528,33 @@ public class MusicSelectController : MonoBehaviour
         {
             settingsPanel.SetActive(false);
         }
+    }
+
+    private void PlaySelectedMusic()
+    {
+        if (previewAudioSource == null)
+        {
+            return;
+        }
+
+        if (songClips == null ||
+            centerSongIndex < 0 ||
+            centerSongIndex >= songClips.Length)
+        {
+            return;
+        }
+
+        AudioClip selectedClip = songClips[centerSongIndex];
+
+        if (selectedClip == null)
+        {
+            previewAudioSource.Stop();
+            return;
+        }
+
+        previewAudioSource.Stop();
+        previewAudioSource.clip = selectedClip;
+        previewAudioSource.time = 0f;
+        previewAudioSource.Play();
     }
 }
