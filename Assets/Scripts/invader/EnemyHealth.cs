@@ -5,7 +5,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
 {
     public int maxHealth = 1; // 敵の最大体力
     [SerializeField]
-    private int currentHealth;   // 敵の現在の体力
+    public int currentHealth;   // 敵の現在の体力
     private ObjectPool ownerPool; // 所属するオブジェクトプール
     private bool isDead = false; // 死亡フラグ
     private Animator anim; // アニメーターの参照
@@ -57,7 +57,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     {
         currentHealth -= damage;
         anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead)
         {
             StartCoroutine(Die());
         }
@@ -69,7 +69,18 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     private IEnumerator Die()
     {
         // 死亡エフェクトやスコア加算などの処理をここに追加
+        if (isDead)
+        {
+            yield break;
+        }
+
         isDead = true; // 死亡フラグを立てる
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = false; // 死亡時に当たり判定を無効化
+        }
 
         if (deathSE != null)
         {
@@ -101,6 +112,11 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
         anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
         enemyMove.enabled = true; // 敵の移動を再開
         rb.linearVelocity = Vector2.zero; // Rigidbodyの速度をリセット
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider != null)
+        {
+            collider.enabled = true; // コライダーを有効化
+        }
     }
 
     /// <summary>

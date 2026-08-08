@@ -89,13 +89,16 @@ public class Bullet : MonoBehaviour, IPoolable
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        penetration = damage; // 貫通力を減らす
         if (!isAttacking) return;
 
         // プレイヤー以外のオブジェクトにダメージを与える
         if (! other.CompareTag("Player") && other.gameObject.TryGetComponent(out IDamageable damageable))
         {
-            damageable.TakeDamage(damage);
-            penetration--; // 貫通力を減らす
+            EnemyHealth health = other.gameObject.GetComponent<EnemyHealth>();
+            int currentHealth = health != null ? health.currentHealth : 0; // 敵の現在の体力を取得
+            damageable.TakeDamage(penetration);
+            penetration -= currentHealth; // 貫通力を減らす
             if (penetration <= 0)
             {
                 ReturnToPool(); // 貫通力がなくなったら弾を消す
