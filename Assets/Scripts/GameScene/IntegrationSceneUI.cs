@@ -155,7 +155,12 @@ public class IntegrationSceneUI : MonoBehaviour
         // 最高スコアと最高ランクのUI
         if (rankText != null)
         {
-            rankText.text = "ランク：---";
+            int highScore = HighScoreStorage.Get(
+                GameManager.Instance.musicTitle,
+                GameManager.Instance.difficulty
+            );
+
+            rankText.text = $"ランク：{ScoreRankCalculator.Calculate(highScore,GameManager.Instance.maxScore)}";
             rankText.fontSize = 32;
         }
 

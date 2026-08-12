@@ -34,4 +34,21 @@ public class SongDatabase : MonoBehaviour
 	{
 		return songs.Find(s => s.songName == name);
 	}
+
+	public ChartData FindChart(string songName,string difficulty)
+	{
+		SongData song = FindSong(songName);
+
+		if (song == null || song.charts == null)
+		{
+			return null;
+		}
+
+		string normalizedDifficulty =
+			difficulty == "Difficult" ? "Hard" : difficulty;
+
+		return song.charts.Find(
+			chart => chart.difficultyName == normalizedDifficulty
+		);
+	}
 }

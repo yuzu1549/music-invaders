@@ -12,6 +12,8 @@ public class ResultUI : MonoBehaviour
     [SerializeField] private GameObject goodText;
     [Header("ミス表示用のテキストオブジェクト")]
     [SerializeField] private GameObject missText;
+    [Header("ランク表示用のテキストオブジェクト")]
+    [SerializeField] private GameObject rankText;
 
     void Start()
     {
@@ -51,6 +53,9 @@ public class ResultUI : MonoBehaviour
                 GameManager.Instance.difficulty,
                 currentScore
             );
+
+            string rank = ScoreRankCalculator.Calculate(currentScore,GameManager.Instance.maxScore);
+            rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "ランク：" + rank;
 
             GameManager.Instance.score = 0; // スコアをリセット
             GameManager.Instance.perfectCount = 0; // パーフェクト数をリセット
