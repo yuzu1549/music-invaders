@@ -43,6 +43,15 @@ public class ResultUI : MonoBehaviour
             goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "Good：" + GameManager.Instance.goodCount;
             missText.GetComponent<TMPro.TextMeshProUGUI>().text = "Miss：" + GameManager.Instance.missCount;
 
+            int currentScore = GameManager.Instance.score;
+
+            // 最高スコアの保存
+            bool isNewRecord = HighScoreStorage.TryUpdate(
+                GameManager.Instance.musicTitle,
+                GameManager.Instance.difficulty,
+                currentScore
+            );
+
             GameManager.Instance.score = 0; // スコアをリセット
             GameManager.Instance.perfectCount = 0; // パーフェクト数をリセット
             GameManager.Instance.goodCount = 0; // グッド数をリセット

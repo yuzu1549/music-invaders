@@ -143,7 +143,12 @@ public class IntegrationSceneUI : MonoBehaviour
 
         if (highScoreText != null)
         {
-            highScoreText.text = "最高スコア：---";
+            int highScore = HighScoreStorage.Get(
+                GameManager.Instance.musicTitle,
+                GameManager.Instance.difficulty
+            );
+
+            highScoreText.text = $"最高スコア：{highScore}";
             highScoreText.fontSize = 32;
         }
 
