@@ -12,6 +12,8 @@ public class ResultUI : MonoBehaviour
     [SerializeField] private GameObject goodText;
     [Header("ミス表示用のテキストオブジェクト")]
     [SerializeField] private GameObject missText;
+    [Header("ランク表示用のテキストオブジェクト")]
+    [SerializeField] private GameObject rankText;
 
     void Start()
     {
@@ -42,6 +44,18 @@ public class ResultUI : MonoBehaviour
             perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "Perfect：" + GameManager.Instance.perfectCount;
             goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "Good：" + GameManager.Instance.goodCount;
             missText.GetComponent<TMPro.TextMeshProUGUI>().text = "Miss：" + GameManager.Instance.missCount;
+
+            int currentScore = GameManager.Instance.score;
+
+            // 最高スコアの保存
+            bool isNewRecord = HighScoreStorage.TryUpdate(
+                GameManager.Instance.musicTitle,
+                GameManager.Instance.difficulty,
+                currentScore
+            );
+
+            string rank = ScoreRankCalculator.Calculate(currentScore,GameManager.Instance.maxScore);
+            rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "ランク：" + rank;
 
             GameManager.Instance.score = 0; // スコアをリセット
             GameManager.Instance.perfectCount = 0; // パーフェクト数をリセット

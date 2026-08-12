@@ -997,7 +997,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -79.094246, w: 0}
+  m_margin: {x: 0, y: 0, z: -140.87236, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -13370,6 +13370,8 @@ RectTransform:
   - {fileID: 1711022203}
   - {fileID: 1408582679}
   - {fileID: 1046944632}
+  - {fileID: 111184927}
+  - {fileID: 1749158166}
   - {fileID: 1855864888}
   - {fileID: 1349880001}
   - {fileID: 473881636}
@@ -13383,8 +13385,6 @@ RectTransform:
   - {fileID: 236899895}
   - {fileID: 453098822}
   - {fileID: 2098911133}
-  - {fileID: 111184927}
-  - {fileID: 1749158166}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -14938,8 +14938,8 @@ MonoBehaviour:
   titleText: {fileID: 1711022204}
   artistText: {fileID: 1408582680}
   difficultyText: {fileID: 1046944633}
-  highScoreText: {fileID: 0}
-  rankText: {fileID: 0}
+  highScoreText: {fileID: 111184928}
+  rankText: {fileID: 1749158167}
   lifeText: {fileID: 1844078577}
   scoreText: {fileID: 1535303847}
   perfectCountText: {fileID: 1454236987}

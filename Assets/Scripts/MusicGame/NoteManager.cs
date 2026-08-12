@@ -208,6 +208,16 @@ public class NoteManager : MonoBehaviour
 				chartText = foundChart.chartFile;
 				Debug.Log($"✨ 譜面をセットしました: {targetSongName} - {targetDifficulty}");
 
+				if (GameManager.Instance != null)
+				{
+					GameManager.Instance.maxScore =
+						ScoreRankCalculator.CalculateMaxScore(
+							songDatabase,
+							GameManager.Instance.musicTitle,
+							GameManager.Instance.difficulty
+						);
+				}
+
 				// 見つかった「譜面」固有のデフォルトオフセットを、設定用の全体オフセットに加算する
 				chartOffset += foundChart.defaultOffset;
 				Debug.Log($"🔧 譜面固有({targetDifficulty})のオフセットを適用しました: {foundChart.defaultOffset:F3}秒 (合計オフセット: {chartOffset:F3}秒)");

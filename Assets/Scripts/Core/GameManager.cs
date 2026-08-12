@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public string difficulty; // 難易度の公開プロパティ
     public string artistName; // アーティスト名の公開プロパティ
     public int score; // スコアの公開プロパティ
+    public int maxScore; // 最大スコアの公開プロパティ
     public int perfectCount; // パーフェクトの公開プロパティ
     public int goodCount; // グッドの公開プロパティ
     public int missCount; // ミスの公開プロパティ
