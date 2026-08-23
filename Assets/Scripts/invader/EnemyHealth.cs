@@ -11,6 +11,8 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     private Animator anim; // アニメーターの参照
     private Rigidbody2D rb; // Rigidbody2Dの参照
     private EnemyMove enemyMove; // EnemyMoveの参照
+    private EnemyAttack enemyAttack; // EnemyAttackの参照
+    private EnemyGroupController enemyGroup; // 所属する敵グループ
     
     [Header("死亡音")]
     [SerializeField] private AudioClip deathSE; // 死亡音
@@ -22,6 +24,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
         currentHealth = maxHealth; // 初期化
         anim = GetComponent<Animator>(); // アニメーターの取得
         enemyMove = GetComponent<EnemyMove>(); // EnemyMoveの取得
+        enemyAttack = GetComponent<EnemyAttack>(); // EnemyAttackの取得
         rb = GetComponent<Rigidbody2D>(); // Rigidbody2Dの取得
     }
 
@@ -55,12 +58,71 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     /// <param name="damage">与えるダメージ量</param>
     public void TakeDamage(int damage)
     {
+        ApplyDamage(damage, false);
+    }
+
+    /// <summary>
+    /// プレイヤーの攻撃によるダメージを敵へ与える。
+    /// </summary>
+    /// <param name="damage">与えるダメージ量</param>
+    public void TakePlayerDamage(int damage)
+    {
+        ApplyDamage(damage, true);
+    }
+
+    /// <summary>
+    /// 敵が所属するグループを設定する。
+    /// </summary>
+    /// <param name="group">所属する敵グループ</param>
+    public void SetEnemyGroup(EnemyGroupController group)
+    {
+        enemyGroup = group;
+    }
+
+    /// <summary>
+    /// 撃破得点を加算せずに敵をプールへ戻す。
+    /// </summary>
+    public void DespawnWithoutDefeat()
+    {
+        StopAllCoroutines();
+
+        if (ownerPool != null)
+        {
+            ownerPool.Return(gameObject);
+            return;
+        }
+
+        enemyGroup?.UnregisterEnemy(this);
+        enemyGroup = null;
+        Destroy(gameObject);
+    }
+
+    /// <summary>
+    /// 敵へダメージを適用する。
+    /// </summary>
+    /// <param name="damage">与えるダメージ量</param>
+    /// <param name="isPlayerAttack">プレイヤーの攻撃によるダメージか</param>
+    private void ApplyDamage(int damage, bool isPlayerAttack)
+    {
+        if (isDead || damage <= 0)
+        {
+            return;
+        }
+
         currentHealth -= damage;
         anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
-        if (currentHealth <= 0 && !isDead)
+
+        if (currentHealth > 0)
         {
-            StartCoroutine(Die());
+            return;
         }
+
+        if (isPlayerAttack)
+        {
+            enemyGroup?.RegisterEnemyDefeat(this);
+        }
+
+        StartCoroutine(Die());
     }
 
     /// <summary>
@@ -92,14 +154,7 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
 
         yield return new WaitForSeconds(playSeconds);
 
-        if (ownerPool != null)
-        {
-            ownerPool.Return(gameObject); // プールに返す
-        }
-        else
-        {
-            Destroy(gameObject); // プールがない場合はオブジェクトを破壊
-        }
+        DespawnWithoutDefeat();
     }
 
     /// <summary>
@@ -107,9 +162,26 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     /// </summary>
     public void OnSpawn()
     {
+        StopAllCoroutines();
+        enabled = true;
         isDead = false; // 死亡フラグをリセット
+        enemyGroup = null;
         currentHealth = maxHealth; // スポーン時に体力をリセット
-        anim.SetInteger("HP", currentHealth); // アニメーターに体力を渡す
+
+        if (enemyAttack != null)
+        {
+            enemyAttack.enabled = true;
+        }
+
+        if (anim != null)
+        {
+            anim.enabled = true;
+            // プール再利用時に死亡状態の表示を残さない。
+            anim.Rebind();
+            anim.SetInteger("HP", currentHealth);
+            anim.Update(0f);
+        }
+
         enemyMove.enabled = true; // 敵の移動を再開
         rb.linearVelocity = Vector2.zero; // Rigidbodyの速度をリセット
         Collider2D collider = GetComponent<Collider2D>();
@@ -124,7 +196,19 @@ public class EnemyHealth : MonoBehaviour, IPoolable, IDamageable
     /// </summary>
     public void OnDespawn()
     {
-        transform.position = ownerPool.container.position; // プールの位置に戻す
+        StopAllCoroutines();
+
+        EnemyGroupController previousGroup = enemyGroup;
+        enemyGroup = null;
+
+        if (ownerPool != null && ownerPool.container != null)
+        {
+            // グループ破棄に巻き込まれないよう、登録解除より先に退避する。
+            transform.SetParent(ownerPool.container, false);
+            transform.position = ownerPool.container.position;
+        }
+
+        previousGroup?.UnregisterEnemy(this);
         transform.rotation = Quaternion.identity; // 回転をリセット
     }
 }

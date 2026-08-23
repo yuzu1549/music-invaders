@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
     public int perfectCount; // パーフェクトの公開プロパティ
     public int goodCount; // グッドの公開プロパティ
     public int missCount; // ミスの公開プロパティ
-    public event Action<string> OnScoreChanged; // 判定結果を通知するイベント
+    public event Action OnGameStatsChanged; // スコアまたは判定数の変更を通知するイベント
     public event Action<string> OnMusicPlayed; // 音楽再生を通知するイベント
 
     private JudgementManager registeredJudgementManager;
@@ -54,7 +54,7 @@ public class GameManager : MonoBehaviour
             missCount = 0;
             RegisterJudgementHandler(); // 判定結果に応じてスコアやカウントを更新するメソッドを登録
 
-            OnScoreChanged?.Invoke(""); // スコアやカウントの初期化を通知
+            OnGameStatsChanged?.Invoke(); // スコアや判定数の初期化を通知
         }
     }
 
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
 
         UnregisterJudgementHandler();
 
-        currentJudgementManager.OnJudgement += CostCount;
+        currentJudgementManager.OnJudgement += RecordJudgement;
         registeredJudgementManager = currentJudgementManager;
     }
 
@@ -98,7 +98,7 @@ public class GameManager : MonoBehaviour
             return;
         }
 
-        registeredJudgementManager.OnJudgement -= CostCount;
+        registeredJudgementManager.OnJudgement -= RecordJudgement;
         registeredJudgementManager = null;
     }
 
@@ -155,12 +155,11 @@ public class GameManager : MonoBehaviour
 
 
     /// <summary>
-    /// 判定結果に応じてスコアやカウントを更新するメソッド
+    /// 判定結果に応じて判定数を更新する。
     /// </summary>
     /// <param name="judgement">判定結果</param>
-    public void CostCount(string judgement)
+    private void RecordJudgement(string judgement)
     {
-        Debug.Log($"判定結果: {judgement}");
         switch (judgement)
         {
             case "PERFECT":
@@ -174,11 +173,21 @@ public class GameManager : MonoBehaviour
                 break;
         }
 
-        score = perfectCount * 20 + goodCount * 10 + missCount * 0; // スコア計算（例: PERFECT=20点, GOOD=10点, MISS=0点）
-
-        OnScoreChanged?.Invoke(judgement);
+        OnGameStatsChanged?.Invoke();
     }
 
+    /// <summary>
+    /// 敵撃破によって獲得したスコアを加算する。
+    /// </summary>
+    /// <param name="scoreAmount">加算するスコア</param>
+    public void AddEnemyDefeatScore(int scoreAmount)
+    {
+        if (scoreAmount <= 0)
+        {
+            return;
+        }
 
-
+        score += scoreAmount;
+        OnGameStatsChanged?.Invoke();
+    }
 }

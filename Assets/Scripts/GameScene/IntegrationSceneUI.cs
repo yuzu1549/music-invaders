@@ -57,9 +57,17 @@ public class IntegrationSceneUI : MonoBehaviour
         }
 
         UpdateAllTexts();
-        UpdateScoreTexts(""); // 初期化のために空文字で呼び出す
+        UpdateScoreTexts();
 
-        GameManager.Instance.OnScoreChanged += UpdateScoreTexts; // 判定結果のイベントにメソッドを登録
+        GameManager.Instance.OnGameStatsChanged += UpdateScoreTexts;
+    }
+
+    private void OnDestroy()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.OnGameStatsChanged -= UpdateScoreTexts;
+        }
     }
 
     private void Update()
@@ -192,7 +200,7 @@ public class IntegrationSceneUI : MonoBehaviour
         // }
     }
 
-    private void UpdateScoreTexts(string judgement)
+    private void UpdateScoreTexts()
     {
 
         if (scoreText != null)
