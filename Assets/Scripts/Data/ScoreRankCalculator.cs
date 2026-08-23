@@ -2,7 +2,7 @@ using UnityEngine;
 
 public static class ScoreRankCalculator
 {
-    private const int PerfectScore = 20;
+    private const int ScorePerNoteForRank = 200;
 
     /// <summary>
     /// 最大スコアを計算
@@ -36,7 +36,7 @@ public static class ScoreRankCalculator
         }
 
         int noteCount = CountNotes(chart.chartFile);
-        return noteCount * PerfectScore;
+        return noteCount * ScorePerNoteForRank;
     }
 
     /// <summary>
