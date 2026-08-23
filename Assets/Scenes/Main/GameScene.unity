@@ -3178,9 +3178,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: 5ff2feffd463fe841a5700c9da731427, type: 3}
-  bpm: 158
-  outputFileName: ShiningStar_Easy.txt
+  osuTextFile: {fileID: 4900000, guid: cbc09a80a35beef4b9c76a1a8c3632e1, type: 3}
+  bpm: 224
+  outputFileName: Snowdrive0123_Normal.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
@@ -8022,8 +8022,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6939410eb7e32d3498113ac924e4cd8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestDataInjector
-  testSongName: ShiningStar
-  testDifficulty: Easy
+  testSongName: SnowDrive0123
+  testDifficulty: Normal
 --- !u!4 &957203738
 Transform:
   m_ObjectHideFlags: 0
@@ -8741,10 +8741,23 @@ MonoBehaviour:
       chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
       defaultOffset: 0
     - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
-      defaultOffset: 0.1
+      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
+      defaultOffset: 0
     - difficultyName: Normal
       chartFile: {fileID: 4900000, guid: a8342cfcd5cd43b46abfda378f239ee4, type: 3}
+      defaultOffset: 0
+  - songName: SnowDrive0123
+    bgm: {fileID: 8300000, guid: 31d9aa4c096625d428de8b5eabf5f051, type: 3}
+    bpm: 224
+    charts:
+    - difficultyName: Easy
+      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
+      defaultOffset: 0
+    - difficultyName: Hard
+      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
+      defaultOffset: 0
+    - difficultyName: Normal
+      chartFile: {fileID: 4900000, guid: 73edf264c8570034f90e5f979c9d2362, type: 3}
       defaultOffset: 0
 --- !u!4 &1013447275
 Transform:
