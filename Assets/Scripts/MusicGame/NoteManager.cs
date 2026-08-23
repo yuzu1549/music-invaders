@@ -44,6 +44,12 @@ public class NoteManager : MonoBehaviour
 	private double pauseStartedDspTime;
 	private float pausedAudioTime;
 
+	public float CurrentMusicTimeSeconds => GetCurrentMusicTime();
+	public float SecondsPerBeat => bpm > 0f ? 60f / bpm : 0f;
+	public int BeatsPerMeasure => beatsPerMeasure;
+	public bool IsMusicPlaying =>
+		audioSource != null && audioSource.isPlaying && !isPaused;
+
 	// 途中から始めた分の時間を記憶する変数
 	private float debugStartTimeOffset = 0f;
 
