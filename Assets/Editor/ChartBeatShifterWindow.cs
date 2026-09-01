@@ -22,7 +22,8 @@ public class ChartBeatShifterWindow : EditorWindow
     private string shiftedChartText;
     private string previewText;
     private string validationMessage;
-    private int selectedShift;
+    private string beatShiftText = "0";
+    private string selectedShiftText;
 
     [MenuItem("Tools/Music Game/Chart Beat Shifter")]
     private static void OpenWindow()
@@ -45,29 +46,40 @@ public class ChartBeatShifterWindow : EditorWindow
         if (chartFile != previousChartFile)
         {
             previousChartFile = chartFile;
-            ClearPreview();
+            ResetShift();
         }
 
         EditorGUILayout.Space();
+        EditorGUI.BeginChangeCheck();
+        string updatedBeatShiftText = EditorGUILayout.TextField(
+            "移動量（拍）",
+            beatShiftText
+        );
+        if (EditorGUI.EndChangeCheck())
+        {
+            beatShiftText = updatedBeatShiftText;
+            InvalidatePreview();
+        }
+
         using (new EditorGUI.DisabledScope(chartFile == null))
         {
             EditorGUILayout.BeginHorizontal();
             if (GUILayout.Button("-1拍"))
             {
-                AddBeatShift(-1);
+                AddBeatShift(-1m);
             }
 
             if (GUILayout.Button("+1拍"))
             {
-                AddBeatShift(1);
+                AddBeatShift(1m);
             }
             EditorGUILayout.EndHorizontal();
-        }
 
-        EditorGUILayout.LabelField(
-            "現在の移動量",
-            selectedShift.ToString("+#;-#;0") + "拍"
-        );
+            if (GUILayout.Button("プレビュー"))
+            {
+                BuildPreviewFromInput();
+            }
+        }
 
         DrawValidationMessage();
         DrawPreview();
@@ -86,29 +98,69 @@ public class ChartBeatShifterWindow : EditorWindow
     /// 現在の移動量へ指定拍数を加算する。
     /// </summary>
     /// <param name="beatShiftDelta">追加する拍数</param>
-    private void AddBeatShift(int beatShiftDelta)
+    private void AddBeatShift(decimal beatShiftDelta)
     {
-        int updatedShift = selectedShift + beatShiftDelta;
-        if (updatedShift == 0)
+        if (!TryParseBeatShift(
+            beatShiftText,
+            out decimal currentShift,
+            out int decimalPlaceCount))
         {
-            ClearPreview();
+            InvalidatePreview();
+            validationMessage = "移動量を数値で入力してください。";
             return;
         }
 
-        BuildPreview(updatedShift);
+        decimal updatedShift = currentShift + beatShiftDelta;
+        if (updatedShift == 0)
+        {
+            beatShiftText = "0";
+            InvalidatePreview();
+            return;
+        }
+
+        beatShiftText = FormatBeat(updatedShift, decimalPlaceCount);
+        BuildPreview(updatedShift, decimalPlaceCount);
+    }
+
+    /// <summary>
+    /// 手入力された移動量から変換プレビューを作成する。
+    /// </summary>
+    private void BuildPreviewFromInput()
+    {
+        if (!TryParseBeatShift(
+            beatShiftText,
+            out decimal beatShift,
+            out int decimalPlaceCount))
+        {
+            InvalidatePreview();
+            validationMessage = "移動量を数値で入力してください。";
+            return;
+        }
+
+        if (beatShift == 0m)
+        {
+            InvalidatePreview();
+            validationMessage = "0以外の移動量を入力してください。";
+            return;
+        }
+
+        BuildPreview(beatShift, decimalPlaceCount);
     }
 
     /// <summary>
     /// 選択された移動量で変換結果とプレビューを作成する。
     /// </summary>
     /// <param name="beatShift">全体へ加算する拍数</param>
-    private void BuildPreview(int beatShift)
+    /// <param name="shiftDecimalPlaceCount">移動量の小数桁数</param>
+    private void BuildPreview(
+        decimal beatShift,
+        int shiftDecimalPlaceCount)
     {
-        shiftedChartText = null;
-        previewText = null;
-        validationMessage = null;
-        previewScrollPosition = Vector2.zero;
-        selectedShift = beatShift;
+        InvalidatePreview();
+        selectedShiftText = GetSignedBeatText(
+            beatShift,
+            shiftDecimalPlaceCount
+        );
 
         string assetPath = AssetDatabase.GetAssetPath(chartFile);
         if (string.IsNullOrEmpty(assetPath) ||
@@ -122,6 +174,7 @@ public class ChartBeatShifterWindow : EditorWindow
         if (!TryShiftChart(
             sourceText,
             beatShift,
+            shiftDecimalPlaceCount,
             out string resultText,
             out string resultPreview,
             out string errorMessage))
@@ -140,13 +193,15 @@ public class ChartBeatShifterWindow : EditorWindow
     /// </summary>
     /// <param name="sourceText">変換前の譜面テキスト</param>
     /// <param name="beatShift">全体へ加算する拍数</param>
+    /// <param name="shiftDecimalPlaceCount">移動量の小数桁数</param>
     /// <param name="resultText">変換後の譜面テキスト</param>
     /// <param name="resultPreview">変換内容のプレビュー</param>
     /// <param name="errorMessage">変換できない理由</param>
     /// <returns>すべての行を変換できた場合はtrue</returns>
     private static bool TryShiftChart(
         string sourceText,
-        int beatShift,
+        decimal beatShift,
+        int shiftDecimalPlaceCount,
         out string resultText,
         out string resultPreview,
         out string errorMessage)
@@ -210,7 +265,10 @@ public class ChartBeatShifterWindow : EditorWindow
 
             string shiftedBeatText = FormatBeat(
                 shiftedBeat,
-                GetDecimalPlaceCount(beatText)
+                Mathf.Max(
+                    GetDecimalPlaceCount(beatText),
+                    shiftDecimalPlaceCount
+                )
             );
             string shiftedLine =
                 lineMatch.Groups["leading"].Value +
@@ -269,6 +327,46 @@ public class ChartBeatShifterWindow : EditorWindow
     }
 
     /// <summary>
+    /// 手入力された移動量を小数として読み取る。
+    /// </summary>
+    /// <param name="shiftText">入力された移動量</param>
+    /// <param name="beatShift">読み取った移動量</param>
+    /// <param name="decimalPlaceCount">入力値の小数桁数</param>
+    /// <returns>移動量を読み取れた場合はtrue</returns>
+    private static bool TryParseBeatShift(
+        string shiftText,
+        out decimal beatShift,
+        out int decimalPlaceCount)
+    {
+        string trimmedShiftText = shiftText.Trim();
+        bool couldParse = decimal.TryParse(
+            trimmedShiftText,
+            NumberStyles.AllowLeadingSign |
+                NumberStyles.AllowDecimalPoint,
+            CultureInfo.InvariantCulture,
+            out beatShift
+        );
+        decimalPlaceCount = couldParse
+            ? GetDecimalPlaceCount(trimmedShiftText)
+            : 0;
+        return couldParse;
+    }
+
+    /// <summary>
+    /// 移動方向が分かる符号付きの拍文字列を返す。
+    /// </summary>
+    /// <param name="beatShift">表示する移動量</param>
+    /// <param name="decimalPlaceCount">表示する小数桁数</param>
+    /// <returns>符号付きの移動量</returns>
+    private static string GetSignedBeatText(
+        decimal beatShift,
+        int decimalPlaceCount)
+    {
+        string sign = beatShift > 0m ? "+" : string.Empty;
+        return sign + FormatBeat(beatShift, decimalPlaceCount);
+    }
+
+    /// <summary>
     /// 文字列が改行コードか確認する。
     /// </summary>
     /// <param name="text">確認する文字列</param>
@@ -287,7 +385,7 @@ public class ChartBeatShifterWindow : EditorWindow
         bool shouldSave = EditorUtility.DisplayDialog(
             "譜面の拍を変更",
             $"{chartFile.name} の全拍を " +
-                $"{selectedShift:+#;-#;0} します。保存しますか？",
+                $"{selectedShiftText}拍移動します。保存しますか？",
             "保存",
             "キャンセル"
         );
@@ -306,7 +404,7 @@ public class ChartBeatShifterWindow : EditorWindow
             ImportAssetOptions.ForceUpdate
         );
 
-        ClearPreview();
+        ResetShift();
         validationMessage = "保存しました。";
     }
 
@@ -352,12 +450,21 @@ public class ChartBeatShifterWindow : EditorWindow
     /// <summary>
     /// 現在の変換結果を破棄する。
     /// </summary>
-    private void ClearPreview()
+    private void InvalidatePreview()
     {
         shiftedChartText = null;
         previewText = null;
         validationMessage = null;
-        selectedShift = 0;
+        selectedShiftText = null;
         previewScrollPosition = Vector2.zero;
+    }
+
+    /// <summary>
+    /// 入力値と現在の変換結果を初期状態へ戻す。
+    /// </summary>
+    private void ResetShift()
+    {
+        beatShiftText = "0";
+        InvalidatePreview();
     }
 }

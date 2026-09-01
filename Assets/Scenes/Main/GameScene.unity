@@ -8892,7 +8892,7 @@ MonoBehaviour:
     bgm: {fileID: 8300000, guid: 58a1838a0a8f8474ebda25ee20c570f4, type: 3}
     bpm: 132
     songOffsetSeconds: 0
-    enemyStartBeat: 0
+    enemyStartBeat: 4
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
@@ -8903,7 +8903,7 @@ MonoBehaviour:
   - songName: SnowDrive0123
     bgm: {fileID: 8300000, guid: 31d9aa4c096625d428de8b5eabf5f051, type: 3}
     bpm: 224
-    songOffsetSeconds: 0
+    songOffsetSeconds: 1.767
     enemyStartBeat: 0
     charts:
     - difficultyName: Easy
