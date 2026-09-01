@@ -21,9 +21,6 @@ public class NoteManager : MonoBehaviour
 	public float noteSpeed = 1.0f;
 	public float delayTime = 3.0f;    // 全体の開始待ち時間
 
-	[Header("同期調整")]
-	public float chartOffset = 0.0f;
-
 	[Header("■■■ デバッグ・テスト専用 ■■■")]
 	[Tooltip("ONにすると下の小節から曲と譜面を途中再生します")]
 	public bool isDebugMode = false;
@@ -37,6 +34,8 @@ public class NoteManager : MonoBehaviour
 	private List<NoteData> notes = new List<NoteData>();
 	private double dspStartTime;
 	private bool isMusicScheduled = false;
+	private float songOffsetSeconds = 0f;
+	private int enemyStartBeat = 0;
 	private float timingOffsetSeconds = 0f;
 	private bool hasMusicStarted = false;
 	private bool isPaused = false;
@@ -47,6 +46,10 @@ public class NoteManager : MonoBehaviour
 	public float CurrentMusicTimeSeconds => GetCurrentMusicTime();
 	public float SecondsPerBeat => bpm > 0f ? 60f / bpm : 0f;
 	public int BeatsPerMeasure => beatsPerMeasure;
+	public float EnemyBeatStartTimeSeconds =>
+		songOffsetSeconds - timingOffsetSeconds +
+		enemyStartBeat * SecondsPerBeat;
+	public int TimingOffsetRevision { get; private set; }
 	public bool IsMusicPlaying =>
 		audioSource != null && audioSource.isPlaying && !isPaused;
 
@@ -114,7 +117,16 @@ public class NoteManager : MonoBehaviour
 	private void ApplySettings()
 	{
 		noteSpeed = GameSettings.NoteSpeed;
-		timingOffsetSeconds = GameSettings.TimingOffsetMs / 1000f;
+
+		float updatedTimingOffsetSeconds =
+			GameSettings.TimingOffsetMs / 1000f;
+		if (!Mathf.Approximately(
+			timingOffsetSeconds,
+			updatedTimingOffsetSeconds))
+		{
+			timingOffsetSeconds = updatedTimingOffsetSeconds;
+			TimingOffsetRevision++;
+		}
 	}
 
 	/// <summary>
@@ -174,7 +186,7 @@ public class NoteManager : MonoBehaviour
 
 	// シーン間のデータ引き継ぎ処理
 	// Resourcesではなく、SongDatabaseから検索してロードする
-	// 曲ごとではなく「譜面（難易度）ごと」のオフセットを取得して適用する
+	// 選択された曲と譜面をデータベースから取得する
 	void SetupFromArgs()
 	{
 		string targetSongName = GameSceneArgs.SelectedMusic;
@@ -202,6 +214,8 @@ public class NoteManager : MonoBehaviour
 
 			// 🔥【追加】データベースのBPMで、NoteManagerのBPMを上書きする！
 			bpm = foundSong.bpm;
+			songOffsetSeconds = foundSong.SongOffsetSeconds;
+			enemyStartBeat = foundSong.EnemyStartBeat;
 
 			Debug.Log($"🎵 BGMをセットしました: {targetSongName} (BPM: {bpm})");
 
@@ -223,10 +237,6 @@ public class NoteManager : MonoBehaviour
 							GameManager.Instance.difficulty
 						);
 				}
-
-				// 見つかった「譜面」固有のデフォルトオフセットを、設定用の全体オフセットに加算する
-				chartOffset += foundChart.defaultOffset;
-				Debug.Log($"🔧 譜面固有({targetDifficulty})のオフセットを適用しました: {foundChart.defaultOffset:F3}秒 (合計オフセット: {chartOffset:F3}秒)");
 			}
 			else
 			{
@@ -454,7 +464,9 @@ public class NoteManager : MonoBehaviour
 	/// <returns>判定位置に到達する曲中時間</returns>
 	private float GetTargetTime(float beat, float secondsPerBeat)
 	{
-		return (beat * secondsPerBeat) + chartOffset - timingOffsetSeconds;
+		return (beat * secondsPerBeat)
+			+ songOffsetSeconds
+			- timingOffsetSeconds;
 	}
 
 	/// <summary>

@@ -8879,42 +8879,39 @@ MonoBehaviour:
   - songName: ShiningStar
     bgm: {fileID: 8300000, guid: fa9a85d9a140a4640a0c6e5d338d56ec, type: 3}
     bpm: 158
+    songOffsetSeconds: 0.752
+    enemyStartBeat: 0
     charts:
-    - difficultyName: Normal
-      chartFile: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
-      defaultOffset: 0.4
-    - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
-      defaultOffset: 0
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 0ceb34a62d825094eb2128009ff063a5, type: 3}
-      defaultOffset: 0
+    - difficultyName: Normal
+      chartFile: {fileID: 4900000, guid: 14fad42dd0223ef4b89bf46e7a412d51, type: 3}
+    - difficultyName: Hard
+      chartFile: {fileID: 4900000, guid: 627491d722b20b14c8c5d82093360eec, type: 3}
   - songName: MereFancy
     bgm: {fileID: 8300000, guid: 58a1838a0a8f8474ebda25ee20c570f4, type: 3}
     bpm: 132
+    songOffsetSeconds: 0
+    enemyStartBeat: 4
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
-      defaultOffset: 0
-    - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
-      defaultOffset: 0
     - difficultyName: Normal
       chartFile: {fileID: 4900000, guid: a8342cfcd5cd43b46abfda378f239ee4, type: 3}
-      defaultOffset: 0
+    - difficultyName: Hard
+      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
   - songName: SnowDrive0123
     bgm: {fileID: 8300000, guid: 31d9aa4c096625d428de8b5eabf5f051, type: 3}
     bpm: 224
+    songOffsetSeconds: 1.767
+    enemyStartBeat: 0
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
-      defaultOffset: 0
-    - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
-      defaultOffset: 0
     - difficultyName: Normal
       chartFile: {fileID: 4900000, guid: 73edf264c8570034f90e5f979c9d2362, type: 3}
-      defaultOffset: 0
+    - difficultyName: Hard
+      chartFile: {fileID: 4900000, guid: 501466ff9a1bda7498be3e7cc2eca3da, type: 3}
 --- !u!4 &1013447275
 Transform:
   m_ObjectHideFlags: 0
