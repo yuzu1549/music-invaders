@@ -161,11 +161,10 @@ public class EnemyGroupMovement : MonoBehaviour
         }
 
         currentPhase = MovementPhase.Normal;
-        // 0拍目の通知で最初の移動を行うため、初期状態は1拍手前にする。
         elapsedNormalPhaseBeats = Mathf.Clamp(
             Mathf.RoundToInt(
                 elapsedNormalMeasures * musicBeatClock.BeatsPerMeasure
-            ) - 1,
+            ),
             0,
             normalPhaseBeats
         );
