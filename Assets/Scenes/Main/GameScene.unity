@@ -8291,6 +8291,30 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: diveStartSE
+      value: 
+      objectReference: {fileID: 8300000, guid: 2b39c24847eefb341a76bf16feef1473, type: 3}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: chargeStartSE
+      value: 
+      objectReference: {fileID: 8300000, guid: 5ee9b75d2a0f09e44b8f46154911fe56, type: 3}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: diveStartSEVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: chargeEffectPrefab
+      value: 
+      objectReference: {fileID: 1085203053202936996, guid: f5e5628df1681ed458ed0d5df7ac7a87, type: 3}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: chargeStartSEVolume
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7678281160680400679, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: diveStartEffectPrefab
+      value: 
+      objectReference: {fileID: 4489712221428112692, guid: 47c09cba439b32343998b7f1159d4579, type: 3}
     - target: {fileID: 9215624342464528399, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
       propertyPath: enemySpeed
       value: 1.25
