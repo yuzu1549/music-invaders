@@ -8207,6 +8207,50 @@ PrefabInstance:
       propertyPath: m_Name
       value: EnemySpawner
       objectReference: {fileID: 0}
+    - target: {fileID: 3123097753906788281, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: diveEndPoint
+      value: 
+      objectReference: {fileID: 414739055}
+    - target: {fileID: 3123097753906788281, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: diveStartPoint
+      value: 
+      objectReference: {fileID: 1021859869}
+    - target: {fileID: 3123097753906788281, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: entryStartPoint
+      value: 
+      objectReference: {fileID: 711622264}
+    - target: {fileID: 3123097753906788281, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: normalStartPoint
+      value: 
+      objectReference: {fileID: 446191806}
+    - target: {fileID: 4329387076073847702, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: musicBeatClock
+      value: 
+      objectReference: {fileID: 1763804959}
+    - target: {fileID: 4329387076073847702, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: maxActiveGroupCount
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5839595356361914085, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: gridLeftPoint
+      value: 
+      objectReference: {fileID: 299803020}
+    - target: {fileID: 5839595356361914085, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: gridRightPoint
+      value: 
+      objectReference: {fileID: 81471828}
+    - target: {fileID: 5839595356361914085, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: gridColumnCount
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 5839595356361914085, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: minimumGroupGapColumns
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6389476469392016069, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
+      propertyPath: scorePopupController
+      value: 
+      objectReference: {fileID: 1490431171}
     - target: {fileID: 6632750012891455241, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -19151,42 +19195,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPoolKey: Invader
-  gridLeftPoint: {fileID: 299803020}
-  gridRightPoint: {fileID: 81471828}
-  gridColumnCount: 30
-  groupEnemyColumnStep: 2
-  minimumGroupGapColumns: 2
-  spawnDistanceBiasPower: 2
-  entryStartPoint: {fileID: 711622264}
-  normalStartPoint: {fileID: 446191806}
-  diveStartPoint: {fileID: 1021859869}
-  diveEndPoint: {fileID: 414739055}
-  entryPhaseMeasureCount: 1
-  normalPhaseMeasureCount: 14
-  diveChargeBeatCount: 3
-  diveMovementBeatCount: 1
-  entryDecelerationPower: 5
-  diveChargeScaleX: 1.1
-  diveChargeScaleY: 0.7
-  musicBeatClock: {fileID: 1763804959}
-  beatSquashScaleX: 1.05
-  beatSquashScaleY: 0.9
-  beatScaleRestoreProgress: 0.5
-  initialGroupCount: 3
-  firstGroupElapsedMeasures: 1
-  initialGroupMeasureInterval: 2
-  groupDefeatScores: 64000000c80000002c010000
-  scorePopupController: {fileID: 1490431171}
-  maxActiveGroupCount: 0
-  spawnSettings: {fileID: 11400000, guid: 42691079ba2ce4843b6da3b2a1186b65, type: 2}
-  minimumGroupVerticalSpacing: 0.5
-  showSpawnGuide: 1
-  gridGuideColor: {r: 0.2, g: 0.8, b: 1, a: 0.4}
-  entryStartGuideColor: {r: 0.2, g: 0.8, b: 1, a: 1}
-  normalStartGuideColor: {r: 0, g: 1, b: 0, a: 1}
-  diveStartGuideColor: {r: 1, g: 0.5, b: 0, a: 1}
-  diveEndGuideColor: {r: 1, g: 0, b: 0, a: 1}
-  guideMarkerRadius: 0.08
 --- !u!4 &2007607728 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6632750012891455241, guid: 92b4c406074785647a0b628a93d3ae03, type: 3}
