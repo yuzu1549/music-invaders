@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -53,6 +54,7 @@ public class EnemyGroupMovement : MonoBehaviour
     private bool isInitialized;
     private bool isSubscribed;
     private bool isRestoringScale;
+    private bool hasStartedDiveMovement;
 
     private int DivePhaseBeats => diveChargeBeats + diveMovementBeats;
 
@@ -65,6 +67,16 @@ public class EnemyGroupMovement : MonoBehaviour
     /// 現在、敵グループが突入フェーズ中かを表す。
     /// </summary>
     public bool IsInDivePhase => currentPhase == MovementPhase.Dive;
+
+    /// <summary>
+    /// 敵グループが突入前のチャージを開始したときに通知する。
+    /// </summary>
+    public event Action DiveChargeStarted;
+
+    /// <summary>
+    /// 敵グループがチャージを終えて突撃を開始したときに通知する。
+    /// </summary>
+    public event Action DiveStarted;
 
     private void OnEnable()
     {
@@ -294,6 +306,7 @@ public class EnemyGroupMovement : MonoBehaviour
         entryPhaseBeats = Mathf.Max(1, entryMeasures * beatsPerMeasure);
         normalPhaseBeats = Mathf.Max(1, normalMeasures * beatsPerMeasure);
         elapsedNormalPhaseBeats = 0;
+        hasStartedDiveMovement = false;
         isInitialized = musicBeatClock != null &&
             enemyGroupController != null && beatsPerMeasure > 0;
     }
@@ -341,6 +354,7 @@ public class EnemyGroupMovement : MonoBehaviour
         continuousPhaseStartBeat = beatIndex;
         SetGroupY(diveStartY);
         RestoreEnemyVisuals();
+        DiveChargeStarted?.Invoke();
     }
 
     /// <summary>
@@ -410,6 +424,7 @@ public class EnemyGroupMovement : MonoBehaviour
             return;
         }
 
+        NotifyDiveStarted();
         ApplyEnemyVisualScale(1f, 1f);
 
         float movementProgress = Mathf.InverseLerp(
@@ -418,6 +433,20 @@ public class EnemyGroupMovement : MonoBehaviour
             phaseProgress
         );
         SetGroupY(Mathf.Lerp(diveStartY, diveEndY, movementProgress));
+    }
+
+    /// <summary>
+    /// 突撃開始を一度だけ通知する。
+    /// </summary>
+    private void NotifyDiveStarted()
+    {
+        if (hasStartedDiveMovement)
+        {
+            return;
+        }
+
+        hasStartedDiveMovement = true;
+        DiveStarted?.Invoke();
     }
 
     /// <summary>

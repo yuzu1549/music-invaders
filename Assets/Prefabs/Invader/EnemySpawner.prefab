@@ -10,6 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 6632750012891455241}
   - component: {fileID: 9215624342464528399}
+  - component: {fileID: 5839595356361914085}
+  - component: {fileID: 600877001409483006}
+  - component: {fileID: 4329387076073847702}
+  - component: {fileID: 7678281160680400679}
   m_Layer: 0
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -47,11 +51,97 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemySpawner
   enemyPoolKey: Invader
-  spawnInterval: 5
-  initialEnemyCount: 5
-  enemySpacing: 1
-  enemySpeed: 2
-  enemyDownDistance: 1
+  entryStartPoint: {fileID: 0}
+  normalStartPoint: {fileID: 0}
+  diveStartPoint: {fileID: 0}
+  diveEndPoint: {fileID: 0}
+  entryPhaseMeasureCount: 1
+  normalPhaseMeasureCount: 14
+  diveChargeBeatCount: 3
+  diveMovementBeatCount: 1
+  entryDecelerationPower: 3
+  diveChargeScaleX: 1.1
+  diveChargeScaleY: 0.8
+  beatSquashScaleX: 1.05
+  beatSquashScaleY: 0.8
+  beatScaleRestoreProgress: 0.5
+  groupDefeatScores: 64000000c80000002c010000
+  scorePopupController: {fileID: 0}
+--- !u!114 &5839595356361914085
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476387178999917379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3cee7c3a2d2490b4288b598a39a29a6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyGridPlacement
+  gridLeftPoint: {fileID: 0}
+  gridRightPoint: {fileID: 0}
+  gridColumnCount: 30
+  groupEnemyColumnStep: 2
+  minimumGroupGapColumns: 2
+  spawnDistanceBiasPower: 2
+  minimumGroupVerticalSpacing: 0.5
+--- !u!114 &600877001409483006
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476387178999917379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 849819b7423e11b459fbe1542746d5a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnGuide
+  showSpawnGuide: 1
+  gridGuideColor: {r: 0.2, g: 0.8, b: 1, a: 0.4}
+  entryStartGuideColor: {r: 0.2, g: 0.8, b: 1, a: 1}
+  normalStartGuideColor: {r: 0, g: 1, b: 0, a: 1}
+  diveStartGuideColor: {r: 1, g: 0.5, b: 0, a: 1}
+  diveEndGuideColor: {r: 1, g: 0, b: 0, a: 1}
+  guideMarkerRadius: 0.08
+--- !u!114 &4329387076073847702
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476387178999917379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 61f31adc0d936e74ea394cb5f29214fe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemySpawnScheduler
+  musicBeatClock: {fileID: 0}
+  initialGroupCount: 3
+  firstGroupElapsedMeasures: 1
+  initialGroupMeasureInterval: 2
+  maxActiveGroupCount: 6
+  spawnSettings: {fileID: 11400000, guid: 42691079ba2ce4843b6da3b2a1186b65, type: 2}
+--- !u!114 &7678281160680400679
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2476387178999917379}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a34ad5c3df9e96847b3f9b1b8b3f7d81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyChargeEffectController
+  chargeEffectPrefab: {fileID: 0}
+  diveStartEffectPrefab: {fileID: 0}
+  effectOffset: {x: 0, y: 0, z: 0}
+  chargeStartSE: {fileID: 0}
+  chargeStartSEVolume: 1
+  diveStartSE: {fileID: 0}
+  diveStartSEVolume: 1
 --- !u!1 &7687402408269253897
 GameObject:
   m_ObjectHideFlags: 0
