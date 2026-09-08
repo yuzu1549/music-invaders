@@ -1,4 +1,5 @@
 using UnityEngine;
+using MusicInvaders.Data;
 
 public class ScoreRankCalculator
 {
@@ -12,7 +13,7 @@ public class ScoreRankCalculator
     /// <param name="difficulty"></param>
     /// <returns></returns>
     public int CalculateMaxScore(
-        SongDatabase songDatabase,
+        SongDatabaseSO songDatabase,
         string songName,
         string difficulty)
     {
@@ -22,7 +23,7 @@ public class ScoreRankCalculator
             return 0;
         }
 
-        ChartData chart = songDatabase.FindChart(
+        MusicInvaders.Data.ChartData chart = songDatabase.FindChart(
             songName,
             difficulty
         );

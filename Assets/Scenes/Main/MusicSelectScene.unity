@@ -1458,7 +1458,7 @@ MonoBehaviour:
   hardButton: {fileID: 401011006}
   rankText: {fileID: 925749624}
   bestScoreText: {fileID: 1224481278}
-  songDatabase: {fileID: 1934405862}
+  songDatabase: {fileID: 11400000, guid: 329127d0810bb9d46a35f67a5caf1860, type: 2}
   confirmButton: {fileID: 1238504086}
   settingsPanel: {fileID: 386514045}
 --- !u!1 &189490196
@@ -15222,7 +15222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1934405861
 Transform:
   m_ObjectHideFlags: 0

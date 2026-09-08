@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using MusicInvaders.Data;
 
 
 public class MusicSelectController : MonoBehaviour
@@ -29,7 +30,7 @@ public class MusicSelectController : MonoBehaviour
     [SerializeField] private TMP_Text bestScoreText;
 
     [Header("スコア計算用")]
-    [SerializeField] private SongDatabase songDatabase;
+    [SerializeField] private SongDatabaseSO songDatabase;
 
     [Header("決定ボタン")]
     [SerializeField] private Button confirmButton;

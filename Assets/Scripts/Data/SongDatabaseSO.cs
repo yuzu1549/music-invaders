@@ -38,7 +38,7 @@ namespace MusicInvaders.Data
         fileName = "SongDatabase",
         menuName = "Music/Song Database"
     )]
-    public class SongDatabase : ScriptableObject
+    public class SongDatabaseSO : ScriptableObject
     {
         [Header("ここに全楽曲のデータを登録します")]
         public List<SongData> songs = new List<SongData>();
