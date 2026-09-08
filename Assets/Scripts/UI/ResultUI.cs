@@ -1,19 +1,60 @@
 using UnityEngine;
+using MusicInvaders.Data;
+using UnityEngine.UI;
 
 public class ResultUI : MonoBehaviour
 {
-    [Header("結果表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject gameResultText;
-    [Header("スコア表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject scoreText;
-    [Header("パーフェクト表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject perfectText;
-    [Header("グッド表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject goodText;
-    [Header("ミス表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject missText;
-    [Header("ランク表示用のテキストオブジェクト")]
-    [SerializeField] private GameObject rankText;
+    [System.Serializable]
+    public class ResultText
+    {
+        [Header("結果表示用のテキストオブジェクト")]
+        public GameObject gameResultText;
+        [Header("曲名表示用のテキストオブジェクト")]
+        public GameObject songTitleText;
+        [Header("難易度表示用のテキストオブジェクト")]
+        public GameObject difficultyText;
+        [Header("スコア表示用のテキストオブジェクト")]
+        public GameObject scoreText;
+        [Header("パーフェクト表示用のテキストオブジェクト")]
+        public GameObject perfectText;
+        [Header("グッド表示用のテキストオブジェクト")]
+        public GameObject goodText;
+        [Header("ミス表示用のテキストオブジェクト")]
+        public GameObject missText;
+        [Header("ランク表示用のテキストオブジェクト")]
+        public GameObject rankText;
+    }
+
+    [System.Serializable]
+    public class RankSprite
+    {
+        [Header("ランクSのスプライト")]
+        public Sprite rankS;
+        [Header("ランクAのスプライト")]
+        public Sprite rankA;
+        [Header("ランクBのスプライト")]
+        public Sprite rankB;
+        [Header("ランクCのスプライト")]
+        public Sprite rankC;
+        [Header("ランクDのスプライト")]
+        public Sprite rankD;
+    }
+
+    [Header("結果表示用のテキスト")]
+    [SerializeField]
+    private ResultText resultText;
+
+    [Header("ランク表示用のスプライト")]
+    [SerializeField]
+    private RankSprite rankSprites;
+
+    [Header("ランク表示用のImage")]
+    [SerializeField]
+    private Image rankImage;
+
+    [Header("曲データベース")]
+    [SerializeField] private SongDatabaseSO songDatabase;
+
 
     void Start()
     {
@@ -29,6 +70,7 @@ public class ResultUI : MonoBehaviour
         if (GameManager.Instance != null)
         {
             TitleTextUpdate();
+            SongInfoTextUpdate();
             ScoreJudgeUpdate();
             HighScoreUpdate();
             RankUpdate();
@@ -44,16 +86,25 @@ public class ResultUI : MonoBehaviour
         if (GameManager.Instance.isGameOver)
         {
             // ゲームオーバー時の処理
-            gameResultText.GetComponent<TMPro.TextMeshProUGUI>().text = "GAME OVER";
+            resultText.gameResultText.GetComponent<TMPro.TextMeshProUGUI>().text = "GAME OVER";
+            resultText.gameResultText.GetComponent<TMPro.TextMeshProUGUI>().color = Color.red;
             GameManager.Instance.isGameOver = false; // フラグをリセット
             
         }
         else if (GameManager.Instance.isGameCleared)
         {
             // ゲームクリア時の処理
-            gameResultText.GetComponent<TMPro.TextMeshProUGUI>().text = "GAME CLEAR";
+            resultText.gameResultText.GetComponent<TMPro.TextMeshProUGUI>().text = "GAME CLEAR";
+            resultText.gameResultText.GetComponent<TMPro.TextMeshProUGUI>().color = Color.yellow;
             GameManager.Instance.isGameCleared = false; // フラグをリセット
         }
+    }
+
+    private void SongInfoTextUpdate()
+    {
+        // 曲名と難易度の表示
+        resultText.songTitleText.GetComponent<TMPro.TextMeshProUGUI>().text = GameManager.Instance.musicTitle;
+        resultText.difficultyText.GetComponent<TMPro.TextMeshProUGUI>().text = GameManager.Instance.difficulty;
     }
 
     /// <summary>
@@ -62,10 +113,10 @@ public class ResultUI : MonoBehaviour
     private void ScoreJudgeUpdate()
     {
         // スコア、パーフェクト、グッド、ミスの表示
-        scoreText.GetComponent<TMPro.TextMeshProUGUI>().text = "スコア：" + GameManager.Instance.score;
-        perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "Perfect：" + GameManager.Instance.perfectCount;
-        goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "Good：" + GameManager.Instance.goodCount;
-        missText.GetComponent<TMPro.TextMeshProUGUI>().text = "Miss：" + GameManager.Instance.missCount;
+        resultText.scoreText.GetComponent<TMPro.TextMeshProUGUI>().text = "スコア：" + GameManager.Instance.score;
+        resultText.perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "Perfect：" + GameManager.Instance.perfectCount;
+        resultText.goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "Good：" + GameManager.Instance.goodCount;
+        resultText.missText.GetComponent<TMPro.TextMeshProUGUI>().text = "Miss：" + GameManager.Instance.missCount;
     }
 
     /// <summary>
@@ -89,7 +140,28 @@ public class ResultUI : MonoBehaviour
     private void RankUpdate()
     {
         string rank = new ScoreRankCalculator().Calculate(GameManager.Instance.score, GameManager.Instance.maxScore);
-        rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "ランク：" + rank;
+        resultText.rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "ランク：";
+        switch (rank)
+        {
+            case "S":
+                rankImage.sprite = rankSprites.rankS;
+                break;
+            case "A":
+                rankImage.sprite = rankSprites.rankA;
+                break;
+            case "B":
+                rankImage.sprite = rankSprites.rankB;
+                break;
+            case "C":
+                rankImage.sprite = rankSprites.rankC;
+                break;
+            case "D":
+                rankImage.sprite = rankSprites.rankD;
+                break;
+            default:
+                Debug.LogWarning("不明なランク: " + rank);
+                break;
+        }
     }
 
     /// <summary>
