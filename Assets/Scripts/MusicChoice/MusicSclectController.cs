@@ -611,7 +611,7 @@ public class MusicSelectController : MonoBehaviour
 
         // その譜面の理論最大スコア
         int maxScore =
-            ScoreRankCalculator.CalculateMaxScore(
+            new ScoreRankCalculator().CalculateMaxScore(
                 songDatabase,
                 currentSongName,
                 currentDifficultyName
@@ -625,7 +625,7 @@ public class MusicSelectController : MonoBehaviour
         if (highScore > 0)
         {
             rank =
-                ScoreRankCalculator.Calculate(
+                new ScoreRankCalculator().Calculate(
                     highScore,
                     maxScore
                 );

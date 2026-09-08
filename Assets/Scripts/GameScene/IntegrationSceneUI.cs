@@ -168,7 +168,7 @@ public class IntegrationSceneUI : MonoBehaviour
                 GameManager.Instance.difficulty
             );
 
-            rankText.text = $"ランク：{ScoreRankCalculator.Calculate(highScore,GameManager.Instance.maxScore)}";
+            rankText.text = $"ランク：{new ScoreRankCalculator().Calculate(highScore, GameManager.Instance.maxScore)}";
             rankText.fontSize = 32;
         }
 

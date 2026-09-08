@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public static class ScoreRankCalculator
+public class ScoreRankCalculator
 {
     private const int ScorePerNoteForRank = 200;
 
@@ -11,7 +11,7 @@ public static class ScoreRankCalculator
     /// <param name="songName"></param>
     /// <param name="difficulty"></param>
     /// <returns></returns>
-    public static int CalculateMaxScore(
+    public int CalculateMaxScore(
         SongDatabase songDatabase,
         string songName,
         string difficulty)
@@ -45,7 +45,7 @@ public static class ScoreRankCalculator
     /// <param name="score"></param>
     /// <param name="maxScore"></param>
     /// <returns></returns>
-    public static string Calculate(int score, int maxScore)
+    public string Calculate(int score, int maxScore)
     {
         if (maxScore <= 0)
         {
@@ -82,7 +82,7 @@ public static class ScoreRankCalculator
     /// </summary>
     /// <param name="chartFile"></param>
     /// <returns></returns>
-    private static int CountNotes(TextAsset chartFile)
+    private int CountNotes(TextAsset chartFile)
     {
         int noteCount = 0;
         string[] lines = chartFile.text.Split('\n');

@@ -231,7 +231,7 @@ public class NoteManager : MonoBehaviour
 				if (GameManager.Instance != null)
 				{
 					GameManager.Instance.maxScore =
-						ScoreRankCalculator.CalculateMaxScore(
+						new ScoreRankCalculator().CalculateMaxScore(
 							songDatabase,
 							GameManager.Instance.musicTitle,
 							GameManager.Instance.difficulty
