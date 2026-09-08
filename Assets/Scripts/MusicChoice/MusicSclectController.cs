@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using MusicInvaders.Data;
 
 
 public class MusicSelectController : MonoBehaviour
@@ -29,7 +30,7 @@ public class MusicSelectController : MonoBehaviour
     [SerializeField] private TMP_Text bestScoreText;
 
     [Header("スコア計算用")]
-    [SerializeField] private SongDatabase songDatabase;
+    [SerializeField] private SongDatabaseSO songDatabase;
 
     [Header("決定ボタン")]
     [SerializeField] private Button confirmButton;
@@ -611,7 +612,7 @@ public class MusicSelectController : MonoBehaviour
 
         // その譜面の理論最大スコア
         int maxScore =
-            ScoreRankCalculator.CalculateMaxScore(
+            new ScoreRankCalculator().CalculateMaxScore(
                 songDatabase,
                 currentSongName,
                 currentDifficultyName
@@ -625,7 +626,7 @@ public class MusicSelectController : MonoBehaviour
         if (highScore > 0)
         {
             rank =
-                ScoreRankCalculator.Calculate(
+                new ScoreRankCalculator().Calculate(
                     highScore,
                     maxScore
                 );

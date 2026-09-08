@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using MusicInvaders.Data;
 
 public class NoteManager : MonoBehaviour
 {
@@ -7,7 +8,7 @@ public class NoteManager : MonoBehaviour
 	public TextAsset chartText;
 	public AudioSource audioSource;
 	public ObjectPool pool;
-	public SongDatabase songDatabase;
+	public SongDatabaseSO songDatabase;
 
 	[Header("表示上の判定線")]
 	public Transform judgementLineTransform;
@@ -200,12 +201,12 @@ public class NoteManager : MonoBehaviour
 
 		if (songDatabase == null)
 		{
-			Debug.LogError("❌ SongDatabase がインスペクターにセットされていません！");
+			Debug.LogError("❌ SongDatabaseSO がインスペクターにセットされていません！");
 			return;
 		}
 
 		// 1. データベースから曲名で検索
-		SongData foundSong = songDatabase.FindSong(targetSongName);
+		MusicInvaders.Data.SongData foundSong = songDatabase.FindSong(targetSongName);
 
 		if (foundSong != null)
 		{
@@ -220,7 +221,7 @@ public class NoteManager : MonoBehaviour
 			Debug.Log($"🎵 BGMをセットしました: {targetSongName} (BPM: {bpm})");
 
 			// 2. その曲の中から、難易度が一致する譜面を検索
-			ChartData foundChart = foundSong.charts.Find(c => c.difficultyName == targetDifficulty);
+			MusicInvaders.Data.ChartData foundChart = foundSong.charts.Find(c => c.difficultyName == targetDifficulty);
 
 			if (foundChart != null)
 			{
@@ -231,7 +232,7 @@ public class NoteManager : MonoBehaviour
 				if (GameManager.Instance != null)
 				{
 					GameManager.Instance.maxScore =
-						ScoreRankCalculator.CalculateMaxScore(
+						new ScoreRankCalculator().CalculateMaxScore(
 							songDatabase,
 							GameManager.Instance.musicTitle,
 							GameManager.Instance.difficulty

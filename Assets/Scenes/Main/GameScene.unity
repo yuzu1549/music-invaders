@@ -8930,7 +8930,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1013447274
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -20253,7 +20253,7 @@ PrefabInstance:
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: songDatabase
       value: 
-      objectReference: {fileID: 1013447274}
+      objectReference: {fileID: 11400000, guid: 329127d0810bb9d46a35f67a5caf1860, type: 2}
     - target: {fileID: 6071681824075111865, guid: 7e60284364ba5174183e7965bcc987f2, type: 3}
       propertyPath: startMeasure
       value: 45

@@ -18,6 +18,10 @@ public static class HighScoreStorage
     /// <summary>
     /// 最高記録を更新した場合は true を返す。
     /// </summary>
+    /// <param name="songId"></param>
+    /// <param name="difficulty"></param>
+    /// <param name="score"></param>
+    /// <returns></returns>
     public static bool TryUpdate(
         string songId,
         string difficulty,
@@ -36,6 +40,12 @@ public static class HighScoreStorage
         return true;
     }
 
+    /// <summary>
+    /// キーを生成する
+    /// </summary>
+    /// <param name="songId"></param>
+    /// <param name="difficulty"></param>
+    /// <returns></returns>
     private static string CreateKey(
         string songId,
         string difficulty)
@@ -44,7 +54,7 @@ public static class HighScoreStorage
     }
 
     /// <summary>
-    /// 
+    /// 難易度の表記を正規化する
     /// </summary>
     /// <param name="difficulty"></param>
     /// <returns></returns>
