@@ -113,10 +113,10 @@ public class ResultUI : MonoBehaviour
     private void ScoreJudgeUpdate()
     {
         // スコア、パーフェクト、グッド、ミスの表示
-        resultText.scoreText.GetComponent<TMPro.TextMeshProUGUI>().text = "スコア：" + GameManager.Instance.score;
-        resultText.perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "Perfect：" + GameManager.Instance.perfectCount;
-        resultText.goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "Good：" + GameManager.Instance.goodCount;
-        resultText.missText.GetComponent<TMPro.TextMeshProUGUI>().text = "Miss：" + GameManager.Instance.missCount;
+        resultText.scoreText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=white>スコア：</color>" + GameManager.Instance.score;
+        resultText.perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#ffff00>Perfect：</color>" + GameManager.Instance.perfectCount;
+        resultText.goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#87cefa>Good：</color>" + GameManager.Instance.goodCount;
+        resultText.missText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#c0c0c0>Miss：</color>" + GameManager.Instance.missCount;
     }
 
     /// <summary>
@@ -140,7 +140,7 @@ public class ResultUI : MonoBehaviour
     private void RankUpdate()
     {
         string rank = new ScoreRankCalculator().Calculate(GameManager.Instance.score, GameManager.Instance.maxScore);
-        resultText.rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "ランク：";
+        resultText.rankText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=white>ランク：</color>";
         switch (rank)
         {
             case "S":
