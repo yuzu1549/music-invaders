@@ -1125,6 +1125,15 @@ MonoBehaviour:
     rankD: {fileID: 21300000, guid: a74c6536dbb260e469514e4fe94a78cd, type: 3}
   rankImage: {fileID: 1588618140}
   songDatabase: {fileID: 11400000, guid: 329127d0810bb9d46a35f67a5caf1860, type: 2}
+  returnButton: {fileID: 1898785012}
+  displayInterval: 0.5
+  numberAnimationDuration: 0.25
+  numberShrinkScale: 0.8
+  numberExpandScale: 1.1
+  numberRevealSE: {fileID: 8300000, guid: fbe9eac0933945689fa334877024630e, type: 3}
+  numberRevealVolume: 0.65
+  rankRevealSE: {fileID: 8300000, guid: abdb1a00ca2d4ab9b4b2cb303c0e9c34, type: 3}
+  rankRevealVolume: 0.85
 --- !u!1 &1426731116
 GameObject:
   m_ObjectHideFlags: 0
@@ -1633,7 +1642,7 @@ GameObject:
   - component: {fileID: 1898785015}
   - component: {fileID: 1898785014}
   m_Layer: 5
-  m_Name: Button
+  m_Name: ReturnButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

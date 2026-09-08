@@ -1,6 +1,10 @@
 using UnityEngine;
 using MusicInvaders.Data;
 using UnityEngine.UI;
+using System;
+using Cysharp.Threading.Tasks;
+using System.Threading;
+using TMPro;
 
 public class ResultUI : MonoBehaviour
 {
@@ -55,26 +59,50 @@ public class ResultUI : MonoBehaviour
     [Header("曲データベース")]
     [SerializeField] private SongDatabaseSO songDatabase;
 
+    [Header("リターンボタン")]
+    [SerializeField]
+    private GameObject returnButton;
 
-    void Start()
+    [Header("表示間隔")]
+    [SerializeField, Min(0f)] private float displayInterval = 0.5f;
+
+    [Header("数字の表示アニメーション")]
+    [SerializeField, Min(0f)] private float numberAnimationDuration = 0.25f;
+    [SerializeField, Range(0.1f, 1f)] private float numberShrinkScale = 0.8f;
+    [SerializeField, Range(1f, 1.5f)] private float numberExpandScale = 1.1f;
+
+    [Header("結果表示のSE")]
+    [SerializeField] private AudioClip numberRevealSE;
+    [SerializeField, Range(0f, 1f)] private float numberRevealVolume = 0.65f;
+    [SerializeField] private AudioClip rankRevealSE;
+    [SerializeField, Range(0f, 1f)] private float rankRevealVolume = 0.85f;
+
+
+    private void Start()
     {
-        Result();
+        rankImage.gameObject.SetActive(false);
+        returnButton.SetActive(false);
+        Result(this.GetCancellationTokenOnDestroy()).SuppressCancellationThrow().Forget();
     }
 
     /// <summary>
     /// 結果を表示する
     /// </summary>
-    private void Result()
+    private async UniTask Result(CancellationToken cancellationToken)
     {
         // ゲームオーバーまたはゲームクリアの状態を監視
         if (GameManager.Instance != null)
         {
             TitleTextUpdate();
             SongInfoTextUpdate();
-            ScoreJudgeUpdate();
             HighScoreUpdate();
-            RankUpdate();
+            await ScoreJudgeUpdate(cancellationToken);
 
+            await UniTask.Delay(TimeSpan.FromSeconds(1f), ignoreTimeScale: true,
+                cancellationToken: cancellationToken);
+
+            RankUpdate();
+            returnButton.SetActive(true);
         }
     }
 
@@ -100,6 +128,9 @@ public class ResultUI : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 曲名と難易度の表示を更新する
+    /// </summary>
     private void SongInfoTextUpdate()
     {
         // 曲名と難易度の表示
@@ -110,13 +141,156 @@ public class ResultUI : MonoBehaviour
     /// <summary>
     /// スコア、パーフェクト、グッド、ミスの表示を更新する
     /// </summary>
-    private void ScoreJudgeUpdate()
+    private async UniTask ScoreJudgeUpdate(CancellationToken cancellationToken)
     {
-        // スコア、パーフェクト、グッド、ミスの表示
-        resultText.scoreText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=white>スコア：</color>" + GameManager.Instance.score;
-        resultText.perfectText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#ffff00>Perfect：</color>" + GameManager.Instance.perfectCount;
-        resultText.goodText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#87cefa>Good：</color>" + GameManager.Instance.goodCount;
-        resultText.missText.GetComponent<TMPro.TextMeshProUGUI>().text = "<color=#c0c0c0>Miss：</color>" + GameManager.Instance.missCount;
+        // ラベルの設定
+        const string perfectLabel = "<color=#ffff00>Perfect：</color>";
+        const string goodLabel = "<color=#87cefa>Good：</color>";
+        const string missLabel = "<color=#c0c0c0>Miss：</color>";
+        const string scoreLabel = "<color=white>スコア：</color>";
+
+        // 初期化
+        TextMeshProUGUI perfectText = resultText.perfectText.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI goodText = resultText.goodText.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI missText = resultText.missText.GetComponent<TextMeshProUGUI>();
+        TextMeshProUGUI scoreText = resultText.scoreText.GetComponent<TextMeshProUGUI>();
+        int perfectCount = GameManager.Instance.perfectCount;
+        int goodCount = GameManager.Instance.goodCount;
+        int missCount = GameManager.Instance.missCount;
+        int score = GameManager.Instance.score;
+
+        perfectText.text = perfectLabel;
+        goodText.text = goodLabel;
+        missText.text = missLabel;
+        scoreText.text = scoreLabel;
+
+        // 数字の表示アニメーションを順番に実行
+        await ShowNumberAsync(perfectText, perfectLabel, perfectCount, cancellationToken);
+        await ShowNumberAsync(goodText, goodLabel, goodCount, cancellationToken);
+        await ShowNumberAsync(missText, missLabel, missCount, cancellationToken);
+        await ShowNumberAsync(scoreText, scoreLabel, score, cancellationToken);
+    }
+
+    /// <summary>
+    /// 数字の表示アニメーションを実行する
+    /// </summary>
+    /// <param name="targetText"></param>
+    /// <param name="label"></param>
+    /// <param name="value"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    private async UniTask ShowNumberAsync(TextMeshProUGUI targetText, string label,
+        int value, CancellationToken cancellationToken)
+    {
+        await UniTask.Delay(TimeSpan.FromSeconds(Mathf.Max(0f, displayInterval)),
+            ignoreTimeScale: true, cancellationToken: cancellationToken);
+
+        targetText.text = label + value;
+        PlayResultSE(numberRevealSE, numberRevealVolume);
+        float elapsedTime = 0f;
+
+        try
+        {
+            while (elapsedTime < numberAnimationDuration)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                float progress = elapsedTime / numberAnimationDuration;
+                float scale = EvaluateNumberScale(progress);
+                ScaleNumberVertices(targetText, label.Length, scale);
+
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+                elapsedTime += Time.unscaledDeltaTime;
+            }
+        }
+        finally
+        {
+            if (targetText != null)
+            {
+                targetText.ForceMeshUpdate();
+            }
+        }
+    }
+
+    /// <summary>
+    /// 数字の拡縮率を評価する
+    /// </summary>
+    /// <param name="progress"></param>
+    /// <returns></returns>
+    private float EvaluateNumberScale(float progress)
+    {
+        if (progress < 0.3f)
+        {
+            return Mathf.SmoothStep(1f, numberShrinkScale, progress / 0.3f);
+        }
+
+        if (progress < 0.75f)
+        {
+            return Mathf.SmoothStep(numberShrinkScale, numberExpandScale,
+                (progress - 0.3f) / 0.45f);
+        }
+
+        return Mathf.SmoothStep(numberExpandScale, 1f, (progress - 0.75f) / 0.25f);
+    }
+
+    /// <summary>
+    /// 数字の頂点を拡縮する
+    /// </summary>
+    /// <param name="targetText"></param>
+    /// <param name="numberStartIndex"></param>
+    /// <param name="scale"></param>
+    private static void ScaleNumberVertices(TextMeshProUGUI targetText,
+        int numberStartIndex, float scale)
+    {
+        // 毎回元の頂点を生成し、拡縮の累積とレイアウト変更によるずれを防ぐ。
+        targetText.ForceMeshUpdate();
+        TMP_TextInfo textInfo = targetText.textInfo;
+        Vector3 minimum = new Vector3(float.PositiveInfinity, float.PositiveInfinity, 0f);
+        Vector3 maximum = new Vector3(float.NegativeInfinity, float.NegativeInfinity, 0f);
+        bool hasVisibleNumber = false;
+
+        for (int characterIndex = 0; characterIndex < textInfo.characterCount; characterIndex++)
+        {
+            TMP_CharacterInfo character = textInfo.characterInfo[characterIndex];
+            // indexはリッチテキストタグを含む元の文字列上の位置。
+            if (!character.isVisible || character.index < numberStartIndex)
+            {
+                continue;
+            }
+
+            Vector3[] vertices = textInfo.meshInfo[character.materialReferenceIndex].vertices;
+            for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++)
+            {
+                Vector3 vertex = vertices[character.vertexIndex + cornerIndex];
+                minimum = Vector3.Min(minimum, vertex);
+                maximum = Vector3.Max(maximum, vertex);
+            }
+
+            hasVisibleNumber = true;
+        }
+
+        if (!hasVisibleNumber)
+        {
+            return;
+        }
+
+        Vector3 numberCenter = (minimum + maximum) * 0.5f;
+        for (int characterIndex = 0; characterIndex < textInfo.characterCount; characterIndex++)
+        {
+            TMP_CharacterInfo character = textInfo.characterInfo[characterIndex];
+            if (!character.isVisible || character.index < numberStartIndex)
+            {
+                continue;
+            }
+
+            Vector3[] vertices = textInfo.meshInfo[character.materialReferenceIndex].vertices;
+            for (int cornerIndex = 0; cornerIndex < 4; cornerIndex++)
+            {
+                int vertexIndex = character.vertexIndex + cornerIndex;
+                vertices[vertexIndex] = numberCenter + (vertices[vertexIndex] - numberCenter) * scale;
+            }
+        }
+
+        targetText.UpdateVertexData(TMP_VertexDataUpdateFlags.Vertices);
     }
 
     /// <summary>
@@ -162,6 +336,16 @@ public class ResultUI : MonoBehaviour
                 Debug.LogWarning("不明なランク: " + rank);
                 break;
         }
+        rankImage.gameObject.SetActive(true);
+        PlayResultSE(rankRevealSE, rankRevealVolume);
+    }
+
+    private static void PlayResultSE(AudioClip clip, float volume)
+    {
+        if (AudioManager.Instance != null)
+        {
+            AudioManager.Instance.PlaySE(clip, volume);
+        }
     }
 
     /// <summary>
@@ -169,6 +353,10 @@ public class ResultUI : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
+        if (GameManager.Instance == null)
+        {
+            return;
+        }
         // 結果画面が閉じられるときにスコアをリセット
         GameManager.Instance.score = 0;
         GameManager.Instance.perfectCount = 0;
