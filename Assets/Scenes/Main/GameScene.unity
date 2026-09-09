@@ -3240,9 +3240,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: 60e725ce5af0a6d46838b8c8d5eb8a4e, type: 3}
-  bpm: 224
-  outputFileName: Snowdrive0123_Easy.txt
+  osuTextFile: {fileID: 4900000, guid: 0cd69649fba80854fa1f15d9191d9781, type: 3}
+  bpm: 132
+  outputFileName: MereFancy_Easy.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
@@ -8179,7 +8179,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TestDataInjector
   testSongName: SnowDrive0123
-  testDifficulty: Easy
+  testDifficulty: Hard
 --- !u!4 &957203738
 Transform:
   m_ObjectHideFlags: 0
