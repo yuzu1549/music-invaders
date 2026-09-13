@@ -43,9 +43,6 @@ namespace UI
                 BGLowerY = 0f;
                 BGUpperY = BGLowerY + BGLowerRenderer.bounds.size.y;
             }
-            
-            Debug.Log(BGYsize);
-
         }
 
         private void Update()
