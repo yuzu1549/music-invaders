@@ -461,6 +461,9 @@ MonoBehaviour:
   easyBox: {fileID: 6671160679849131060}
   normalBox: {fileID: 1017723396718374912}
   difficultBox: {fileID: 8286854257638876462}
+  easyStarsText: {fileID: 0}
+  normalStarsText: {fileID: 0}
+  hardStarsText: {fileID: 0}
 --- !u!1 &1740618448915742056
 GameObject:
   m_ObjectHideFlags: 0
@@ -1193,7 +1196,6 @@ GameObject:
   - component: {fileID: 7281673875878546507}
   - component: {fileID: 2807497160781110573}
   - component: {fileID: 638883470667254181}
-  - component: {fileID: 2756999233433864738}
   m_Layer: 5
   m_Name: SongItem_2
   m_TagString: Untagged
@@ -1259,20 +1261,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2756999233433864738
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5071235469907743756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0a9759b577f074f41a3970896bfa407b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SongItem
-  backgroundImage: {fileID: 638883470667254181}
-  titleText: {fileID: 4873223950696645400}
 --- !u!1 &5461554895718656833
 GameObject:
   m_ObjectHideFlags: 0
@@ -2025,10 +2013,22 @@ MonoBehaviour:
   songItems:
   - {fileID: 4444447948326794609}
   - {fileID: 8075005425025363309}
-  - {fileID: 2756999233433864738}
+  - {fileID: 0}
   - {fileID: 647864807877038057}
   - {fileID: 3872167279691718152}
   songInfoPanel: {fileID: 2600691593957036072}
+  previewAudioSource: {fileID: 0}
+  songClips: []
+  upButton: {fileID: 0}
+  downButton: {fileID: 0}
+  easyButton: {fileID: 0}
+  normalButton: {fileID: 0}
+  hardButton: {fileID: 0}
+  rankText: {fileID: 0}
+  bestScoreText: {fileID: 0}
+  songDatabase: {fileID: 0}
+  confirmButton: {fileID: 0}
+  settingsPanel: {fileID: 0}
 --- !u!1 &8416015585018035720
 GameObject:
   m_ObjectHideFlags: 0
