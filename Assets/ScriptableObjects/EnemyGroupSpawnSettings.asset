@@ -14,6 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyGroupSpawnSettings
   rules:
   - spawnIntervalMeasures: 1
+    spawnGroupCount: 5
+  - spawnIntervalMeasures: 1
     spawnGroupCount: 3
   - spawnIntervalMeasures: 1
     spawnGroupCount: 2
@@ -22,6 +24,4 @@ MonoBehaviour:
   - spawnIntervalMeasures: 2
     spawnGroupCount: 1
   - spawnIntervalMeasures: 3
-    spawnGroupCount: 1
-  - spawnIntervalMeasures: 4
     spawnGroupCount: 1

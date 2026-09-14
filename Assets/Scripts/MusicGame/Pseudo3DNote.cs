@@ -14,9 +14,11 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	[Range(0f, 1f)]
 	public float perspectiveBlend = 0.5f;
 
-	[Header("見た目の設定（色分け）")]
-	private Color leftColor = Color.white; // 左レーンの色
-	private Color rightColor = Color.gray; // 右レーンの色
+	[Header("左レーンのノーツ画像")]
+	[SerializeField] private Sprite leftSprite;
+
+	[Header("右レーンのノーツ画像")]
+	[SerializeField] private Sprite rightSprite;
 
 	[Header("座標設定（下から真ん中の場合）")]
 	public float startY = -5f;
@@ -37,6 +39,7 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	private Vector3 endPos;
 	private ObjectPool _pool;
 	private SpriteRenderer spriteRenderer;
+	private Sprite defaultSprite;
 
 	private void Awake()
 	{
@@ -44,6 +47,11 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 		if (spriteRenderer == null)
 		{
 			spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		}
+
+		if (spriteRenderer != null)
+		{
+			defaultSprite = spriteRenderer.sprite;
 		}
 	}
 
@@ -85,21 +93,21 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 	{
 		this.lane = targetLane;
 
-		// レーンによって色を切り替える
 		if (spriteRenderer != null)
 		{
-			if (this.lane < 0) // レーンが -1 などの場合
+			Sprite laneSprite = defaultSprite;
+			if (this.lane < 0)
 			{
-				spriteRenderer.color = leftColor;
+				laneSprite = leftSprite;
 			}
-			else if (this.lane > 0) // レーンが 1 などの場合
+			else if (this.lane > 0)
 			{
-				spriteRenderer.color = rightColor;
+				laneSprite = rightSprite;
 			}
-			else
-			{
-				spriteRenderer.color = Color.white;
-			}
+
+			// 未設定時も、プール再利用前の別レーンの画像を残さない。
+			spriteRenderer.sprite = laneSprite != null ? laneSprite : defaultSprite;
+			spriteRenderer.color = Color.white;
 		}
 
 		float direction = (float)this.lane;

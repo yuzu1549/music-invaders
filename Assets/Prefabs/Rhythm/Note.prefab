@@ -107,11 +107,13 @@ MonoBehaviour:
   judgeOffset: 0
   lane: 0
   perspectiveBlend: 0.5
+  leftSprite: {fileID: 21300000, guid: 21be7ade11ecff6488d0e3f8cb501dc8, type: 3}
+  rightSprite: {fileID: 21300000, guid: f88e9774c3d387a4d8f8b4330b0d361b, type: 3}
   startY: -5
   endY: 0
   startSpread: 1
   endSpread: 0.225
   startScaleX: 2
   endScaleX: 0.45
-  startScaleY: 0.2
-  endScaleY: 0.045
+  startScaleY: 5
+  endScaleY: 1.125
