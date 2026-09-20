@@ -162,6 +162,12 @@ public class Pseudo3DNote : MonoBehaviour, IPoolable
 
 	void Update()
 	{
+		if (Time.timeScale == 0f || (GameManager.Instance != null &&
+			(GameManager.Instance.isGameOver || GameManager.Instance.isGameCleared)))
+		{
+			return;
+		}
+
 		if (movementDuration <= 0f || judgementDuration <= 0f) return;
 
 		timer += Time.deltaTime;

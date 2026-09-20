@@ -43,6 +43,33 @@ public class NoteManager : MonoBehaviour
 	private bool wasMusicPlayingBeforePause = false;
 	private double pauseStartedDspTime;
 	private float pausedAudioTime;
+	private bool useEnemyEndBeat;
+	private float enemyEndBeat;
+	private float initialMusicVolume;
+	private bool hasEndingController;
+
+	public bool IsPlaybackPaused => isPaused;
+	public bool IsTimelineRunning => isMusicScheduled && !isPaused &&
+		AudioSettings.dspTime - dspStartTime >= delayTime;
+	public bool HasReachedEnding => isMusicScheduled && !isPaused &&
+		(useEnemyEndBeat
+			? GetCurrentMusicTime() >= GetTargetTime(enemyEndBeat, SecondsPerBeat)
+			: hasMusicStarted && !audioSource.isPlaying);
+
+	/// <summary>終了進行を専用コントローラーへ委譲する。</summary>
+	public void RegisterEndingController()
+	{
+		hasEndingController = true;
+	}
+
+	/// <summary>設定音量とは独立した楽曲のフェード倍率を反映する。</summary>
+	public void SetEndingFade(float multiplier)
+	{
+		if (audioSource != null)
+		{
+			audioSource.volume = initialMusicVolume * Mathf.Clamp01(multiplier);
+		}
+	}
 
 	public float CurrentMusicTimeSeconds => GetCurrentMusicTime();
 	public float SecondsPerBeat => bpm > 0f ? 60f / bpm : 0f;
@@ -68,6 +95,7 @@ public class NoteManager : MonoBehaviour
 		// 前のシーンから曲データと難易度が渡されていればセットアップする
 		SetupFromArgs();
 		ApplySettings();
+		initialMusicVolume = audioSource != null ? audioSource.volume : 1f;
 
 		// 譜面データを読み込む
 		LoadChart();
@@ -217,6 +245,14 @@ public class NoteManager : MonoBehaviour
 			bpm = foundSong.bpm;
 			songOffsetSeconds = foundSong.SongOffsetSeconds;
 			enemyStartBeat = foundSong.EnemyStartBeat;
+			useEnemyEndBeat = foundSong.UseEnemyEndBeat;
+			enemyEndBeat = foundSong.EnemyEndBeat;
+			if (useEnemyEndBeat && (float.IsNaN(enemyEndBeat) ||
+				float.IsInfinity(enemyEndBeat) || enemyEndBeat <= enemyStartBeat))
+			{
+				Debug.LogError("敵の終了拍は開始拍より後に設定してください。音源終了を使用します。");
+				useEnemyEndBeat = false;
+			}
 
 			Debug.Log($"🎵 BGMをセットしました: {targetSongName} (BPM: {bpm})");
 
@@ -282,7 +318,7 @@ public class NoteManager : MonoBehaviour
 		// 待ち時間を過ぎて曲が鳴り始めているはずの時はオーディオの再生位置（秒）を基準にする
 		if (currentDspTime >= delayTime)
 		{
-			currentMusicTime = audioSource.time;
+			currentMusicTime = GetCurrentMusicTime();
 
 			if (!hasMusicStarted && audioSource.isPlaying)
 			{
@@ -295,7 +331,7 @@ public class NoteManager : MonoBehaviour
 			currentMusicTime = (float)(currentDspTime - delayTime) + debugStartTimeOffset;
 		}
 
-		if (hasMusicStarted && !audioSource.isPlaying)
+		if (!hasEndingController && hasMusicStarted && !audioSource.isPlaying)
 		{
 			// 再生開始後に停止している場合、曲の再生が終わったと判断してクリアを実行
 			OnMusicEnded();
@@ -443,12 +479,14 @@ public class NoteManager : MonoBehaviour
 			return 0f;
 		}
 
-		double referenceDspTime = isPaused
-			? pauseStartedDspTime
-			: AudioSettings.dspTime;
-		double currentDspTime = referenceDspTime - dspStartTime;
+		if (isPaused)
+		{
+			return pausedAudioTime;
+		}
 
-		if (delayTime <= currentDspTime)
+		double currentDspTime = AudioSettings.dspTime - dspStartTime;
+
+		if (delayTime <= currentDspTime && audioSource.isPlaying)
 		{
 			return audioSource.time;
 		}
@@ -513,15 +551,13 @@ public class NoteManager : MonoBehaviour
 	{
 		if (audioSource == null || isPaused) return;
 
+		pausedAudioTime = GetCurrentMusicTime();
 		isPaused = true;
 		pauseStartedDspTime = AudioSettings.dspTime;
 		double elapsedDspTime = pauseStartedDspTime - dspStartTime;
 		bool hasReachedScheduledStart = delayTime <= elapsedDspTime;
 		wasMusicPlayingBeforePause =
 			hasReachedScheduledStart && audioSource.isPlaying;
-		pausedAudioTime = wasMusicPlayingBeforePause
-			? audioSource.time
-			: 0f;
 
 		if (wasMusicPlayingBeforePause)
 		{
@@ -556,9 +592,9 @@ public class NoteManager : MonoBehaviour
 		{
 			audioSource.UnPause();
 		}
-		else if (isMusicScheduled && audioSource.clip != null)
+		else if (isMusicScheduled && !hasMusicStarted && audioSource.clip != null)
 		{
-			audioSource.time = Mathf.Min(pausedAudioTime, audioSource.clip.length);
+			audioSource.time = Mathf.Min(debugStartTimeOffset, audioSource.clip.length);
 			audioSource.PlayScheduled(dspStartTime + delayTime);
 		}
 

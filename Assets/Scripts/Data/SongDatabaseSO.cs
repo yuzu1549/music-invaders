@@ -27,10 +27,19 @@ namespace MusicInvaders.Data
         [Min(0)]
         [SerializeField] private int enemyStartBeat = 0;
 
+        [Header("敵の終了拍を指定する")]
+        [SerializeField] private bool useEnemyEndBeat;
+
+        [Header("敵が動き終わる拍（曲オフセットを0拍目とする）")]
+        [Min(0f)]
+        [SerializeField] private float enemyEndBeat;
+
         public List<ChartData> charts; // この曲の各難易度の譜面リスト
 
         public float SongOffsetSeconds => songOffsetSeconds;
         public int EnemyStartBeat => Mathf.Max(0, enemyStartBeat);
+        public bool UseEnemyEndBeat => useEnemyEndBeat;
+        public float EnemyEndBeat => enemyEndBeat;
     }
 
     // データベース本体

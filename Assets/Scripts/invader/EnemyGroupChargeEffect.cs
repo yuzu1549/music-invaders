@@ -349,6 +349,7 @@ public class EnemyGroupChargeEffect : MonoBehaviour
 
         enemyGroupMovement.DiveChargeStarted += HandleDiveChargeStarted;
         enemyGroupMovement.DiveStarted += HandleDiveStarted;
+        enemyGroupMovement.CombatStopped += StopAllEffects;
         isSubscribed = true;
     }
 
@@ -364,6 +365,7 @@ public class EnemyGroupChargeEffect : MonoBehaviour
 
         enemyGroupMovement.DiveChargeStarted -= HandleDiveChargeStarted;
         enemyGroupMovement.DiveStarted -= HandleDiveStarted;
+        enemyGroupMovement.CombatStopped -= StopAllEffects;
         isSubscribed = false;
     }
 }
