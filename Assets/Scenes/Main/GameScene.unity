@@ -3240,9 +3240,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a7ab136cb19a464c87a73e5b822b168, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OsuConverter
-  osuTextFile: {fileID: 4900000, guid: 0cd69649fba80854fa1f15d9191d9781, type: 3}
-  bpm: 132
-  outputFileName: MereFancy_Easy.txt
+  osuTextFile: {fileID: 4900000, guid: 2633d4c04ef07e147a05eed943cb3d91, type: 3}
+  bpm: 158
+  outputFileName: ShiningStar_Easy2.txt
   quantizeDivision: 24
 --- !u!4 &343468541
 Transform:
