@@ -110,6 +110,12 @@ public class RandomEnemyAttacker : MonoBehaviour
     /// </summary>
     private void RandomEnemyAttack()
     {
+        if (musicBeatClock == null || musicBeatClock.IsCombatStopped)
+        {
+            CancelInvoke(nameof(RandomEnemyAttack));
+            return;
+        }
+
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         List<GameObject> availableEnemies = new();
 

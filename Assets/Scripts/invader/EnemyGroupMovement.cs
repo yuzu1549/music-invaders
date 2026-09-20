@@ -55,6 +55,10 @@ public class EnemyGroupMovement : MonoBehaviour
     private bool isSubscribed;
     private bool isRestoringScale;
     private bool hasStartedDiveMovement;
+    private bool hasStoppedCombat;
+
+    /// <summary>終了拍でチャージ演出を停止するための通知。</summary>
+    public event Action CombatStopped;
 
     private int DivePhaseBeats => diveChargeBeats + diveMovementBeats;
 
@@ -91,7 +95,14 @@ public class EnemyGroupMovement : MonoBehaviour
 
     private void Update()
     {
-        if (!isInitialized || musicBeatClock == null)
+        if (musicBeatClock != null && musicBeatClock.IsCombatStopped &&
+            !hasStoppedCombat)
+        {
+            hasStoppedCombat = true;
+            CombatStopped?.Invoke();
+        }
+
+        if (!isInitialized || musicBeatClock == null || musicBeatClock.IsCombatStopped)
         {
             return;
         }

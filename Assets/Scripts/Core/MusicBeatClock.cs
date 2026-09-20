@@ -21,6 +21,14 @@ public class MusicBeatClock : MonoBehaviour
     private bool isClockInitialized;
     private bool shouldRebaseClock;
 
+    public bool IsCombatStopped { get; private set; }
+
+    /// <summary>終了後の拍通知と敵の時間進行を停止する。</summary>
+    public void StopCombat()
+    {
+        IsCombatStopped = true;
+    }
+
     private void Update()
     {
         if (noteManager == null)
@@ -30,7 +38,7 @@ public class MusicBeatClock : MonoBehaviour
 
         DetectTimingOffsetChange();
 
-        if (!noteManager.IsMusicPlaying)
+        if (IsCombatStopped || !noteManager.IsTimelineRunning)
         {
             return;
         }

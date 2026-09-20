@@ -58,6 +58,12 @@ public class JudgementManager : MonoBehaviour
 
 	void Update()
 	{
+		if (Time.timeScale == 0f || (GameManager.Instance != null &&
+			(GameManager.Instance.isGameOver || GameManager.Instance.isGameCleared)))
+		{
+			return;
+		}
+
 		if (inputReader == null)
 		{
 			return;
