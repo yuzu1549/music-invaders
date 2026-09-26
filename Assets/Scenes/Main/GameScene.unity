@@ -17584,7 +17584,7 @@ MonoBehaviour:
   noteManager: {fileID: 666150379}
   musicBeatClock: {fileID: 1763804959}
   gameFinish: {fileID: 1827994862}
-  clearDelaySeconds: 2
+  clearDelaySeconds: 3
 --- !u!1 &1832773989
 GameObject:
   m_ObjectHideFlags: 0

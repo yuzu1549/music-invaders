@@ -18,8 +18,8 @@ MonoBehaviour:
     bpm: 158
     songOffsetSeconds: 0.752
     enemyStartBeat: 0
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 205
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 96fd5e7aa7b7e154d805a79bf3ac5a9b, type: 3}
@@ -32,8 +32,8 @@ MonoBehaviour:
     bpm: 132
     songOffsetSeconds: 0
     enemyStartBeat: 4
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 211
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 730d5678cfe8ea6438327e2ce2531eb0, type: 3}
@@ -46,8 +46,8 @@ MonoBehaviour:
     bpm: 224
     songOffsetSeconds: 1.767
     enemyStartBeat: 0
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 448
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: eeeb1104ec8b6ed4cb5246b6a6c8335c, type: 3}
