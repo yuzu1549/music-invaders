@@ -14,6 +14,10 @@ public class StarFlowUI : MonoBehaviour
     [SerializeField]
     private float rotationSpeed = 60f;
 
+    [Header("星のサイズ倍率（元のサイズに対する範囲）")]
+    [SerializeField]
+    private Vector2 scaleRange = new Vector2(0.5f, 1.5f);
+
     [Header("画面外判定")]
     [SerializeField]
     private float leftLimit = -1050f;
@@ -125,6 +129,17 @@ public class StarFlowUI : MonoBehaviour
 
             stars[i] = star;
 
+            // 元の縦横比を保ちながら、星ごとにサイズをばらけさせる。
+            float minScale = Mathf.Max(0.01f, Mathf.Min(scaleRange.x, scaleRange.y));
+            float maxScale = Mathf.Max(minScale, Mathf.Max(scaleRange.x, scaleRange.y));
+            float scale = Random.Range(minScale, maxScale);
+            Vector3 originalScale = star.localScale;
+            star.localScale = new Vector3(
+                originalScale.x * scale,
+                originalScale.y * scale,
+                originalScale.z
+            );
+
             /*
              * 回転中心を星の中央に設定する。
              * Pivotが中央なら、回転しても移動軌道に影響しない。
@@ -139,10 +154,10 @@ public class StarFlowUI : MonoBehaviour
                 spawnPositions[i];
 
             /*
-             * 回転角度を初期化する。
+             * 星ごとの回転角度をばらけさせる。
              */
             stars[i].localRotation =
-                Quaternion.identity;
+                Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
             /*
              * 星が一気に出ないよう、
@@ -249,11 +264,18 @@ public class StarFlowUI : MonoBehaviour
             Mathf.Abs(star.localScale.y) *
             0.5f;
 
+        // 回転後の外接矩形で判定し、星が見えている途中で戻らないようにする。
+        float angle = star.localEulerAngles.z * Mathf.Deg2Rad;
+        float cos = Mathf.Abs(Mathf.Cos(angle));
+        float sin = Mathf.Abs(Mathf.Sin(angle));
+        float rotatedHalfWidth = halfWidth * cos + halfHeight * sin;
+        float rotatedHalfHeight = halfWidth * sin + halfHeight * cos;
+
         bool outsideLeft =
-            position.x + halfWidth < leftLimit;
+            position.x + rotatedHalfWidth < leftLimit;
 
         bool outsideBottom =
-            position.y + halfHeight < bottomLimit;
+            position.y + rotatedHalfHeight < bottomLimit;
 
         return outsideLeft || outsideBottom;
     }
@@ -275,10 +297,10 @@ public class StarFlowUI : MonoBehaviour
             spawnPositions[index];
 
         /*
-         * 回転角度を初期状態へ戻す。
+             * 再出現時も回転角度をばらけさせる。
          */
         star.localRotation =
-            Quaternion.identity;
+            Quaternion.Euler(0f, 0f, Random.Range(0f, 360f));
 
         /*
          * リセット直後に少し待機させる。
