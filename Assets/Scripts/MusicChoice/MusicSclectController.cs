@@ -44,7 +44,7 @@ public class MusicSelectController : MonoBehaviour
     {
         "ShiningStar",
         "MereFancy",
-        "snowdrive0123"
+        "SnowDrive0123"
     };
 
 

@@ -36,11 +36,11 @@ MonoBehaviour:
     enemyEndBeat: 211
     charts:
     - difficultyName: Easy
-      chartFile: {fileID: 4900000, guid: 730d5678cfe8ea6438327e2ce2531eb0, type: 3}
+      chartFile: {fileID: 4900000, guid: 91b92ab7336b4da41b081c7852cf584c, type: 3}
     - difficultyName: Normal
-      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
+      chartFile: {fileID: 4900000, guid: 730d5678cfe8ea6438327e2ce2531eb0, type: 3}
     - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: a8342cfcd5cd43b46abfda378f239ee4, type: 3}
+      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
   - songName: SnowDrive0123
     bgm: {fileID: 8300000, guid: 31d9aa4c096625d428de8b5eabf5f051, type: 3}
     bpm: 224
