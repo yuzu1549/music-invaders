@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 /// IntegrationScenes上に曲情報・時間・オプション・スコア情報を表示する。
 public class IntegrationSceneUI : MonoBehaviour
@@ -17,6 +18,11 @@ public class IntegrationSceneUI : MonoBehaviour
 
     [Header("Right UI Text")]
     [SerializeField] private TextMeshProUGUI lifeText;
+    [Header("Life Images")]
+    [SerializeField] private Sprite lifeSprite;
+    [SerializeField, Min(1f)] private float lifeIconSize = 40f;
+    [SerializeField, Min(0f)] private float lifeIconSpacing = 8f;
+    private Image[] lifeImages;
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI perfectCountText;
     [SerializeField] private TextMeshProUGUI goodCountText;
@@ -96,7 +102,7 @@ public class IntegrationSceneUI : MonoBehaviour
     {
         UpdateMusicTexts();
         UpdateOptionTexts();
-        UpdateLifeText();
+        UpdateLifeImages();
     }
 
     private void UpdateMusicTexts()
@@ -228,24 +234,50 @@ public class IntegrationSceneUI : MonoBehaviour
         }
     }
 
-    private void UpdateLifeText()
+    private void UpdateLifeImages()
     {
-        if (lifeText != null)
+        if (lifeText == null || lifeSprite == null) return;
+
+        int maxLife = playerHealth != null ? Mathf.Max(0, playerHealth.maxHealth) : 3;
+        int life = playerHealth != null ? Mathf.Clamp(playerHealth.currentHealth, 0, maxLife) : maxLife;
+
+        if (lifeImages == null || lifeImages.Length != maxLife)
         {
-            int life = 3;
-
-            if (playerHealth != null)
+            if (lifeImages != null)
             {
-                life = playerHealth.currentHealth;
+                foreach (Image icon in lifeImages)
+                {
+                    icon.gameObject.SetActive(false);
+                    Destroy(icon.gameObject);
+                }
             }
 
-            if (life < 0)
+            // 既存のライフ表示位置を画像の親として利用する。
+            lifeText.text = string.Empty;
+            lifeText.enabled = false;
+            lifeImages = new Image[maxLife];
+            for (int i = 0; i < maxLife; i++)
             {
-                life = 0;
+                GameObject iconObject = new GameObject("LifeIcon" + (i + 1), typeof(RectTransform), typeof(Image));
+                iconObject.layer = lifeText.gameObject.layer;
+                Image icon = iconObject.GetComponent<Image>();
+                icon.rectTransform.SetParent(lifeText.rectTransform, false);
+                icon.rectTransform.anchorMin = new Vector2(0f, 0.5f);
+                icon.rectTransform.anchorMax = new Vector2(0f, 0.5f);
+                icon.rectTransform.pivot = new Vector2(0f, 0.5f);
+                icon.preserveAspect = true;
+                icon.raycastTarget = false;
+                lifeImages[i] = icon;
             }
+        }
 
-            lifeText.text = "Life:" + new string('♥', life);
-            lifeText.fontSize = 40;
+        for (int i = 0; i < lifeImages.Length; i++)
+        {
+            Image icon = lifeImages[i];
+            icon.sprite = lifeSprite;
+            icon.rectTransform.sizeDelta = Vector2.one * lifeIconSize;
+            icon.rectTransform.anchoredPosition = new Vector2(i * (lifeIconSize + lifeIconSpacing), 0f);
+            icon.enabled = i < life;
         }
     }
 

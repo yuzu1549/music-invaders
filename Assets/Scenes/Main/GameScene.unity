@@ -15567,6 +15567,9 @@ MonoBehaviour:
   highScoreText: {fileID: 111184928}
   rankText: {fileID: 1749158167}
   lifeText: {fileID: 1844078577}
+  lifeSprite: {fileID: 1104778580331295467, guid: e00d304104fa4b54993d7acb014656a4, type: 3}
+  lifeIconSize: 40
+  lifeIconSpacing: 8
   scoreText: {fileID: 1535303847}
   perfectCountText: {fileID: 1454236987}
   goodCountText: {fileID: 1517443714}
