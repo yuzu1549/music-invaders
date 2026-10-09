@@ -18,8 +18,8 @@ MonoBehaviour:
     bpm: 158
     songOffsetSeconds: 0.752
     enemyStartBeat: 0
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 205
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: 96fd5e7aa7b7e154d805a79bf3ac5a9b, type: 3}
@@ -32,22 +32,22 @@ MonoBehaviour:
     bpm: 132
     songOffsetSeconds: 0
     enemyStartBeat: 4
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 211
     charts:
     - difficultyName: Easy
-      chartFile: {fileID: 4900000, guid: 730d5678cfe8ea6438327e2ce2531eb0, type: 3}
+      chartFile: {fileID: 4900000, guid: 91b92ab7336b4da41b081c7852cf584c, type: 3}
     - difficultyName: Normal
-      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
+      chartFile: {fileID: 4900000, guid: 730d5678cfe8ea6438327e2ce2531eb0, type: 3}
     - difficultyName: Hard
-      chartFile: {fileID: 4900000, guid: a8342cfcd5cd43b46abfda378f239ee4, type: 3}
+      chartFile: {fileID: 4900000, guid: 09f2d306a7745634ba242d89b0916e63, type: 3}
   - songName: SnowDrive0123
     bgm: {fileID: 8300000, guid: 31d9aa4c096625d428de8b5eabf5f051, type: 3}
     bpm: 224
     songOffsetSeconds: 1.767
     enemyStartBeat: 0
-    useEnemyEndBeat: 0
-    enemyEndBeat: 0
+    useEnemyEndBeat: 1
+    enemyEndBeat: 448
     charts:
     - difficultyName: Easy
       chartFile: {fileID: 4900000, guid: eeeb1104ec8b6ed4cb5246b6a6c8335c, type: 3}
