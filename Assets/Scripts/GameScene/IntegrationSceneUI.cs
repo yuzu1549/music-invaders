@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System.Globalization;
 
 /// IntegrationScenes上に曲情報・時間・オプション・スコア情報を表示する。
 public class IntegrationSceneUI : MonoBehaviour
@@ -10,7 +11,6 @@ public class IntegrationSceneUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI artistText;
     [SerializeField] private TextMeshProUGUI difficultyText;
     [SerializeField] private TextMeshProUGUI highScoreText;
-    [SerializeField] private TextMeshProUGUI rankText;
     //[SerializeField] private TextMeshProUGUI timeText;
     //[SerializeField] private TextMeshProUGUI optionTitleText;
     //[SerializeField] private TextMeshProUGUI notesSpeedText;
@@ -21,6 +21,7 @@ public class IntegrationSceneUI : MonoBehaviour
     [Header("Life Images")]
     [SerializeField] private Sprite lifeSprite;
     [SerializeField, Min(1f)] private float lifeIconSize = 40f;
+    [SerializeField, Min(0.1f)] private float lifeIconScale = 1.4f;
     [SerializeField, Min(0f)] private float lifeIconSpacing = 8f;
     private Image[] lifeImages;
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -61,6 +62,11 @@ public class IntegrationSceneUI : MonoBehaviour
         {
             gameOverText.gameObject.SetActive(false);
         }
+
+        ConfigureScoreText();
+        ConfigureJudgementCount(perfectCountText);
+        ConfigureJudgementCount(goodCountText);
+        ConfigureJudgementCount(missCountText);
 
         UpdateAllTexts();
         UpdateScoreTexts();
@@ -115,45 +121,10 @@ public class IntegrationSceneUI : MonoBehaviour
             //totalTimeText = FormatTime(musicClip.length);
         //}
 
-        if (titleText != null)
-        {
-            if (string.IsNullOrEmpty(GameManager.Instance.musicTitle))
-            {
-                titleText.text = "Title: Unknown";
-            }
-            else
-            {
-                titleText.text = $"Title: {GameManager.Instance.musicTitle}";
-            }
-            titleText.fontSize = 40;
-        }
-
-        if (artistText != null)
-        {
-            if (string.IsNullOrEmpty(GameManager.Instance.artistName))
-            {
-                artistText.text = "Artist\nUnknown";
-            }
-            else
-            {
-                artistText.text = $"Artist\n{GameManager.Instance.artistName}";
-            }
-
-            artistText.fontSize = 40;
-        }
-
-        if (difficultyText != null)
-        {
-            if (string.IsNullOrEmpty(GameManager.Instance.difficulty))
-            {
-                difficultyText.text = "Difficulty: Unknown";
-            }
-            else
-            {
-                difficultyText.text = $"Difficulty: {GameManager.Instance.difficulty}";
-            }
-            difficultyText.fontSize = 40;
-        }
+        UpdateMusicInfoText(titleText, "Title", GameManager.Instance.musicTitle);
+        UpdateMusicInfoText(artistText, "Artist", GameManager.Instance.artistName);
+        UpdateMusicInfoText(difficultyText, "Difficulty", GameManager.Instance.difficulty,
+            GetDifficultyColor(GameManager.Instance.difficulty));
 
         if (highScoreText != null)
         {
@@ -166,23 +137,36 @@ public class IntegrationSceneUI : MonoBehaviour
             highScoreText.fontSize = 32;
         }
 
-        // 最高スコアと最高ランクのUI
-        if (rankText != null)
-        {
-            int highScore = HighScoreStorage.Get(
-                GameManager.Instance.musicTitle,
-                GameManager.Instance.difficulty
-            );
-
-            rankText.text = $"ランク：{new ScoreRankCalculator().Calculate(highScore, GameManager.Instance.maxScore)}";
-            rankText.fontSize = 32;
-        }
-
         //[if (timeText != null)
         //{
             //timeText.text = $"Time:\n{currentTimeText} / {totalTimeText}";
             //timeText.fontSize = 32;
         //}
+    }
+
+    private static void UpdateMusicInfoText(TextMeshProUGUI text, string label, string value, string valueColor = null)
+    {
+        if (text == null) return;
+
+        string content = string.IsNullOrEmpty(value) ? "Unknown" : value;
+        if (!string.IsNullOrEmpty(valueColor))
+        {
+            content = $"<color=#{valueColor}>{content}</color>";
+        }
+        text.text = $"<size=75%><color=#B0B8C4>{label}</color></size>\n{content}";
+        text.fontSize = 40;
+    }
+
+    private static string GetDifficultyColor(string difficulty)
+    {
+        switch (difficulty)
+        {
+            case "Easy": return "87CEFA";
+            case "Normal": return "7FE39A";
+            case "Hard":
+            case "Difficult": return "FFA45B";
+            default: return "FFFFFF";
+        }
     }
 
     private void UpdateOptionTexts()
@@ -209,29 +193,79 @@ public class IntegrationSceneUI : MonoBehaviour
     private void UpdateScoreTexts()
     {
 
-        if (scoreText != null)
-        {
-            scoreText.text = $"Score: {GameManager.Instance.score}";
-            scoreText.fontSize = 40;
-        }
+        UpdateScoreText(GameManager.Instance.score);
 
-        if (perfectCountText != null)
-        {
-            perfectCountText.text = $"P: {GameManager.Instance.perfectCount}";
-            perfectCountText.fontSize = 40;
-        }
+        UpdateJudgementCount(perfectCountText, "P", "FFFF00", GameManager.Instance.perfectCount);
+        UpdateJudgementCount(goodCountText, "G", "87CEFA", GameManager.Instance.goodCount);
+        UpdateJudgementCount(missCountText, "M", "C0C0C0", GameManager.Instance.missCount);
+    }
 
-        if (goodCountText != null)
-        {
-            goodCountText.text = $"G: {GameManager.Instance.goodCount}";
-            goodCountText.fontSize = 40;
-        }
+    private void ConfigureScoreText()
+    {
+        if (scoreText == null) return;
 
-        if (missCountText != null)
-        {
-            missCountText.text = $"M: {GameManager.Instance.missCount}";
-            missCountText.fontSize = 40;
-        }
+        const float rowWidth = 290f;
+        RectTransform rect = scoreText.rectTransform;
+        float left = rect.anchoredPosition.x - rect.rect.width * rect.pivot.x;
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rowWidth);
+        rect.anchoredPosition = new Vector2(left + rowWidth * rect.pivot.x, rect.anchoredPosition.y);
+        scoreText.margin = Vector4.zero;
+        scoreText.textWrappingMode = TextWrappingModes.NoWrap;
+        scoreText.alignment = TextAlignmentOptions.TopLeft;
+        scoreText.richText = true;
+        scoreText.fontSize = 40;
+        // 数字だけを縮めるため、サイズ調整はUpdateScoreTextで行う。
+        scoreText.enableAutoSizing = false;
+        scoreText.fontSizeMin = 20;
+        scoreText.fontSizeMax = 40;
+    }
+
+    private void UpdateScoreText(int score)
+    {
+        if (scoreText == null) return;
+
+        const string label = "<size=75%>Score:</size>";
+        string number = score.ToString(CultureInfo.InvariantCulture);
+        float rowWidth = scoreText.rectTransform.rect.width;
+        float labelWidth = scoreText.GetPreferredValues(label, Mathf.Infinity, Mathf.Infinity).x;
+        float numberWidth = scoreText.GetPreferredValues(number, Mathf.Infinity, Mathf.Infinity).x;
+        float availableWidth = Mathf.Max(1f, rowWidth - labelWidth - 12f);
+        float numberSize = Mathf.Clamp(40f * availableWidth / Mathf.Max(1f, numberWidth), 20f, 40f);
+        string size = numberSize.ToString("0.###", CultureInfo.InvariantCulture);
+        string sizedNumber = $"<size={size}>{number}</size>";
+        float sizedWidth = scoreText.GetPreferredValues(sizedNumber, Mathf.Infinity, Mathf.Infinity).x;
+        string position = (rowWidth - sizedWidth).ToString("0.###", CultureInfo.InvariantCulture);
+        scoreText.text = $"{label}<pos={position}>{sizedNumber}";
+    }
+
+    private void ConfigureJudgementCount(TextMeshProUGUI text)
+    {
+        if (text == null) return;
+
+        const float rowWidth = 290f;
+        RectTransform rect = text.rectTransform;
+        RectTransform reference = scoreText != null ? scoreText.rectTransform : rect;
+        float left = reference.anchoredPosition.x - reference.rect.width * reference.pivot.x;
+        rect.SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, rowWidth);
+        rect.anchoredPosition = new Vector2(left + rowWidth * rect.pivot.x, rect.anchoredPosition.y);
+        text.margin = Vector4.zero;
+        text.alignment = TextAlignmentOptions.TopLeft;
+        text.textWrappingMode = TextWrappingModes.NoWrap;
+        text.richText = true;
+        text.color = Color.white;
+        text.fontSize = 40;
+    }
+
+    private static void UpdateJudgementCount(TextMeshProUGUI text, string label, string color, int count)
+    {
+        if (text == null) return;
+
+        string number = count.ToString(CultureInfo.InvariantCulture);
+        float numberWidth = text.GetPreferredValues(number, Mathf.Infinity, Mathf.Infinity).x;
+        float numberPosition = Mathf.Max(60f, text.rectTransform.rect.width - numberWidth);
+        string position = numberPosition.ToString("0.###", CultureInfo.InvariantCulture);
+        // 同じ行にラベルと数字を描画し、数字の幅に合わせて右端を揃える。
+        text.text = $"<color=#{color}>{label}:</color><pos={position}>{number}";
     }
 
     private void UpdateLifeImages()
@@ -271,13 +305,15 @@ public class IntegrationSceneUI : MonoBehaviour
             }
         }
 
+        float iconSize = lifeIconSize * lifeIconScale;
         for (int i = 0; i < lifeImages.Length; i++)
         {
             Image icon = lifeImages[i];
             icon.sprite = lifeSprite;
-            icon.rectTransform.sizeDelta = Vector2.one * lifeIconSize;
-            icon.rectTransform.anchoredPosition = new Vector2(i * (lifeIconSize + lifeIconSpacing), 0f);
-            icon.enabled = i < life;
+            icon.rectTransform.sizeDelta = Vector2.one * iconSize;
+            icon.rectTransform.anchoredPosition = new Vector2(i * (iconSize + lifeIconSpacing), 0f);
+            icon.color = i < life ? Color.white : new Color(0.3f, 0.3f, 0.3f, 1f);
+            icon.enabled = true;
         }
     }
 
